@@ -1,8 +1,11 @@
 import { DataTypes, Model } from "sequelize";
 import { sequelize } from "../../config/db.ts";
-import type { ProductAttributes, ProductCreationAttributes } from "./product.types.ts";
+import type {
+  ProductAttributes,
+  ProductCreationAttributes,
+} from "./product.types.ts";
 
- export class Product
+export class Product
   extends Model<ProductAttributes, ProductCreationAttributes>
   implements ProductAttributes
 {
@@ -11,7 +14,7 @@ import type { ProductAttributes, ProductCreationAttributes } from "./product.typ
   declare type: string;
   declare serial_number: string | null;
   declare WXQP: string | null;
-  declare code: string;
+  declare code: number;
   declare source: "soviet" | "import";
   declare quantity: number;
   declare minimum_quantity: number | null;
@@ -52,8 +55,8 @@ Product.init(
     },
 
     code: {
-      type: DataTypes.STRING,
-      allowNull: false,
+      type: DataTypes.INTEGER,
+      allowNull: true,
     },
 
     source: {
@@ -97,11 +100,17 @@ Product.init(
     updatedAt: {
       type: DataTypes.DATE,
       allowNull: false,
-    }
+    },
   },
   {
     sequelize,
     tableName: "products",
     timestamps: true,
-  }
+  },
 );
+
+Product.afterCreate(async (product) => {
+  if (!product.code) {
+    await product.update({ code: product.id });
+  }
+});

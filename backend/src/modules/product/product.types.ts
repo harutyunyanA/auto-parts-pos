@@ -6,7 +6,7 @@ export type ProductAttributes = {
   type: string;
   serial_number?: string | null;
   WXQP?: string | null;
-  code: string;
+  code: number;
   source: "soviet" | "import";
   quantity: number;
   minimum_quantity?: number | null;
@@ -19,5 +19,5 @@ export type ProductAttributes = {
 
 export type ProductCreationAttributes = Optional<
   ProductAttributes,
-  "id" | "serial_number" | "WXQP" | "minimum_quantity"
+  "id" | "serial_number" | "WXQP" | "minimum_quantity" | "code"
 >;

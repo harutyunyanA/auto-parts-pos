@@ -19,3 +19,4 @@ app.use(express.urlencoded({ extended: true }));
 app.use(errorHandler);
 
 app.use(productRouter);
+app.use(errorHandler)
