@@ -3,16 +3,23 @@ dotenv.config();
 import { app } from "./app.ts";
 import logger from "./utils/logger.ts";
 import { setupGracefulShutdown } from "./utils/graceful-shutdown.ts";
+import { sequelize } from "./config/db.ts";
 
 const PORT = process.env.PORT || 4000;
 
-function start() {
-  const server = app.listen(PORT, () => {
-    logger.info(`Server running on port ${PORT}`);
-    
-  });
+async function start() {
+  try {
+    await sequelize.authenticate();
+    logger.info("DB connected");
 
-  setupGracefulShutdown(server);
+    const server = app.listen(PORT, () => {
+      logger.info(`Server running on port ${PORT}`);
+    });
+
+    setupGracefulShutdown(server);
+  } catch (e) {
+    logger.error(`db error: ${e}`);
+  }
 }
 
 start();
