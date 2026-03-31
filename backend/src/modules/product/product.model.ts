@@ -16,7 +16,7 @@ export class Product
   declare serial_number: string | null;
   declare WXQP: string | null;
   declare code: number;
-  declare source: sourceType
+  declare source: sourceType;
   declare quantity: number;
   declare minimum_quantity: number | null;
   declare purchase_price: number;
