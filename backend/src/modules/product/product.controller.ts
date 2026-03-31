@@ -54,5 +54,44 @@ class ProductController {
       message: "product successfully deleted",
     });
   }
+
+  async updateProduct(req: Request, res: Response, next: NextFunction) {
+    const { code, source }: { code: number; source: "soviet" | "import" } =
+      req.validated?.query;
+    const product = await service.getProductByCode(code, source);
+
+    if (!product) {
+      return errorResponse(
+        res,
+        "NOT_FOUND",
+        "product with such code and source not found",
+        404,
+      );
+    }
+
+    const productData: ProductCreationAttributes = req.validated?.body;
+    const allowedFields = [
+      "name",
+      "type",
+      "serial_number",
+      "WXQP",
+      "quantity",
+      "minimum_quantity",
+      "purchase_price",
+      "sale_price",
+      "supplier_id",
+      "source",
+    ];
+
+    const filteredData = Object.fromEntries(
+      Object.entries(productData).filter(([key]) =>
+        allowedFields.includes(key),
+      ),
+    );
+
+    await product.update(filteredData);
+
+    return successResponse(res, { ok: true });
+  }
 }
 export default new ProductController();

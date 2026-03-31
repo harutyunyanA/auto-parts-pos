@@ -1,4 +1,3 @@
-import { constrainedMemory } from "node:process";
 import { Product } from "./product.model.ts";
 import type { ProductCreationAttributes } from "./product.types.ts";
 
@@ -19,8 +18,13 @@ class ProductSrvices {
     const res = await Product.destroy({
       where: { code: code, source: source },
     });
-    console.log(res);
     return res;
+  }
+
+  async updateProduct(code : number, source : "soviet" | "import", productData : ProductCreationAttributes) {
+    const res = await Product.update({
+      
+    },{where: {code : code, source : source}})
   }
 }
 
