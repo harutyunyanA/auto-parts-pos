@@ -1,8 +1,9 @@
+import type { sourceType } from "../../types/source.types.ts";
 import { Product } from "./product.model.ts";
 import type { ProductCreationAttributes } from "./product.types.ts";
 
 class ProductSrvices {
-  async getProductByCode(code: number, source: string) {
+  async getProductByCode(code: number, source: sourceType) {
     const res = await Product.findOne({
       where: { code: code, source: source },
     });
@@ -14,17 +15,22 @@ class ProductSrvices {
     return product.dataValues;
   }
 
-  async deleteProduct(code: number, source: string) {
+  async deleteProduct(code: number, source: sourceType) {
     const res = await Product.destroy({
       where: { code: code, source: source },
     });
     return res;
   }
 
-  async updateProduct(code : number, source : "soviet" | "import", productData : ProductCreationAttributes) {
-    const res = await Product.update({
-      
-    },{where: {code : code, source : source}})
+  async updateProduct(
+    code: number,
+    source: sourceType,
+    productData: ProductCreationAttributes,
+  ) {
+    const res = await Product.update(
+      {},
+      { where: { code: code, source: source } },
+    );
   }
 }
 

@@ -5,10 +5,11 @@ import type {
   ProductAttributes,
   ProductCreationAttributes,
 } from "./product.types.ts";
+import type { sourceType } from "../../types/source.types.ts";
 
 class ProductController {
   async getProduct(req: Request, res: Response, next: NextFunction) {
-    const { code, source }: { code: number; source: "soviet" | "import" } =
+    const { code, source }: { code: number; source: sourceType } =
       req.validated?.query;
 
     const product: ProductAttributes | null = await service.getProductByCode(
@@ -38,7 +39,7 @@ class ProductController {
   }
 
   async deleteProduct(req: Request, res: Response, next: NextFunction) {
-    const { code, source }: { code: number; source: "soviet" | "import" } =
+    const { code, source }: { code: number; source: sourceType } =
       req.validated?.query;
 
     const result = await service.deleteProduct(code, source);
@@ -56,7 +57,7 @@ class ProductController {
   }
 
   async updateProduct(req: Request, res: Response, next: NextFunction) {
-    const { code, source }: { code: number; source: "soviet" | "import" } =
+    const { code, source }: { code: number; source: sourceType } =
       req.validated?.query;
     const product = await service.getProductByCode(code, source);
 
@@ -89,9 +90,9 @@ class ProductController {
       ),
     );
 
-    await product.update(filteredData);
+    const result = await product.update(filteredData);
 
-    return successResponse(res, { ok: true });
+    return successResponse(res, result.dataValues);
   }
 }
 export default new ProductController();

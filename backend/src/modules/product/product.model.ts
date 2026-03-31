@@ -4,6 +4,7 @@ import type {
   ProductAttributes,
   ProductCreationAttributes,
 } from "./product.types.ts";
+import type { sourceType } from "../../types/source.types.ts";
 
 export class Product
   extends Model<ProductAttributes, ProductCreationAttributes>
@@ -15,7 +16,7 @@ export class Product
   declare serial_number: string | null;
   declare WXQP: string | null;
   declare code: number;
-  declare source: "soviet" | "import";
+  declare source: sourceType
   declare quantity: number;
   declare minimum_quantity: number | null;
   declare purchase_price: number;
