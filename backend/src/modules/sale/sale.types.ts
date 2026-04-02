@@ -1,4 +1,4 @@
-export type SaleType = {
+export type CartType = {
   id: number;
   status: "draft" | "completed";
   totalAmount: number;
@@ -9,7 +9,7 @@ export type SaleType = {
 
 export type SaleItemType = {
   id: number;
-  saleId: number;
+  cartId: number;
   productId: number;
   quantity: number;
   priceAtSale: number;

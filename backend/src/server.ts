@@ -11,6 +11,8 @@ async function start() {
   try {
     await sequelize.authenticate();
     logger.info("DB connected");
+    await sequelize.sync({ alter: true });
+    logger.info("Tables are synchronized");
 
     const server = app.listen(PORT, () => {
       logger.info(`Server running on port ${PORT}`);

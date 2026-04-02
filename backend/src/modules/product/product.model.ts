@@ -10,18 +10,19 @@ export class Product
   extends Model<ProductAttributes, ProductCreationAttributes>
   implements ProductAttributes
 {
+
   declare id: number;
   declare name: string;
   declare type: string;
   declare serial_number: string | null;
   declare WXQP: string | null;
-  declare code: number;
+  declare code: number | null;
   declare source: sourceType;
   declare quantity: number;
   declare minimum_quantity: number | null;
   declare purchase_price: number;
   declare sale_price: number;
-  declare supplier_id: number;
+  declare supplier_id: number | null;
   declare createdAt: Date;
   declare updatedAt: Date;
 }
@@ -32,6 +33,7 @@ Product.init(
       type: DataTypes.INTEGER,
       autoIncrement: true,
       primaryKey: true,
+      unique: true,
     },
 
     name: {
@@ -41,7 +43,7 @@ Product.init(
 
     type: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
       defaultValue: "-",
     },
 
@@ -63,6 +65,7 @@ Product.init(
     source: {
       type: DataTypes.ENUM("soviet", "import"),
       allowNull: false,
+      defaultValue: "soviet",
     },
 
     quantity: {
@@ -90,7 +93,8 @@ Product.init(
 
     supplier_id: {
       type: DataTypes.INTEGER,
-      allowNull: false,
+      allowNull: true,
+      defaultValue: 1,
     },
 
     createdAt: {

@@ -1,8 +1,8 @@
 import { DataTypes, Model } from "sequelize";
-import type { SaleType, SaleItemType } from "./sale.types.ts";
+import type { CartType, SaleItemType } from "./sale.types.ts";
 import { sequelize } from "../../config/db.ts";
 
-export class SaleCart extends Model implements SaleType {
+export class Cart extends Model implements CartType {
   declare id: number;
   declare status: "draft" | "completed";
   declare totalAmount: number;
@@ -11,7 +11,7 @@ export class SaleCart extends Model implements SaleType {
   declare updatedAt: Date;
 }
 
-SaleCart.init(
+Cart.init(
   {
     id: {
       type: DataTypes.INTEGER,
@@ -30,7 +30,8 @@ SaleCart.init(
     },
     paymentMethod: {
       type: DataTypes.ENUM("cash", "card"),
-      allowNull: true,
+      allowNull: false,
+      defaultValue: "cash",
     },
   },
   {
@@ -42,7 +43,7 @@ SaleCart.init(
 
 export class SaleItem extends Model implements SaleItemType {
   declare id: number;
-  declare saleId: number;
+  declare cartId: number;
   declare productId: number;
   declare quantity: number;
   declare priceAtSale: number;
@@ -56,7 +57,7 @@ SaleItem.init(
       autoIncrement: true,
       primaryKey: true,
     },
-    saleId: {
+    cartId: {
       type: DataTypes.INTEGER,
       allowNull: false,
     },
@@ -84,9 +85,9 @@ SaleItem.init(
     indexes: [
       {
         unique: true,
-        fields: ["saleId", "productId"],
+        fields: ["cartId", "productId"],
       },
-      { fields: ["saleId"] },
+      { fields: ["cartId"] },
       { fields: ["productId"] },
     ],
   },
