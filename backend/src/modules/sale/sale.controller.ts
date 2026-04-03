@@ -76,63 +76,85 @@ class SaleController {
     }
 
     const result = await normalizeCart(Number(cartId));
-    if (result.success) {
+    if (result.normalized) {
       return successResponse(res, result);
     }
     return errorResponse(res, "cannot normalize", 500);
   }
 
-  
+  async updateCartItemQuantity(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) {
+    try {
+      const { itemId } = req.params;
+      const { quantity } = req.body;
 
-  // async createCart(req: Request, res: Response, next: NextFunction) {
-  //   try {
-  //     const result = await service.createCart();
-  //     if (!result.success) {
-  //       return errorResponse(
-  //         res,
-  //         "FAILD_TO_CREATE_CART",
-  //         "Cart creation failed due to an unknown error",
-  //         500,
-  //       );
-  //     }
+      if (!itemId || (!quantity && quantity !== 0)) {
+        return errorResponse(res, "itemId and quantity required");
+      }
 
-  //     return successResponse(res, result.data, 201);
-  //   } catch (e) {
-  //     next(e);
-  //   }
-  // }
+      const cartItem = await service.updateCartItemQuantity(
+        Number(itemId),
+        quantity,
+      );
 
-  // async addToCart(req: Request, res: Response, next: NextFunction) {
-  //   // try {
-  //   const { id } = req.params as { id: string };
-  //   const cartId: number = Number(id);
+      return successResponse(res, cartItem);
+    } catch (err: any) {
+      logger.error(err.message);
 
-  //   if (!id) {
-  //     return errorResponse(res, "", 400);
-  //   }
+      next(err);
+    }
+  }
 
-  //   const product = req.body;
+  async updateCartItemPrice(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { itemId } = req.params;
+      const { price } = req.body;
 
-  //   if (!product) {
-  //     return errorResponse(
-  //       res,
-  //       "PRODUCT_DATA_REQUIRED",
-  //       "Product data required. Expecting product code",
-  //       400,
-  //     );
-  //   }
-  //   // console.log(product);
+      if (!itemId || (!price && price !== 0)) {
+        return errorResponse(res, "itemId and price required");
+      }
 
-  //   const updatedCart = await service.addProductToCart(cartId, {
-  //     ...product,
-  //     source: req.source,
-  //   });
+      const cartItem = await service.updateCartItemPrice(Number(itemId), price);
 
-  //   return successResponse(res, { ok: true });
-  //   // } catch (e) {
-  //   //   next(e);
-  //   // }
-  // }
+      return successResponse(res, cartItem);
+    } catch (err: any) {
+      logger.error(err.message);
+
+      next(err);
+    }
+  }
+
+  async deleteItemFromCart(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { itemId } = req.params;
+      if (!itemId) {
+        return errorResponse(res, "Item id is required", 400);
+      }
+
+      const result = await service.deleteItemFromCart(Number(itemId));
+
+      if (result.success) {
+        return successResponse(res, {});
+      }
+    } catch (err: any) {
+      logger.error(err.message);
+      next(err);
+    }
+  }
+
+  async changeCartStatus(req: Request, res: Response, next: NextFunction) {
+    const { cartId } = req.params;
+
+    if (!cartId || isNaN(Number(cartId))) {
+      return errorResponse(res, "cartId required", 400);
+    }
+    const result = await service.cartStatusToggle(Number(cartId));
+
+    return successResponse(res, result);
+  }
 }
 
 export default new SaleController();

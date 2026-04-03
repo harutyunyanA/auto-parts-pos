@@ -2,6 +2,7 @@ import { DataTypes, Model } from "sequelize";
 import type { CartType, CartItemType } from "./sale.types.ts";
 import { sequelize } from "../../config/db.ts";
 import { Product } from "../product/product.model.ts";
+import { recalcCartTotal } from "../../utils/recalcCartTotal.ts";
 
 export class Cart extends Model implements CartType {
   declare id: number;
@@ -113,4 +114,19 @@ CartItem.belongsTo(Product, {
 
 Product.hasMany(CartItem, {
   foreignKey: "productId",
+});
+
+// CREATE
+CartItem.addHook("afterCreate", async (item: CartItem, options) => {
+  await recalcCartTotal(item.cartId, options.transaction);
+});
+
+// UPDATE
+CartItem.addHook("afterUpdate", async (item: CartItem, options) => {
+  await recalcCartTotal(item.cartId, options.transaction);
+});
+
+// DELETE
+CartItem.addHook("afterDestroy", async (item: CartItem, options) => {
+  await recalcCartTotal(item.cartId, options.transaction);
 });

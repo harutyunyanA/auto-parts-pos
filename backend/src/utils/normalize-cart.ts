@@ -2,8 +2,9 @@ import { Sequelize, Op } from "sequelize";
 import { sequelize } from "../config/db.ts";
 import { Cart, CartItem } from "../modules/sale/sale.model.ts";
 
-export async function normalizeCart(cartId: number) {
-  const transaction = await sequelize.transaction();
+export async function normalizeCart(cartId: number, transaction?: any) {
+  const t = transaction || (await sequelize.transaction());
+  const ownTransaction = !transaction;
 
   try {
     const groupedItems = await CartItem.findAll({
@@ -13,19 +14,13 @@ export async function normalizeCart(cartId: number) {
         [Sequelize.fn("SUM", Sequelize.col("quantity")), "quantity"],
         [Sequelize.fn("SUM", Sequelize.col("totalPrice")), "totalPrice"],
       ],
-      where: {
-        cartId,
-        quantity: { [Op.gt]: 0 },
-      },
+      where: { cartId, quantity: { [Op.gt]: 0 } },
       group: ["productId", "priceAtSale"],
       raw: true,
-      transaction,
+      transaction: t,
     });
 
-    await CartItem.destroy({
-      where: { cartId },
-      transaction,
-    });
+    await CartItem.destroy({ where: { cartId }, transaction: t });
 
     const itemsToInsert = groupedItems.map((item: any) => ({
       cartId,
@@ -36,7 +31,7 @@ export async function normalizeCart(cartId: number) {
     }));
 
     if (itemsToInsert.length) {
-      await CartItem.bulkCreate(itemsToInsert, { transaction });
+      await CartItem.bulkCreate(itemsToInsert, { transaction: t });
     }
 
     const totalAmount = itemsToInsert.reduce(
@@ -44,13 +39,16 @@ export async function normalizeCart(cartId: number) {
       0,
     );
 
-    await Cart.update({ totalAmount }, { where: { id: cartId }, transaction });
+    await Cart.update(
+      { totalAmount },
+      { where: { id: cartId }, transaction: t },
+    );
 
-    await transaction.commit();
+    if (ownTransaction) await t.commit();
 
-    return { success: true, totalAmount, items: itemsToInsert };
+    return { normalized: true, totalAmount, items: itemsToInsert };
   } catch (err) {
-    await transaction.rollback();
+    if (ownTransaction) await t.rollback();
     throw err;
   }
 }
