@@ -1,36 +1,39 @@
 import type { Request, Response, NextFunction } from "express";
 import { errorResponse, successResponse } from "../../utils/response.ts";
 import service from "./product.service.ts";
-import type {
-  ProductAttributes,
-  ProductCreationAttributes,
-} from "./product.types.ts";
+import type { ProductType, ProductCreationType } from "./product.types.ts";
 import type { sourceType } from "../../types/source.types.ts";
+import { Product } from "./product.model.ts";
 
 class ProductController {
   async getProduct(req: Request, res: Response, next: NextFunction) {
     const { code, source }: { code: number; source: sourceType } =
       req.validated?.query;
 
-    const product: ProductAttributes | null = await service.getProductByCode(
+    const product: ProductType | undefined = await service.getProductByCode(
       Number(code),
       source,
     );
 
     if (!product)
-      return errorResponse(res, "PRODUCT_NOT_FOUND", "product not found", 404);
+      return errorResponse(
+        res,
+        // "PRODUCT_NOT_FOUND",
+        "product not found",
+        404,
+      );
 
     return successResponse(res, product);
   }
 
   async addProduct(req: Request, res: Response, next: NextFunction) {
-    const productData: ProductCreationAttributes = req.validated?.body;
+    const productData: ProductCreationType = req.validated?.body;
 
     const product: any = await service.addProduct(productData);
     if (!product) {
       errorResponse(
         res,
-        "INTERNAL_ERROR",
+        // "INTERNAL_ERROR",
         "something went wrong, internal error",
         500,
       );
@@ -46,8 +49,8 @@ class ProductController {
     if (!result) {
       return errorResponse(
         res,
-        "NOT_FOUND",
-        "product not found. Product already delete OR doesn't exist",
+        // "NOT_FOUND",
+        "product not found. Product already deleted OR doesn't exist",
         404,
       );
     }
@@ -64,13 +67,13 @@ class ProductController {
     if (!product) {
       return errorResponse(
         res,
-        "NOT_FOUND",
+        // "NOT_FOUND",
         "product with such code and source not found",
         404,
       );
     }
 
-    const productData: ProductCreationAttributes = req.validated?.body;
+    const productData: ProductCreationType = req.validated?.body;
     const allowedFields = [
       "name",
       "type",
@@ -90,9 +93,9 @@ class ProductController {
       ),
     );
 
-    const result = await product.update(filteredData);
+    // const result = await Product.update(filteredData);
 
-    return successResponse(res, result.dataValues);
+    // return successResponse(res, result.dataValues);
   }
 }
 export default new ProductController();

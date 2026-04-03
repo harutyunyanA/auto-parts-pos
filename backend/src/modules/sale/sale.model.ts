@@ -1,6 +1,7 @@
 import { DataTypes, Model } from "sequelize";
-import type { CartType, SaleItemType } from "./sale.types.ts";
+import type { CartType, CartItemType } from "./sale.types.ts";
 import { sequelize } from "../../config/db.ts";
+import { Product } from "../product/product.model.ts";
 
 export class Cart extends Model implements CartType {
   declare id: number;
@@ -41,7 +42,7 @@ Cart.init(
   },
 );
 
-export class SaleItem extends Model implements SaleItemType {
+export class CartItem extends Model implements CartItemType {
   declare id: number;
   declare cartId: number;
   declare productId: number;
@@ -50,7 +51,7 @@ export class SaleItem extends Model implements SaleItemType {
   declare totalPrice: number;
 }
 
-SaleItem.init(
+CartItem.init(
   {
     id: {
       type: DataTypes.INTEGER,
@@ -60,14 +61,23 @@ SaleItem.init(
     cartId: {
       type: DataTypes.INTEGER,
       allowNull: false,
+      references: {
+        model: "sales",
+        key: "id",
+      },
     },
     productId: {
       type: DataTypes.INTEGER,
       allowNull: false,
+      references: {
+        model: "products",
+        key: "id",
+      },
     },
     quantity: {
       type: DataTypes.INTEGER,
       allowNull: false,
+      defaultValue: 0,
     },
     priceAtSale: {
       type: DataTypes.INTEGER,
@@ -76,19 +86,31 @@ SaleItem.init(
     totalPrice: {
       type: DataTypes.INTEGER,
       allowNull: false,
+      defaultValue: 0,
     },
   },
+
   {
     sequelize,
     tableName: "sale_items",
     timestamps: false,
-    indexes: [
-      {
-        unique: true,
-        fields: ["cartId", "productId"],
-      },
-      { fields: ["cartId"] },
-      { fields: ["productId"] },
-    ],
   },
 );
+
+Cart.hasMany(CartItem, {
+  foreignKey: "cartId",
+  as: "items",
+});
+
+CartItem.belongsTo(Cart, {
+  foreignKey: "cartId",
+});
+
+CartItem.belongsTo(Product, {
+  foreignKey: "productId",
+  as: "product",
+});
+
+Product.hasMany(CartItem, {
+  foreignKey: "productId",
+});

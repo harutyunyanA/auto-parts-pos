@@ -1,16 +1,12 @@
 import { DataTypes, Model } from "sequelize";
 import { sequelize } from "../../config/db.ts";
-import type {
-  ProductAttributes,
-  ProductCreationAttributes,
-} from "./product.types.ts";
+import type { ProductType, ProductCreationType } from "./product.types.ts";
 import type { sourceType } from "../../types/source.types.ts";
 
 export class Product
-  extends Model<ProductAttributes, ProductCreationAttributes>
-  implements ProductAttributes
+  extends Model<ProductType, ProductCreationType>
+  implements ProductType
 {
-
   declare id: number;
   declare name: string;
   declare type: string;
@@ -49,12 +45,14 @@ Product.init(
 
     serial_number: {
       type: DataTypes.STRING,
-      allowNull: true,
+      allowNull: false,
+      defaultValue: "-",
     },
 
     WXQP: {
       type: DataTypes.STRING,
-      allowNull: true,
+      allowNull: false,
+      defaultValue: "-",
     },
 
     code: {

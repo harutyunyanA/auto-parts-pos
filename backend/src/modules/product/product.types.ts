@@ -1,6 +1,6 @@
 import type { Optional } from "sequelize";
 
-export type ProductAttributes = {
+export type ProductType = {
   id: number;
   name: string;
   type: string;
@@ -17,7 +17,7 @@ export type ProductAttributes = {
   updatedAt: Date;
 };
 
-export type ProductCreationAttributes = Optional<
-  ProductAttributes,
+export type ProductCreationType = Optional<
+  ProductType,
   "id" | "serial_number" | "WXQP" | "minimum_quantity" | "code"
 >;

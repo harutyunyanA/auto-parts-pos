@@ -5,11 +5,18 @@ export function errorHandler(
   err: any,
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) {
   // custom error
-  if (err.code && err.message) {
-    return errorResponse(res, err.code, err.message, err.statusCode ?? 400);
+  if (
+    // err.code &&
+     err.message) {
+    return errorResponse(
+      res,
+      // err.code,
+      err.message,
+      err.statusCode ?? 400,
+    );
   }
 
   // any other error
@@ -18,7 +25,7 @@ export function errorHandler(
   return errorResponse(
     res,
     "INTERNAL_SERVER_ERROR",
-    "Something went wrong",
-    500
+    // "Something went wrong",
+    500,
   );
 }

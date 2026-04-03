@@ -7,7 +7,7 @@ export type CartType = {
   updatedAt: Date;
 };
 
-export type SaleItemType = {
+export type CartItemType = {
   id: number;
   cartId: number;
   productId: number;

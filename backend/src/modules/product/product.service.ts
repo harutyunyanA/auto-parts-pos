@@ -1,7 +1,7 @@
 import type { sourceType } from "../../types/source.types.ts";
 import { throwError } from "../../utils/throwError.ts";
 import { Product } from "./product.model.ts";
-import type { ProductCreationAttributes } from "./product.types.ts";
+import type { ProductCreationType } from "./product.types.ts";
 
 class ProductServices {
   async getProductByCode(code: number, source: sourceType) {
@@ -15,7 +15,7 @@ class ProductServices {
     return res?.dataValues;
   }
 
-  async addProduct(productData: ProductCreationAttributes) {
+  async addProduct(productData: ProductCreationType) {
     const product = await Product.create(productData);
     return product.dataValues;
   }
@@ -30,7 +30,7 @@ class ProductServices {
   async updateProduct(
     code: number,
     source: sourceType,
-    productData: ProductCreationAttributes,
+    productData: ProductCreationType,
   ) {
     const res = await Product.update(
       {},
