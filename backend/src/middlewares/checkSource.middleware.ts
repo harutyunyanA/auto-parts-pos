@@ -12,7 +12,7 @@ export default function checkSource(
   if (!authHeader) {
     return errorResponse(
       res,
-      "INVALID_OR_MISSING_SOURCE",
+      // "INVALID_OR_MISSING_SOURCE",
       "Source is missing",
       401,
     );
@@ -23,7 +23,7 @@ export default function checkSource(
   if (type !== "Bearer" || !source) {
     return errorResponse(
       res,
-      "INVALID_OR_MISSING_Source",
+      // "INVALID_OR_MISSING_Source",
       "Source is missing",
       401,
     );

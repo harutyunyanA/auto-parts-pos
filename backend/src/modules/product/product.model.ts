@@ -1,27 +1,24 @@
 import { DataTypes, Model } from "sequelize";
 import { sequelize } from "../../config/db.ts";
-import type {
-  ProductAttributes,
-  ProductCreationAttributes,
-} from "./product.types.ts";
+import type { ProductType, ProductCreationType } from "./product.types.ts";
 import type { sourceType } from "../../types/source.types.ts";
 
 export class Product
-  extends Model<ProductAttributes, ProductCreationAttributes>
-  implements ProductAttributes
+  extends Model<ProductType, ProductCreationType>
+  implements ProductType
 {
   declare id: number;
   declare name: string;
   declare type: string;
   declare serial_number: string | null;
   declare WXQP: string | null;
-  declare code: number;
-  declare source: sourceType
+  declare code: number | null;
+  declare source: sourceType;
   declare quantity: number;
   declare minimum_quantity: number | null;
   declare purchase_price: number;
   declare sale_price: number;
-  declare supplier_id: number;
+  declare supplier_id: number | null;
   declare createdAt: Date;
   declare updatedAt: Date;
 }
@@ -32,6 +29,7 @@ Product.init(
       type: DataTypes.INTEGER,
       autoIncrement: true,
       primaryKey: true,
+      unique: true,
     },
 
     name: {
@@ -41,18 +39,20 @@ Product.init(
 
     type: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
       defaultValue: "-",
     },
 
     serial_number: {
       type: DataTypes.STRING,
-      allowNull: true,
+      allowNull: false,
+      defaultValue: "-",
     },
 
     WXQP: {
       type: DataTypes.STRING,
-      allowNull: true,
+      allowNull: false,
+      defaultValue: "-",
     },
 
     code: {
@@ -63,6 +63,7 @@ Product.init(
     source: {
       type: DataTypes.ENUM("soviet", "import"),
       allowNull: false,
+      defaultValue: "soviet",
     },
 
     quantity: {
@@ -90,7 +91,8 @@ Product.init(
 
     supplier_id: {
       type: DataTypes.INTEGER,
-      allowNull: false,
+      allowNull: true,
+      defaultValue: 1,
     },
 
     createdAt: {

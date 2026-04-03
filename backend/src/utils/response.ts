@@ -5,7 +5,7 @@ import logger from "./logger.ts";
 export function successResponse<T>(
   res: Response,
   data: T,
-  statusCode = 200
+  statusCode = 200,
 ): Response<ApiResponse<T>> {
   const response: ApiResponse<T> = {
     success: true,
@@ -17,14 +17,18 @@ export function successResponse<T>(
 
 export function errorResponse(
   res: Response,
-  code: string,
+  // code: string,
   message: string,
-  statusCode = 400
+  statusCode = 400,
 ): Response<ApiResponse<null>> {
-  const error: ApiError = { code, message };
+  const error: ApiError = {
+    //  code,
+    message,
+  };
   const response: ApiResponse<null> = { success: false, error };
 
-  logger.error(`[${code}] ${message}`);
+  // logger.error(`[${code}] ${message}`);
+  logger.error(`${message}`);
 
   return res.status(statusCode).send(response);
 }

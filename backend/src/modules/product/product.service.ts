@@ -1,16 +1,21 @@
 import type { sourceType } from "../../types/source.types.ts";
+import { throwError } from "../../utils/throwError.ts";
 import { Product } from "./product.model.ts";
-import type { ProductCreationAttributes } from "./product.types.ts";
+import type { ProductCreationType } from "./product.types.ts";
 
-class ProductSrvices {
+class ProductServices {
   async getProductByCode(code: number, source: sourceType) {
     const res = await Product.findOne({
       where: { code: code, source: source },
     });
-    return res;
+
+    if (!res) {
+      throwError("product not found", "NOT_FOUND", 404);
+    }
+    return res?.dataValues;
   }
 
-  async addProduct(productData: ProductCreationAttributes) {
+  async addProduct(productData: ProductCreationType) {
     const product = await Product.create(productData);
     return product.dataValues;
   }
@@ -25,7 +30,7 @@ class ProductSrvices {
   async updateProduct(
     code: number,
     source: sourceType,
-    productData: ProductCreationAttributes,
+    productData: ProductCreationType,
   ) {
     const res = await Product.update(
       {},
@@ -34,4 +39,4 @@ class ProductSrvices {
   }
 }
 
-export default new ProductSrvices();
+export default new ProductServices();

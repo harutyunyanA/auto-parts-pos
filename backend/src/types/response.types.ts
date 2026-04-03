@@ -5,6 +5,6 @@ export interface ApiResponse<T> {
 }
 
 export interface ApiError {
-  code: string;
+  // code: string;
   message: string;
 }
