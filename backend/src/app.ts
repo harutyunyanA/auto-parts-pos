@@ -5,6 +5,7 @@ import { httpLogger } from "./middlewares/http-logger.ts";
 import { errorHandler } from "./middlewares/error.middleware.ts";
 import productRouter from "./modules/product/product.router.ts";
 import saleRouter from "./modules/sale/sale.router.ts";
+import supplyRouter from "./modules/supply/supply.router.ts";
 export const app = express();
 
 app.use(httpLogger);
@@ -15,10 +16,13 @@ app.use(
     credentials: true,
   }),
 );
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(errorHandler);
 
 app.use(productRouter);
 app.use("/sale", saleRouter);
+app.use("/supplies", supplyRouter);
+
 app.use(errorHandler);
