@@ -1,4 +1,5 @@
 import type { Optional } from "sequelize";
+import type { sourceType } from "../../types/source.types.ts";
 
 export type ProductType = {
   id: number;
@@ -7,7 +8,7 @@ export type ProductType = {
   serial_number?: string | null;
   WXQP?: string | null;
   code: number | null;
-  source: "soviet" | "import";
+  source: sourceType;
   quantity: number;
   minimum_quantity?: number | null;
   purchase_price: number;

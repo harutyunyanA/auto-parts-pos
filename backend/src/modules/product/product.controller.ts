@@ -97,5 +97,16 @@ class ProductController {
 
     // return successResponse(res, result.dataValues);
   }
+
+  async getProductByCode(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { code } = req.query;
+      const source = req.source as sourceType;
+      const product = await service.getProductByCode(Number(code), source);
+      return successResponse(res, product);
+    } catch (err) {
+      next(err);
+    }
+  }
 }
 export default new ProductController();
