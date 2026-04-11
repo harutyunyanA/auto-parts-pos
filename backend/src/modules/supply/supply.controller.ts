@@ -102,7 +102,7 @@ class SupplyController {
 
       const supply = await service.completeSupply(Number(supplyId));
 
-      if (supply.succes) {
+      if (supply.success) {
         return successResponse(res, supply.data);
       }
       return errorResponse(res, "Internal error", 500);
@@ -114,7 +114,7 @@ class SupplyController {
   async getAllSupplies(req: Request, res: Response, next: NextFunction) {
     try {
       const supplies = await service.getAllSupplies();
-      if (supplies.succes) {
+      if (supplies.success) {
         return successResponse(res, supplies.data);
       } else {
         return errorResponse(res, "Supplies are not found", 404);
