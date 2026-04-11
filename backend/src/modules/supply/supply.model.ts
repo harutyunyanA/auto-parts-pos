@@ -2,6 +2,8 @@ import { DataTypes, Model } from "sequelize";
 import { sequelize } from "../../config/db.ts";
 import type { SupplyType } from "./supply.types.ts";
 import type { sourceType } from "../../types/source.types.ts";
+import { Product } from "../product/product.model.ts";
+import { recalcSupplyTotal } from "../../utils/recalcSupplyTotal.ts";
 
 // -------------------- Supply --------------------
 export class Supply extends Model implements SupplyType {
@@ -54,8 +56,11 @@ export class SupplyItem extends Model {
   declare productId: number;
   declare quantity: number;
   declare purchasePrice: string;
-  declare salePrice: string | null;
-  declare minimumQuantity: number | null;
+  declare oldPurchasePrice: string;
+  declare salePrice: string;
+  declare oldSalePrice: string;
+  declare totalCost: string;
+  declare minQuantity: number | null;
   declare createdAt: Date;
   declare updatedAt: Date;
 }
@@ -95,7 +100,19 @@ SupplyItem.init(
       type: DataTypes.DECIMAL(12, 2),
       allowNull: true,
     },
-    minimumQuantity: {
+    oldPurchasePrice: {
+      type: DataTypes.DECIMAL(12, 2),
+      allowNull: false,
+    },
+    oldSalePrice: {
+      type: DataTypes.DECIMAL(12, 2),
+      allowNull: true,
+    },
+    totalCost: {
+      type: DataTypes.DECIMAL(12, 2),
+      allowNull: false,
+    },
+    minQuantity: {
       type: DataTypes.INTEGER,
       allowNull: true,
     },
@@ -110,3 +127,18 @@ SupplyItem.init(
 // -------------------- Associations --------------------
 Supply.hasMany(SupplyItem, { foreignKey: "supplyId", as: "items" });
 SupplyItem.belongsTo(Supply, { foreignKey: "supplyId", as: "supply" });
+SupplyItem.belongsTo(Product, { foreignKey: "productId", as: "product" });
+
+SupplyItem.addHook("afterCreate", async (item: SupplyItem, options) => {
+  await recalcSupplyTotal(item.supplyId, options.transaction);
+});
+
+// UPDATE
+SupplyItem.addHook("afterUpdate", async (item: SupplyItem, options) => {
+  await recalcSupplyTotal(item.supplyId, options.transaction);
+});
+
+// DELETE
+SupplyItem.addHook("afterDestroy", async (item: SupplyItem, options) => {
+  await recalcSupplyTotal(item.supplyId, options.transaction);
+});

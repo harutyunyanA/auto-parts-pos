@@ -6,11 +6,13 @@ import {
   getProductQuerySchema,
   updateProductSchema,
 } from "../../schemas/product.schema.ts";
+import checkSource from "../../middlewares/checkSource.middleware.ts";
 const router = express.Router();
 
 router.get("/", validate(getProductQuerySchema), controller.getProduct);
 router.post("/", validate(addProductSchema), controller.addProduct);
 router.delete("/", validate(getProductQuerySchema), controller.deleteProduct);
 router.patch("/", validate(updateProductSchema), controller.updateProduct);
+router.get("/by-code", checkSource, controller.getProductByCode);
 
 export default router;

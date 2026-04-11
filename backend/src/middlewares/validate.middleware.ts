@@ -16,12 +16,12 @@ export function validate<T extends ZodType<any>>(schema: T) {
       if (err instanceof ZodError) {
         return errorResponse(
           res,
-          "VALIDATION_ERROR",
-          err.issues.map((e) => e.message).join(", "),
+          `VALIDATION_ERROR: 
+          ${err.issues.map((e) => e.message).join(", ")}`,
           400,
         );
       }
-      return errorResponse(res, "UNKNOWN_ERROR", "Something went wrong", 500);
+      return errorResponse(res, "UNKNOWN_ERROR", 500);
     }
   };
 }

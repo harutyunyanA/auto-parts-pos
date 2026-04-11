@@ -5,14 +5,16 @@ import type { ProductCreationType } from "./product.types.ts";
 
 class ProductServices {
   async getProductByCode(code: number, source: sourceType) {
-    const res = await Product.findOne({
-      where: { code: code, source: source },
-    });
+    const res = (
+      await Product.findOne({
+        where: { code, source },
+      })
+    )?.toJSON();
 
     if (!res) {
-      throwError("product not found", "NOT_FOUND", 404);
+      throw new Error("Product not found");
     }
-    return res?.dataValues;
+    return res;
   }
 
   async addProduct(productData: ProductCreationType) {

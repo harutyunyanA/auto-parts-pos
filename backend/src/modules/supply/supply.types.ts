@@ -5,15 +5,18 @@ export type SupplyType = {
   supplierId: number | null;
   totalCost: string | null;
   source: sourceType;
+  status: "draft" | "completed";
   createdAt: Date;
   updatedAt: Date;
 };
 
 export type SupplyItemType = {
-  code: number;
+  productId: number;
   quantity: number;
   purchasePrice: number;
   salePrice: number;
+  oldPurchasePrice: number;
+  oldSalePrice: number;
   minQuantity?: number;
 };
 
