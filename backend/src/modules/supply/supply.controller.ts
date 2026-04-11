@@ -44,7 +44,7 @@ class SupplyController {
       if (!supplyId) {
         return errorResponse(res, "Supply id is required", 400);
       }
-      
+
       const supply = req.validated?.body;
 
       const result = await service.addSupplyItem(Number(supplyId), supply);
@@ -113,13 +113,29 @@ class SupplyController {
 
   async getAllSupplies(req: Request, res: Response, next: NextFunction) {
     try {
-      const { status, totalCost } = req.query;
-      const supplies = await service.getAllSupplies(String(status));
+      const supplies = await service.getAllSupplies();
       if (supplies.succes) {
         return successResponse(res, supplies.data);
       } else {
         return errorResponse(res, "Supplies are not found", 404);
       }
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  async getSupplyInfo(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { supplyId } = req.params;
+
+      if (!supplyId) {
+        return errorResponse(res, "Supply id is required");
+      }
+
+      const supplyItems = await service.getSupplyInfo(Number(supplyId));
+      if (!supplyItems) {
+        return errorResponse(res, "Supply is not found", 404);
+      } else return successResponse(res, supplyItems);
     } catch (err) {
       next(err);
     }

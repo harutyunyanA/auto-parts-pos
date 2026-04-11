@@ -4,6 +4,7 @@ import type { SupplyType } from "./supply.types.ts";
 import type { sourceType } from "../../types/source.types.ts";
 import { Product } from "../product/product.model.ts";
 import { recalcSupplyTotal } from "../../utils/recalcSupplyTotal.ts";
+import { recalcSupplyItemTotal } from "../../utils/recalcSupplyItemTotal.ts";
 
 // -------------------- Supply --------------------
 export class Supply extends Model implements SupplyType {
@@ -129,6 +130,8 @@ Supply.hasMany(SupplyItem, { foreignKey: "supplyId", as: "items" });
 SupplyItem.belongsTo(Supply, { foreignKey: "supplyId", as: "supply" });
 SupplyItem.belongsTo(Product, { foreignKey: "productId", as: "product" });
 
+//HOOKS
+// CREATE
 SupplyItem.addHook("afterCreate", async (item: SupplyItem, options) => {
   await recalcSupplyTotal(item.supplyId, options.transaction);
 });
@@ -142,3 +145,7 @@ SupplyItem.addHook("afterUpdate", async (item: SupplyItem, options) => {
 SupplyItem.addHook("afterDestroy", async (item: SupplyItem, options) => {
   await recalcSupplyTotal(item.supplyId, options.transaction);
 });
+
+// SupplyItem.addHook("beforeSave", async (item: SupplyItem, options) => {
+//   await recalcSupplyItemTotal(item.supplyId, options.transaction);
+// })

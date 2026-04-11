@@ -1,3 +1,4 @@
+import { success } from "zod";
 import { sequelize } from "../../config/db.ts";
 import { Product } from "../product/product.model.ts";
 // import productService from "../product/product.service.ts";
@@ -50,7 +51,7 @@ class SupplyService {
           ...supply,
           oldPurchasePrice: product.purchase_price,
           oldSalePrice: product.sale_price,
-          totalCost: supply.quantity * supply.purchasePrice
+          totalCost: supply.quantity * supply.purchasePrice,
         },
         { transaction },
       );
@@ -191,6 +192,9 @@ class SupplyService {
         supplyItem.minQuantity = data.minQuantity;
       }
 
+      const totalCost = Number(supplyItem.purchasePrice) * supplyItem.quantity;
+      supplyItem.totalCost = String(totalCost);
+
       // Сохраняем изменения
       await product.save({ transaction });
       await supplyItem.save({ transaction });
@@ -213,23 +217,44 @@ class SupplyService {
       throw new Error("Supply already completed");
     } else {
       supply.status = "completed";
+
       await supply.save();
     }
 
     return { succes: true, data: supply.toJSON() };
   }
 
-  async getAllSupplies(status: string) {
-    console.log(status);
-    let supplies = [];
-    if (status) {
-      supplies = await Supply.findAll({ where: { status } });
-    } else {
-      console.log("hello");
-      supplies = await Supply.findAll();
+  async getAllSupplies() {
+    const supplies = await Supply.findAll();
+    if (!supplies) {
+      throw new Error("Supplies not found");
+    }
+    return { succes: true, data: { supplies } };
+  }
+
+  async getSupplyInfo(supplyId: number) {
+    const supply = (
+      await Supply.findByPk(supplyId, {
+        include: [
+          {
+            model: SupplyItem,
+            as: "items",
+            include: [
+              {
+                model: Product,
+                as: "product",
+              },
+            ],
+          },
+        ],
+      })
+    )?.toJSON();
+    
+    if (!supply) {
+      throw new Error("Supply is not found");
     }
 
-    return { succes: true, data: { supplies } };
+    return { success: true, data: supply };
   }
 }
 

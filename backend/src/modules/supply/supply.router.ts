@@ -13,6 +13,7 @@ const router = express.Router();
 router.use(checkSource);
 
 router.get("/", controller.getAllSupplies)
+router.get("/:supplyId", controller.getSupplyInfo)
 router.post(
   "/",
   checkSource,
@@ -27,7 +28,6 @@ router.post(
   controller.addSupplyItem,
 );
 
-
 router.delete("/:supplyId/item/:itemId", controller.deleteSupplyItem);
 
 router.patch(
@@ -38,3 +38,4 @@ router.patch(
 
 router.post("/:supplyId/complete", controller.completeSupply)
 export default router;
+
