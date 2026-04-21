@@ -8,6 +8,8 @@ const router = express.Router();
 
 router.use(checkSource);
 
+router.get("/", controller.getAllCarts);
+router.get("/:date", controller.getCartOfDate);
 router.post("/", controller.createCart);
 router.post(
   "/:cartId/item/:code",

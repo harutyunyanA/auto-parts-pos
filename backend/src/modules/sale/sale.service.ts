@@ -1,15 +1,23 @@
+import { Op } from "sequelize";
 import { sequelize } from "../../config/db.ts";
 import type { sourceType } from "../../types/source.types.ts";
 import { Product } from "../product/product.model.ts";
 import productService from "../product/product.service.ts";
 import type { ProductType } from "../product/product.types.ts";
 import { Cart, CartItem } from "./sale.model.ts";
+import dayjs from "dayjs";
 import { normalizeCart } from "../../utils/normalize-cart.ts";
-import { NotFoundError, BadRequestError, InternalServerError } from "../../utils/errors.ts";
+import {
+  NotFoundError,
+  BadRequestError,
+  InternalServerError,
+} from "../../utils/errors.ts";
+import logger from "../../utils/logger.ts";
+import type { TransformedCartType } from "./sale.types.ts";
 
 class SaleService {
-  async createCart() {
-    const cart = await Cart.create();
+  async createCart(source: sourceType) {
+    const cart = await Cart.create({ source });
 
     if (!cart) {
       throw new InternalServerError("Unable to create new cart");
@@ -153,7 +161,74 @@ class SaleService {
     return cart;
   }
 
-  
+  async getAllCarts() {
+    const carts = await Cart.findAll();
+    if (!carts) {
+      throw new InternalServerError("Unable to get all carts");
+    }
+    return carts;
+  }
+
+  async getCartOfDate(date: string, source: sourceType) {
+    const startOfDay = dayjs(date).startOf("day").toDate();
+    const endOfDay = dayjs(date).add(1, "day").startOf("day").toDate();
+
+    const records = await Cart.findAll({
+      where: {
+        source: source,
+        createdAt: {
+          [Op.gte]: startOfDay,
+          [Op.lt]: endOfDay,
+        },
+      },
+      include: [
+        {
+          model: CartItem,
+          as: "items",
+          attributes: { exclude: ["cartId", "productId"] },
+          include: [
+            {
+              model: Product,
+              as: "product",
+              attributes: {
+                exclude: [
+                  "supplier_id",
+                  "minimum_quantity",
+                  "createdAt",
+                  "source",
+                  "id",
+                  "updatedAt",
+                ],
+              },
+            },
+          ],
+        },
+      ],
+    });
+
+    if (!records) {
+      throw new NotFoundError("No carts found for this date");
+    }
+
+    const transformedCarts: TransformedCartType[] = records.map((cart) => {
+      const plainCart = cart.get({ plain: true });
+      return {
+        ...plainCart,
+        items: plainCart.items.map((item: any) => {
+          const { product, ...itemData } = item;
+          const { quantity: stockQty, ...productInfo } = product;
+
+          return {
+            ...itemData,
+            ...productInfo,
+            quantityAtStore: stockQty,
+          };
+        }),
+      };
+    });
+
+    return transformedCarts;
+  }
 }
 
 export default new SaleService();

@@ -14,7 +14,7 @@ class SaleController {
 
   async createCart(req: Request, res: Response, next: NextFunction) {
     try {
-      const cart = await service.createCart();
+      const cart = await service.createCart(req.source as sourceType);
 
       return successResponse(res, cart);
     } catch (err: any) {
@@ -154,6 +154,32 @@ class SaleController {
     const result = await service.cartStatusToggle(Number(cartId));
 
     return successResponse(res, result);
+  }
+
+  async getAllCarts(req: Request, res: Response, next: NextFunction) {
+    try {
+      const carts = await service.getAllCarts();
+      return successResponse(res, carts);
+    } catch (err: any) {
+      logger.error(err.message);
+      next(err);
+    }
+  }
+
+  async getCartOfDate(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { date } = req.params as { date: string };
+      if (!date) {
+        return errorResponse(res, "date is required", 400);
+      }
+
+      const carts = await service.getCartOfDate(date, req.source as sourceType);
+
+      return successResponse(res, carts);
+    } catch (err: any) {
+      logger.error(err.message);
+      next(err);
+    }
   }
 }
 
