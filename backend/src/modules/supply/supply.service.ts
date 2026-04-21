@@ -5,12 +5,13 @@ import { Product } from "../product/product.model.ts";
 // import type { ProductType } from "../product/product.types.ts";
 import { Supply, SupplyItem } from "./supply.model.ts";
 import type { SupplyItemType, SupplyType } from "./supply.types.ts";
+import { NotFoundError, BadRequestError } from "../../utils/errors.ts";
 
 class SupplyService {
   async createSupply(supplierId: number, source: string) {
     const newSupply = (await Supply.create({ supplierId, source })).toJSON();
     if (!newSupply) {
-      throw new Error("Cannot create new SUPPLY");
+      throw new BadRequestError("Cannot create new SUPPLY");
     }
     return newSupply;
   }
@@ -18,12 +19,12 @@ class SupplyService {
   async updateSupplier(supplyId: number, supplierId: number) {
     const result = await Supply.findByPk(supplyId);
     if (!result) {
-      throw new Error("Supply not found");
+      throw new NotFoundError("Supply not found");
     }
     const supply: SupplyType = result.dataValues;
 
     if (supply.status === "completed") {
-      throw new Error(
+      throw new BadRequestError(
         "Supply status completed. Open supply record before any changes",
       );
     }
@@ -41,7 +42,7 @@ class SupplyService {
       // Проверяем продукт
       const product = await Product.findByPk(supply.productId, { transaction });
       if (!product) {
-        throw new Error("Product not found");
+        throw new NotFoundError("Product not found");
       }
 
       // Создаём SupplyItem
@@ -95,15 +96,15 @@ class SupplyService {
         transaction,
       });
 
-      if (!supplyItem) throw new Error("Supply item not found");
+      if (!supplyItem) throw new NotFoundError("Supply item not found");
       const supply = supplyItem.get("supply") as Supply;
       const product = supplyItem.get("product") as Product;
 
-      if (!supply) throw new Error("Supply not found");
-      if (!product) throw new Error("Product not found");
+      if (!supply) throw new NotFoundError("Supply not found");
+      if (!product) throw new NotFoundError("Product not found");
 
       if (supply.status === "completed") {
-        throw new Error(
+        throw new BadRequestError(
           "Supply status completed. Open supply record before any changes",
         );
       }
@@ -156,13 +157,13 @@ class SupplyService {
         transaction,
       });
 
-      if (!supplyItem) throw new Error("Supply item not found");
+      if (!supplyItem) throw new NotFoundError("Supply item not found");
 
       const supply = supplyItem.get("supply") as Supply;
       const product = supplyItem.get("product") as Product;
 
       if (supply.status === "completed") {
-        throw new Error("Cannot update item in a completed supply");
+        throw new BadRequestError("Cannot update item in a completed supply");
       }
 
       // Сохраняем старые цены на случай отката
@@ -211,25 +212,25 @@ class SupplyService {
   async completeSupply(supplyId: number) {
     const supply = (await Supply.findByPk(supplyId)) as Supply;
     if (!supply) {
-      throw new Error("Supply not found");
+      throw new NotFoundError("Supply not found");
     }
     if (supply.status === "completed") {
-      throw new Error("Supply already completed");
+      throw new BadRequestError("Supply already completed");
     } else {
       supply.status = "completed";
 
       await supply.save();
     }
 
-    return { succes: true, data: supply.toJSON() };
+    return { success: true, data: supply.toJSON() };
   }
 
   async getAllSupplies() {
     const supplies = await Supply.findAll();
     if (!supplies) {
-      throw new Error("Supplies not found");
+      throw new NotFoundError("Supplies not found");
     }
-    return { succes: true, data: { supplies } };
+    return { success: true, data: { supplies } };
   }
 
   async getSupplyInfo(supplyId: number) {
@@ -251,7 +252,7 @@ class SupplyService {
     )?.toJSON();
     
     if (!supply) {
-      throw new Error("Supply is not found");
+      throw new NotFoundError("Supply is not found");
     }
 
     return { success: true, data: supply };

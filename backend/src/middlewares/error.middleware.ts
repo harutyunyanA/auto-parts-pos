@@ -1,5 +1,7 @@
 import type { NextFunction, Request, Response } from "express";
 import { errorResponse } from "../utils/response.ts";
+import { AppError } from "../utils/errors.ts";
+import logger from "../utils/logger.ts";
 
 export function errorHandler(
   err: any,
@@ -7,25 +9,17 @@ export function errorHandler(
   res: Response,
   next: NextFunction,
 ) {
-  // custom error
-  if (
-    // err.code &&
-     err.message) {
-    return errorResponse(
-      res,
-      // err.code,
-      err.message,
-      err.statusCode ?? 400,
-    );
+  if (err instanceof AppError) {
+    return errorResponse(res, err.message, err.statusCode);
   }
 
-  // any other error
-  console.error(err);
+  // Log unexpected errors
+  logger.error(err);
 
+  // default error response for unhandled errors
   return errorResponse(
     res,
-    "INTERNAL_SERVER_ERROR",
-    // "Something went wrong",
+    "An unexpected error occurred",
     500,
   );
 }

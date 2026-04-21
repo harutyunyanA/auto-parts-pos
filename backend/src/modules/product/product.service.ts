@@ -1,7 +1,7 @@
 import type { sourceType } from "../../types/source.types.ts";
-import { throwError } from "../../utils/throwError.ts";
 import { Product } from "./product.model.ts";
 import type { ProductCreationType } from "./product.types.ts";
+import { NotFoundError } from "../../utils/errors.ts";
 
 class ProductServices {
   async getProductByCode(code: number, source: sourceType) {
@@ -12,7 +12,7 @@ class ProductServices {
     )?.toJSON();
 
     if (!res) {
-      throw new Error("Product not found");
+      throw new NotFoundError("Product not found");
     }
     return res;
   }

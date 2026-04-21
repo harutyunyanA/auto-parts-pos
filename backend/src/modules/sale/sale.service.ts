@@ -5,13 +5,14 @@ import productService from "../product/product.service.ts";
 import type { ProductType } from "../product/product.types.ts";
 import { Cart, CartItem } from "./sale.model.ts";
 import { normalizeCart } from "../../utils/normalize-cart.ts";
+import { NotFoundError, BadRequestError, InternalServerError } from "../../utils/errors.ts";
 
 class SaleService {
   async createCart() {
     const cart = await Cart.create();
 
     if (!cart) {
-      throw new Error("Unable to create new cart");
+      throw new InternalServerError("Unable to create new cart");
     }
     return cart.dataValues;
   }
@@ -21,7 +22,7 @@ class SaleService {
       await productService.getProductByCode(code, source as sourceType);
 
     if (!product) {
-      throw new Error("Product not found");
+      throw new NotFoundError("Product not found");
     }
 
     const newCartItem = await CartItem.create<CartItem>({
@@ -31,7 +32,7 @@ class SaleService {
     });
 
     if (!newCartItem) {
-      throw new Error("Unable to create cart item");
+      throw new InternalServerError("Unable to create cart item");
     }
 
     const result = {
@@ -52,7 +53,7 @@ class SaleService {
     try {
       const cartItem = await CartItem.findByPk(cartItemId, { transaction: t });
       if (!cartItem) {
-        throw new Error("Cart item not found");
+        throw new NotFoundError("Cart item not found");
       }
 
       const product = await Product.findByPk(cartItem.productId, {
@@ -60,14 +61,14 @@ class SaleService {
         lock: t.LOCK.UPDATE,
       });
       if (!product) {
-        throw new Error("Product not found");
+        throw new NotFoundError("Product not found");
       }
 
       const oldQty = cartItem.quantity;
       const delta = newQty - oldQty;
 
       if (delta > 0 && product.quantity < delta) {
-        throw new Error("Not enough product in stock");
+        throw new BadRequestError("Not enough product in stock");
       }
 
       product.quantity -= delta;
@@ -95,7 +96,7 @@ class SaleService {
     try {
       const cartItem = await CartItem.findByPk(cartItemId, { transaction: t });
       if (!cartItem) {
-        throw new Error("Cart item not found");
+        throw new NotFoundError("Cart item not found");
       }
 
       cartItem.priceAtSale = newPrice;
@@ -123,11 +124,11 @@ class SaleService {
     try {
       const item = await CartItem.findByPk(itemId, { transaction: t });
       if (!item) {
-        throw new Error(`item: ${itemId} is not found`);
+        throw new NotFoundError(`item: ${itemId} is not found`);
       }
 
       if (item.quantity !== 0) {
-        throw new Error(`Item quantity must be 0`);
+        throw new BadRequestError(`Item quantity must be 0`);
       }
 
       await item.destroy({ transaction: t });
@@ -143,7 +144,7 @@ class SaleService {
   async cartStatusToggle(cartId: number) {
     const cart = await Cart.findByPk(cartId);
     if (!cart) {
-      throw new Error(`Cart: ${cartId} is not found`);
+      throw new NotFoundError(`Cart: ${cartId} is not found`);
     }
 
     cart.status = cart.status === "draft" ? "completed" : "draft";
