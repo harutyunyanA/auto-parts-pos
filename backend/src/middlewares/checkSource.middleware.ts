@@ -7,29 +7,25 @@ export default function checkSource(
   res: Response,
   next: NextFunction,
 ) {
-  const authHeader = req.get("authorization");
+  const source = req.get("X-Source-Type");
 
-  if (!authHeader) {
+  if (!source) {
     return errorResponse(
       res,
-      // "INVALID_OR_MISSING_SOURCE",
-      "Source is missing",
+      "Source is missing (X-Source-Type header)",
       401,
     );
   }
 
-  const [type, source] = authHeader.split(" ");
-
-  if (type !== "Bearer" || !source) {
+  if (source !== "soviet" && source !== "import") {
     return errorResponse(
       res,
-      // "INVALID_OR_MISSING_Source",
-      "Source is missing",
+      "Invalid source type. Must be 'soviet' or 'import'",
       401,
     );
   }
 
-  req.source = source;
+  req.source = source as sourceType;
 
   next();
 }

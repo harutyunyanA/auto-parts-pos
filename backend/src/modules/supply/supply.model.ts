@@ -4,7 +4,6 @@ import type { SupplyType } from "./supply.types.ts";
 import type { sourceType } from "../../types/source.types.ts";
 import { Product } from "../product/product.model.ts";
 import { recalcSupplyTotal } from "../../utils/recalcSupplyTotal.ts";
-import { recalcSupplyItemTotal } from "../../utils/recalcSupplyItemTotal.ts";
 
 // -------------------- Supply --------------------
 export class Supply extends Model implements SupplyType {

@@ -1,5 +1,6 @@
 import { DataTypes, Model } from "sequelize";
 import type { CartType, CartItemType } from "./sale.types.ts";
+import type { sourceType } from "../../types/source.types.ts";
 import { sequelize } from "../../config/db.ts";
 import { Product } from "../product/product.model.ts";
 import { recalcCartTotal } from "../../utils/recalcCartTotal.ts";
@@ -9,6 +10,7 @@ export class Cart extends Model implements CartType {
   declare status: "draft" | "completed";
   declare totalAmount: number;
   declare paymentMethod: "cash" | "card";
+  declare source: sourceType;
   declare createdAt: Date;
   declare updatedAt: Date;
 }
@@ -34,6 +36,10 @@ Cart.init(
       type: DataTypes.ENUM("cash", "card"),
       allowNull: false,
       defaultValue: "cash",
+    },
+    source: {
+      type: DataTypes.ENUM("soviet", "import"),
+      allowNull: false,
     },
   },
   {

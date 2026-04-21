@@ -6,6 +6,7 @@ import { errorHandler } from "./middlewares/error.middleware.ts";
 import productRouter from "./modules/product/product.router.ts";
 import saleRouter from "./modules/sale/sale.router.ts";
 import supplyRouter from "./modules/supply/supply.router.ts";
+import clientsRouter from "./modules/clients/clients.router.ts";
 export const app = express();
 
 app.use(httpLogger);
@@ -24,5 +25,6 @@ app.use(errorHandler);
 app.use("/product", productRouter);
 app.use("/sale", saleRouter);
 app.use("/supplies", supplyRouter);
+app.use("/clients", clientsRouter);
 
 app.use(errorHandler);
