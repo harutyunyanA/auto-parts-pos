@@ -1,4 +1,4 @@
-import { Input, Table, message } from "antd";
+import { Input, Table, message, Modal } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import type { ICart, ICartItem } from "./types";
 import { useQueryClient } from "@tanstack/react-query";
@@ -22,17 +22,41 @@ export function Cart({ cart }: CartProps) {
 
   const inputRefs = useRef<Record<string, any>>({});
 
-  const { mutationAdd, mutationQty, mutationPrice, mutationDelete } =
+  const { mutationAdd, mutationQty, mutationPrice, mutationDelete, mutationStatusToggle } =
     useCartMutations({
       cartId: cart.id,
       currentDate,
       setFocusTarget,
     });
 
+  const showReopenModal = (originalValue: any, inputKey: string) => {
+    Modal.confirm({
+      title: "Cart is closed",
+      content: "This cart is completed. Would you like to open it to make changes?",
+      okText: "Open",
+      cancelText: "Cancel",
+      onOk: () => {
+        mutationStatusToggle.mutate(cart.id);
+      },
+      onCancel: () => {
+        const input = inputRefs.current[inputKey];
+        if (input && input.input) {
+          input.input.value = originalValue;
+        }
+      },
+    });
+  };
+
     
 
   const handleCodeChange = async (record: any, code: string) => {
     if (!code) return;
+
+    if (cart.status === "completed") {
+      showReopenModal("", record.isNew ? "new-code" : `${record.id}-code`);
+      return;
+    }
+
     if (record.isNew) {
       mutationAdd.mutate(code);
     } else {
@@ -116,7 +140,13 @@ export function Cart({ cart }: CartProps) {
             e.target.select();
             if (!record.isNew) setActivePrice(record.purchase_price);
           }}
-          onPressEnter={(e: any) => handleCodeChange(record, e.target.value)}
+          onPressEnter={(e: any) => {
+            if (cart.status === "completed") {
+              showReopenModal(text, record.isNew ? "new-code" : `${record.id}-code`);
+              return;
+            }
+            handleCodeChange(record, e.target.value);
+          }}
           onKeyDown={(e) => handleKeyDown(e, record, "code")}
           variant="borderless"
           style={{ width: "100%", padding: "0" }}
@@ -147,12 +177,16 @@ export function Cart({ cart }: CartProps) {
             }}
             defaultValue={text}
             onFocus={(e) => e.target.select()}
-            onPressEnter={(e: any) =>
+            onPressEnter={(e: any) => {
+              if (cart.status === "completed") {
+                showReopenModal(text, `${record.id}-quantity`);
+                return;
+              }
               mutationQty.mutate({
                 id: record.id,
                 quantity: Number(e.target.value),
-              })
-            }
+              });
+            }}
             onKeyDown={(e) => handleKeyDown(e, record, "quantity")}
             variant="borderless"
             style={{ width: "100%", padding: "0" }}
@@ -177,12 +211,16 @@ export function Cart({ cart }: CartProps) {
               e.target.select();
               setActivePrice(record.purchase_price);
             }}
-            onPressEnter={(e: any) =>
+            onPressEnter={(e: any) => {
+              if (cart.status === "completed") {
+                showReopenModal(text, `${record.id}-price`);
+                return;
+              }
               mutationPrice.mutate({
                 id: record.id,
                 price: Number(e.target.value),
-              })
-            }
+              });
+            }}
             onKeyDown={(e) => handleKeyDown(e, record, "price")}
             variant="borderless"
             style={{ width: "100%", padding: "0" }}
@@ -221,7 +259,7 @@ export function Cart({ cart }: CartProps) {
     }, 100);
 
     return () => clearTimeout(timer);
-  }, [focusTarget, cart.items.length]);
+  }, [focusTarget, cart.items.length, cart.status]);
 
   return (
     <Table

@@ -168,13 +168,19 @@ export default function Sales() {
             <Flex gap={"small"} align="flex-start">
               <Button
                 size="large"
-                disabled={carts?.[currentCartPage - 1]?.status === "draft"}
+                disabled={
+                  carts?.[currentCartPage - 1]?.status === "draft" ||
+                  carts?.[currentCartPage - 1]?.totalAmount === 0
+                }
               >
                 Receipt
               </Button>
               <Button
                 size="large"
-                disabled={carts?.[currentCartPage - 1]?.status === "draft"}
+                disabled={
+                  carts?.[currentCartPage - 1]?.status === "draft" ||
+                  carts?.[currentCartPage - 1]?.totalAmount === 0
+                }
                 onClick={() => {
                   const cartId = carts?.[currentCartPage - 1]?.id;
                   if (cartId) {
