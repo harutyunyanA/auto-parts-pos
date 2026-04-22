@@ -229,6 +229,17 @@ class SaleService {
 
     return transformedCarts;
   }
+
+  async cardPayment(cardId: number) {
+    const cart = await Cart.findByPk(cardId);
+    if (!cart) {
+      throw new NotFoundError(`Cart not found`);
+    }
+
+    cart.paymentMethod = "card";
+    await cart.save();
+    return cart;
+  }
 }
 
 export default new SaleService();

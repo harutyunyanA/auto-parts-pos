@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { persist, createJSONStorage } from 'zustand/middleware';
 
 interface CurrentCartPageState {
   currentCartPage: number;
@@ -14,6 +14,7 @@ export const useCurrentCartPageState = create<CurrentCartPageState>()(
     }),
     {
       name: 'current-cart-page-storage',
+      storage: createJSONStorage(() => sessionStorage),
     }
   )
 );
