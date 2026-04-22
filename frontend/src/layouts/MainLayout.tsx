@@ -11,6 +11,7 @@ import {
   UserOutlined,
 } from '@ant-design/icons';
 import { useNavigate, useLocation, Outlet, Link } from 'react-router-dom';
+import { useQueryClient } from '@tanstack/react-query';
 import { useSource, useClearSource } from '../store/useAuthStore';
 import { useIsDarkMode, useToggleTheme } from '../store/useThemeStore';
 import { useCurrentDate, useSetCurrentDate } from '../store/useDateStore';
@@ -23,6 +24,7 @@ export default function MainLayout() {
   const [collapsed, setCollapsed] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const source = useSource();
   const clearSource = useClearSource();
   const isDarkMode = useIsDarkMode();
@@ -55,6 +57,7 @@ export default function MainLayout() {
   ];
 
   const handleLogout = () => {
+    queryClient.clear();
     clearSource();
     navigate('/selection');
   };

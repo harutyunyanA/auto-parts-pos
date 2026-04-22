@@ -1,11 +1,11 @@
 import { Input, Table, message } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import type { ICart, ICartItem } from "./types";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import api from "../../api/client";
+import { useQueryClient } from "@tanstack/react-query";
 import { useState, useRef, useEffect } from "react";
-import type { ApiResponse } from "../../types/api.types";
 import { useCurrentDate } from "../../store/useDateStore";
+import { usePurchasePriceStore } from "../../store/usePurchasePriceStore";
+import { useCartMutations } from "./mutations";
 
 interface CartProps {
   cart: ICart;
@@ -14,6 +14,7 @@ interface CartProps {
 export function Cart({ cart }: CartProps) {
   const queryClient = useQueryClient();
   const currentDate = useCurrentDate();
+  const setActivePrice = usePurchasePriceStore((state) => state.setActivePrice);
   const [focusTarget, setFocusTarget] = useState<{
     id: number | "new";
     field: "code" | "quantity" | "price";
@@ -21,46 +22,14 @@ export function Cart({ cart }: CartProps) {
 
   const inputRefs = useRef<Record<string, any>>({});
 
-  const mutationAdd = useMutation({
-    mutationFn: (code: string) =>
-      api.post<ApiResponse<ICartItem>>(`/sale/${cart.id}/item/${code}`),
-    onSuccess: (res) => {
-      const newItem = res.data.data;
-      queryClient.invalidateQueries({ queryKey: ["carts", currentDate] });
-      setFocusTarget({ id: newItem.id, field: "quantity" });
-    },
-    onError: (err: any) => {
-      message.error(err.response?.data?.message || "Failed to add item");
-    },
-  });
+  const { mutationAdd, mutationQty, mutationPrice, mutationDelete } =
+    useCartMutations({
+      cartId: cart.id,
+      currentDate,
+      setFocusTarget,
+    });
 
-  const mutationQty = useMutation({
-    mutationFn: ({ id, quantity }: { id: number; quantity: number }) =>
-      api.patch<ApiResponse<ICartItem>>(`/sale/quantity/${id}`, { quantity }),
-    onSuccess: (_res, variables) => {
-      queryClient.invalidateQueries({ queryKey: ["carts"] });
-      setFocusTarget({ id: variables.id, field: "price" });
-    },
-    onError: (err: any) => {
-      message.error(err.response?.data?.message || "Failed to update quantity");
-    },
-  });
-
-  const mutationPrice = useMutation({
-    mutationFn: ({ id, price }: { id: number; price: number }) =>
-      api.patch<ApiResponse<ICartItem>>(`/sale/price/${id}`, { price }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["carts"] });
-      setFocusTarget({ id: "new", field: "code" });
-    },
-    onError: (err: any) => {
-      message.error(err.response?.data?.message || "Failed to update price");
-    },
-  });
-
-  const mutationDelete = useMutation({
-    mutationFn: (id: number) => api.delete(`/sale/${id}`),
-  });
+    
 
   const handleCodeChange = async (record: any, code: string) => {
     if (!code) return;
@@ -80,6 +49,51 @@ export function Cart({ cart }: CartProps) {
     }
   };
 
+  const fields: ("code" | "quantity" | "price")[] = ["code", "quantity", "price"];
+
+  const handleKeyDown = (
+    e: React.KeyboardEvent,
+    record: any,
+    field: "code" | "quantity" | "price"
+  ) => {
+    if (!["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(e.key))
+      return;
+
+    const currentIndex = dataSource.findIndex((item) => item.key === record.key);
+    const fieldIndex = fields.indexOf(field);
+
+    let nextIndex = currentIndex;
+    let nextField = field;
+
+    if (e.key === "ArrowUp") {
+      nextIndex = Math.max(0, currentIndex - 1);
+    } else if (e.key === "ArrowDown") {
+      nextIndex = Math.min(dataSource.length - 1, currentIndex + 1);
+    } else if (e.key === "ArrowLeft") {
+      nextField = fields[Math.max(0, fieldIndex - 1)];
+    } else if (e.key === "ArrowRight") {
+      nextField = fields[Math.min(fields.length - 1, fieldIndex + 1)];
+    }
+
+    const nextRecord = dataSource[nextIndex];
+
+    // If moving onto the "new" row, only "code" is available
+    if (
+      (nextRecord as any).isNew &&
+      (nextField === "quantity" || nextField === "price")
+    ) {
+      nextField = "code";
+    }
+
+    if (nextIndex !== currentIndex || nextField !== field) {
+      e.preventDefault();
+      setFocusTarget({
+        id: (nextRecord as any).isNew ? "new" : (nextRecord as any).id,
+        field: nextField,
+      });
+    }
+  };
+
   const columns: ColumnsType<any> = [
     {
       title: "Code",
@@ -89,12 +103,21 @@ export function Cart({ cart }: CartProps) {
       align: "center",
       render: (text: any, record: any) => (
         <Input
-          key={`${record.key}-code-${text}`}
+          key={
+            record.isNew
+              ? `new-code-${cart.items.length}`
+              : `${record.key}-code-${text}`
+          }
           ref={(el) => {
             inputRefs.current[`${record.key}-code`] = el;
           }}
           defaultValue={text}
+          onFocus={(e) => {
+            e.target.select();
+            if (!record.isNew) setActivePrice(record.purchase_price);
+          }}
           onPressEnter={(e: any) => handleCodeChange(record, e.target.value)}
+          onKeyDown={(e) => handleKeyDown(e, record, "code")}
           variant="borderless"
           style={{ width: "100%", padding: "0" }}
         />
@@ -130,6 +153,7 @@ export function Cart({ cart }: CartProps) {
                 quantity: Number(e.target.value),
               })
             }
+            onKeyDown={(e) => handleKeyDown(e, record, "quantity")}
             variant="borderless"
             style={{ width: "100%", padding: "0" }}
           />
@@ -149,13 +173,17 @@ export function Cart({ cart }: CartProps) {
               inputRefs.current[`${record.id}-price`] = el;
             }}
             defaultValue={text}
-            onFocus={(e) => e.target.select()}
+            onFocus={(e) => {
+              e.target.select();
+              setActivePrice(record.purchase_price);
+            }}
             onPressEnter={(e: any) =>
               mutationPrice.mutate({
                 id: record.id,
                 price: Number(e.target.value),
               })
             }
+            onKeyDown={(e) => handleKeyDown(e, record, "price")}
             variant="borderless"
             style={{ width: "100%", padding: "0" }}
           />
@@ -171,7 +199,7 @@ export function Cart({ cart }: CartProps) {
   ];
 
   const dataSource = [
-    ...cart.items.map((item) => ({ ...item, key: item.id })),
+    ...(cart.items || []).map((item) => ({ ...item, key: item.id })),
     { key: "new", isNew: true, code: "" },
   ];
 
@@ -203,6 +231,11 @@ export function Cart({ cart }: CartProps) {
       rowKey="key"
       size="small"
       bordered
+      onRow={(record: any) => ({
+        onClick: () => {
+          if (!record.isNew) setActivePrice(record.purchase_price);
+        },
+      })}
     />
   );
 }
