@@ -73,8 +73,16 @@ export function useCartMutations({
   });
 
   const mutationCardPayment = useMutation({
-    // mutationFn: (id : number) => api.patch
-  })
+    mutationFn: (id: number) => api.patch(`/sale/${id}/card-payment`),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["carts", currentDate] });
+    },
+    onError: (err: any) => {
+      message.error(
+        err.response?.data?.message || "Failed to make card payment",
+      );
+    },
+  });
 
   return {
     mutationAdd,
@@ -82,5 +90,6 @@ export function useCartMutations({
     mutationPrice,
     mutationDelete,
     mutationStatusToggle,
+    mutationCardPayment,
   };
 }

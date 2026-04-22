@@ -28,7 +28,7 @@ router.patch("/price/:itemId", checkCartStatus, controller.updateCartItemPrice);
 router.delete("/:itemId", checkCartStatus, controller.deleteItemFromCart);
 
 router.patch("/:cartId/change-status/", controller.changeCartStatus);
-
+router.patch("/:cartId/card-payment/", controller.cardPayment);
 // router.patch("/:cartId/item/:code", )
 
 export default router;

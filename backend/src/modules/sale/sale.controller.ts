@@ -181,6 +181,22 @@ class SaleController {
       next(err);
     }
   }
+
+  async cardPayment(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { cartId } = req.params;
+      console.log(cartId);
+      if (!cartId || isNaN(Number(cartId))) {
+        return errorResponse(res, "cartId required", 400);
+      }
+      const result = await service.cardPayment(Number(cartId));
+      console.log(result);
+      return successResponse(res, result);
+    } catch (err: any) {
+      logger.error(err.message);
+      next(err);
+    }
+  }
 }
 
 export default new SaleController();

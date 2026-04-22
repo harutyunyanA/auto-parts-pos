@@ -47,7 +47,7 @@ export default function Sales() {
     staleTime: 1000 * 60 * 10,
   });
 
-  const { mutationStatusToggle } = useCartMutations({
+  const { mutationStatusToggle, mutationCardPayment } = useCartMutations({
     cartId: carts?.[currentCartPage - 1]?.id || 0,
     currentDate,
     setFocusTarget: () => {},
@@ -75,11 +75,14 @@ export default function Sales() {
     setPaid(0);
   }, [source, currentDate]);
 
+  async function createNewCart() {
+    const currentCart = carts?.[currentCartPage - 1];
+    if (currentCart && currentCart.status === "draft") {
+      await mutationStatusToggle.mutateAsync(currentCart.id);
+    }
 
-  function createNewCart() {
-    api.post("/sale").then(() => {
-      queryClient.invalidateQueries({ queryKey: ["carts", currentDate] });
-    });
+    await api.post("/sale");
+    queryClient.invalidateQueries({ queryKey: ["carts", currentDate] });
   }
   return (
     <>
@@ -163,8 +166,24 @@ export default function Sales() {
               <Button size="large">History</Button>
             </Flex>
             <Flex gap={"small"} align="flex-start">
-              <Button size="large">Receipt</Button>
-              <Button size="large">Card</Button>
+              <Button
+                size="large"
+                disabled={carts?.[currentCartPage - 1]?.status === "draft"}
+              >
+                Receipt
+              </Button>
+              <Button
+                size="large"
+                disabled={carts?.[currentCartPage - 1]?.status === "draft"}
+                onClick={() => {
+                  const cartId = carts?.[currentCartPage - 1]?.id;
+                  if (cartId) {
+                    mutationCardPayment.mutate(cartId);
+                  }
+                }}
+              >
+                Card
+              </Button>
             </Flex>
             <Flex vertical gap="small" style={{ width: "200px" }}>
               <Flex justify="space-between" align="center">
