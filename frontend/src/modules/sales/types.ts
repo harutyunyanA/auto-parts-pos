@@ -25,3 +25,8 @@ export interface ICartItem {
   purchase_price: number;
   sale_price: number;
 }
+
+export interface ISalesSummary {
+  totalIncome: number;
+  totalCardIncome: number;
+}

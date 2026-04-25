@@ -26,6 +26,7 @@ import { Typography } from "antd";
 import { useCartMutations } from "../modules/sales/mutations";
 import Modal from "antd/es/modal/Modal";
 import { ProductHistory } from "../modules/history/history";
+import { DaySummary } from "../components/daySummary";
 
 export default function Sales() {
   const currentDate = useCurrentDate();
@@ -59,6 +60,7 @@ export default function Sales() {
   const prevDate = useRef<string | null>(null);
   const [isProductHistoryOpen, setIsProductHistoryOpen] =
     useState<boolean>(false);
+  const [isSummaryOpen, setIsSummaryOpen] = useState<boolean>(false);
 
   useEffect(() => {
     if (carts && carts.length > 0) {
@@ -168,7 +170,9 @@ export default function Sales() {
           <Flex justify="space-between" align="center">
             <Flex justify="space-between" gap={"small"} vertical>
               <Button size="large">Print</Button>
-              <Button size="large">Summary</Button>
+              <Button size="large" onClick={() => setIsSummaryOpen(true)}>
+                Summary
+              </Button>
               <Button
                 size="large"
                 onClick={() => setIsProductHistoryOpen(true)}
@@ -292,6 +296,15 @@ export default function Sales() {
         onCancel={() => setIsProductHistoryOpen(false)}
       >
         <ProductHistory />
+      </Modal>
+      <Modal
+        title="Summary"
+        open={isSummaryOpen}
+        footer={null}
+        destroyOnHidden={true}
+        onCancel={() => setIsSummaryOpen(false)}
+      >
+        <DaySummary />
       </Modal>
     </>
   );
