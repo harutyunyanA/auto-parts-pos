@@ -21,8 +21,7 @@ export interface ICartItem {
   type: string;
   serialNumber: string;
   WXQP: string;
-  code: number,
-  purchase_price: number,
-  sale_price: number,
-
+  code: number;
+  purchase_price: number;
+  sale_price: number;
 }

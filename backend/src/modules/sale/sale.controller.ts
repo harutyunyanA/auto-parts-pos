@@ -6,6 +6,7 @@ import logger from "../../utils/logger.ts";
 import type { sourceType } from "../../types/source.types.ts";
 import { number } from "zod";
 import { normalizeCart } from "../../utils/normalize-cart.ts";
+import dayjs from "dayjs";
 
 class SaleController {
   test(req: Request, res: Response, next: NextFunction) {
@@ -14,8 +15,11 @@ class SaleController {
 
   async createCart(req: Request, res: Response, next: NextFunction) {
     try {
-      const cart = await service.createCart(req.source as sourceType);
+      const { currentDate } = req.body;
 
+      const date = currentDate ? new Date(currentDate) : new Date();
+
+      const cart = await service.createCart(req.source as sourceType, date);
       return successResponse(res, cart);
     } catch (err: any) {
       logger.error(err.message);
@@ -192,6 +196,22 @@ class SaleController {
       const result = await service.cardPayment(Number(cartId));
       console.log(result);
       return successResponse(res, result);
+    } catch (err: any) {
+      logger.error(err.message);
+      next(err);
+    }
+  }
+  async getProductHistory(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { code, oem } = req.validated?.body;
+      if (!code && !oem) {
+        return errorResponse(res, "Code or OEM is required", 400);
+      }
+
+      const source = req.source as sourceType;
+
+      const history = await service.getProductHistory(source, code, oem);
+      return successResponse(res, history);
     } catch (err: any) {
       logger.error(err.message);
       next(err);

@@ -141,3 +141,4 @@ export const updateProductSchema = z.object({
   }),
   params: z.object({}).optional(),
 });
+

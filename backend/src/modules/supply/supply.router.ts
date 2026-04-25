@@ -16,7 +16,7 @@ router.get("/", controller.getAllSupplies)
 router.get("/:supplyId", controller.getSupplyInfo)
 router.post(
   "/",
-  checkSource,
+  // checkSource,
     // validate(createSupplySchema),
   controller.newSupply,
 );

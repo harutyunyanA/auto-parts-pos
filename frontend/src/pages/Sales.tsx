@@ -22,8 +22,10 @@ import {
   useSetCurrentCartPage,
 } from "../store/useCurrentCartPage";
 import { usePurchasePriceStore } from "../store/usePurchasePriceStore";
-import { Typography, Card } from "antd";
+import { Typography } from "antd";
 import { useCartMutations } from "../modules/sales/mutations";
+import Modal from "antd/es/modal/Modal";
+import { ProductHistory } from "../modules/history/history";
 
 export default function Sales() {
   const currentDate = useCurrentDate();
@@ -35,7 +37,7 @@ export default function Sales() {
   const source = useSource();
   const queryClient = useQueryClient();
   const { token } = theme.useToken();
-  const { Title, Paragraph, Text } = Typography;
+  const { Text } = Typography;
   const [paid, setPaid] = useState<number>(0);
 
   const { data: carts } = useQuery({
@@ -55,6 +57,8 @@ export default function Sales() {
 
   const prevCartsLength = useRef<number>(0);
   const prevDate = useRef<string | null>(null);
+  const [isProductHistoryOpen, setIsProductHistoryOpen] =
+    useState<boolean>(false);
 
   useEffect(() => {
     if (carts && carts.length > 0) {
@@ -80,9 +84,11 @@ export default function Sales() {
     if (currentCart && currentCart.status === "draft") {
       await mutationStatusToggle.mutateAsync(currentCart.id);
     }
-
-    await api.post("/sale");
-    queryClient.invalidateQueries({ queryKey: ["carts", currentDate] });
+    // const date = new Date(currentDate).toISOString();
+    await api.post("/sale", { currentDate });
+    queryClient.invalidateQueries({
+      queryKey: ["carts", currentDate, source],
+    });
   }
   return (
     <>
@@ -163,7 +169,12 @@ export default function Sales() {
             <Flex justify="space-between" gap={"small"} vertical>
               <Button size="large">Print</Button>
               <Button size="large">Summary</Button>
-              <Button size="large">History</Button>
+              <Button
+                size="large"
+                onClick={() => setIsProductHistoryOpen(true)}
+              >
+                History
+              </Button>
             </Flex>
             <Flex gap={"small"} align="flex-start">
               <Button
@@ -273,6 +284,15 @@ export default function Sales() {
           </Flex>
         </section>
       </div>
+      <Modal
+        title="Product History"
+        open={isProductHistoryOpen}
+        footer={null}
+        destroyOnHidden={true}
+        onCancel={() => setIsProductHistoryOpen(false)}
+      >
+        <ProductHistory />
+      </Modal>
     </>
   );
 }

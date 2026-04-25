@@ -16,8 +16,11 @@ import logger from "../../utils/logger.ts";
 import type { TransformedCartType } from "./sale.types.ts";
 
 class SaleService {
-  async createCart(source: sourceType) {
-    const cart = await Cart.create({ source });
+  async createCart(source: sourceType, date: Date) {
+    const cart = await Cart.create(
+      { source, createdAt: date, updatedAt: date },
+      { silent: true },
+    );
 
     if (!cart) {
       throw new InternalServerError("Unable to create new cart");
@@ -239,6 +242,62 @@ class SaleService {
     cart.paymentMethod = "card";
     await cart.save();
     return cart;
+  }
+
+  async getProductHistory(source: sourceType, code?: number, oem?: string) {
+    const whereProduct: any = { source };
+
+    if (code) whereProduct.code = code;
+    if (oem) whereProduct.serial_number = oem;
+
+    // const productId = (
+    //   await Product.findOne({
+    //     where: whereProduct,
+    //   })
+    // )?.dataValues.id;
+
+    // const history = await CartItem.findAll({
+    //   where: {
+    //     productId,
+    //   },
+    //   attributes: [
+    //     "totalPrice",
+    //     "priceAtSale",
+    //     "quantity",
+    //     "createdAt",
+    //     "updatedAt",
+    //     "cartId",
+    //   ],
+    //   include: [
+    //     {
+    //       model: Product,
+    //       as: "product",
+    //       attributes: ["name", "code", "serial_number", "WXQP"],
+    //     },
+    //   ],
+    //   order: [["createdAt", "DESC"]],
+    // });
+
+    const history = await CartItem.findAll({
+      attributes: [
+        "totalPrice",
+        "priceAtSale",
+        "quantity",
+        "createdAt",
+        "updatedAt",
+        "cartId",
+      ],
+      include: [
+        {
+          model: Product,
+          as: "product",
+          where: whereProduct,
+          attributes: ["name", "code", "serial_number", "WXQP"],
+        },
+      ],
+      order: [["createdAt", "DESC"]],
+    });
+    return history;
   }
 }
 

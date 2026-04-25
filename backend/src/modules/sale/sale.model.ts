@@ -100,7 +100,7 @@ CartItem.init(
   {
     sequelize,
     tableName: "sale_items",
-    timestamps: false,
+    timestamps: true,
   },
 );
 
