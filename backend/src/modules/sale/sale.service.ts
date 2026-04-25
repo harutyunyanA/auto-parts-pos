@@ -16,7 +16,7 @@ import logger from "../../utils/logger.ts";
 import type { TransformedCartType } from "./sale.types.ts";
 
 class SaleService {
-  async createCart(source: sourceType, date: Date) {
+  async createCart(source: sourceType, date: any) {
     const cart = await Cart.create(
       { source, createdAt: date, updatedAt: date },
       { silent: true },
@@ -298,6 +298,40 @@ class SaleService {
       order: [["createdAt", "DESC"]],
     });
     return history;
+  }
+
+  async getSummary(date: string, source: sourceType) {
+    const startOfDay = dayjs(date, "YYYY-MM-DD").startOf("day").toDate();
+    const endOfDay = dayjs(date, "YYYY-MM-DD").endOf("day").toDate();
+    console.log(startOfDay, endOfDay);
+    const records = await Cart.findAll({
+      where: {
+        source: source,
+        createdAt: {
+          [Op.gte]: startOfDay,
+          [Op.lt]: endOfDay,
+        },
+        status: "completed",
+      },
+      attributes: ["totalAmount", "paymentMethod"],
+    });
+    console.log(records);
+
+    let total = 0;
+    let cardPaid = 0;
+
+    for (let el of records) {
+      if (el.paymentMethod === "card") {
+        cardPaid += el.totalAmount;
+      }
+      total += el.totalAmount;
+    }
+
+    if (!records) {
+      throw new NotFoundError("No carts found for this date");
+    }
+
+    return { totalIncome: total, totalCardIncome: cardPaid };
   }
 }
 

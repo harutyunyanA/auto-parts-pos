@@ -30,6 +30,7 @@ router.delete("/:itemId", checkCartStatus, controller.deleteItemFromCart);
 
 router.patch("/:cartId/change-status/", controller.changeCartStatus);
 router.patch("/:cartId/card-payment/", controller.cardPayment);
+router.get("/summary/:date", controller.getSummary);
 // router.patch("/:cartId/item/:code", )
 
 export default router;

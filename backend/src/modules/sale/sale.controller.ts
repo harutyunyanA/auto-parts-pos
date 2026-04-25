@@ -217,6 +217,22 @@ class SaleController {
       next(err);
     }
   }
+
+  async getSummary(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { date } = req.params as { date: string };
+      if (!date) {
+        return errorResponse(res, "date is required", 400);
+      }
+
+      const summary = await service.getSummary(date, req.source as sourceType);
+
+      return successResponse(res, summary);
+    } catch (error) {
+      logger.error(error);
+      next(error);
+    }
+  }
 }
 
 export default new SaleController();
