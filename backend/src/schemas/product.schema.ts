@@ -142,3 +142,23 @@ export const updateProductSchema = z.object({
   params: z.object({}).optional(),
 });
 
+export const paginationQuerySchema = z.object({
+  body: z.object({}).optional(),
+  query: z.object({
+    serial_number: z.string().optional(),
+    code: z
+      .preprocess((val) => Number(val), z.number().int().positive())
+      .optional(),
+    type: z.string().optional(),
+    name: z.string().optional(),
+    page: z
+      .preprocess((val) => Number(val), z.number().int().positive())
+      .optional()
+      .default(1),
+    limit: z
+      .preprocess((val) => Number(val), z.number().int().positive())
+      .optional()
+      .default(500),
+  }),
+  params: z.object({}).optional(),
+});

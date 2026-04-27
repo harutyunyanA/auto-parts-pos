@@ -4,6 +4,7 @@ import { validate } from "../../middlewares/validate.middleware.ts";
 import {
   addProductSchema,
   getProductQuerySchema,
+  paginationQuerySchema,
   updateProductSchema,
 } from "../../schemas/product.schema.ts";
 import checkSource from "../../middlewares/checkSource.middleware.ts";
@@ -15,4 +16,10 @@ router.delete("/", validate(getProductQuerySchema), controller.deleteProduct);
 router.patch("/", validate(updateProductSchema), controller.updateProduct);
 router.get("/by-code", checkSource, controller.getProductByCode);
 
+router.get(
+  "/all",
+  checkSource,
+  validate(paginationQuerySchema),
+  controller.getAllProducts,
+);
 export default router;

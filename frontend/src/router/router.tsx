@@ -1,18 +1,19 @@
-import { createBrowserRouter, Navigate } from 'react-router-dom';
-import UserSelection from '../pages/Auth/UserSelection';
-import MainLayout from '../layouts/MainLayout';
-import SourceGuard from '../components/SourceGuard';
-import Dashboard from '../pages/Dashboard';
-import Products from '../pages/Products';
-import Sales from '../pages/Sales';
+import { createBrowserRouter, Navigate } from "react-router-dom";
+import UserSelection from "../pages/Auth/UserSelection";
+import MainLayout from "../layouts/MainLayout";
+import SourceGuard from "../components/SourceGuard";
+import Dashboard from "../pages/Dashboard";
+import Products from "../pages/Products";
+import Sales from "../pages/Sales";
+import { Base } from "../pages/Base";
 
 export const router = createBrowserRouter([
   {
-    path: '/selection',
+    path: "/selection",
     element: <UserSelection />,
   },
   {
-    path: '/',
+    path: "/",
     element: <SourceGuard />,
     children: [
       {
@@ -23,19 +24,23 @@ export const router = createBrowserRouter([
             element: <Dashboard />,
           },
           {
-            path: 'products',
+            path: "products",
             element: <Products />,
           },
           {
-            path: 'sales',
+            path: "sales",
             element: <Sales />,
+          },
+          {
+            path: "base",
+            element: <Base />,
           },
         ],
       },
     ],
   },
   {
-    path: '*',
+    path: "*",
     element: <Navigate to="/" replace />,
   },
 ]);

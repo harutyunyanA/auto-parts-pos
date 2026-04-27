@@ -22,3 +22,15 @@ export type ProductCreationType = Optional<
   ProductType,
   "id" | "serial_number" | "WXQP" | "minimum_quantity" | "code"
 >;
+
+export type searchParams = {
+  code?: number;
+  type?: string;
+  name?: string;
+  serial_number?: string;
+};
+
+export type paginationParams = {
+  page?: number;
+  limit?: number;
+};

@@ -3,7 +3,7 @@ import type { ISalesSummary } from "../modules/sales/types";
 import { useCurrentDate } from "../store/useDateStore";
 import api from "../api/client";
 import type { ApiResponse } from "../types/api.types";
-import { Divider, Flex } from "antd";
+import { Divider, Flex, Spin } from "antd";
 import Text from "antd/es/typography/Text";
 
 export function DaySummary() {
@@ -20,7 +20,11 @@ export function DaySummary() {
   }, [currentDate]);
 
   if (!daySummary) {
-    return null;
+    return (
+      <Flex justify="center" align="center" style={{ height: "100%" }}>
+        <Spin description="Loading..." size="large" />
+      </Flex>
+    );
   }
 
   return (

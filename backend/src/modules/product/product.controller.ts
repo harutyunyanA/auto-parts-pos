@@ -1,7 +1,12 @@
 import type { Request, Response, NextFunction } from "express";
 import { errorResponse, successResponse } from "../../utils/response.ts";
 import service from "./product.service.ts";
-import type { ProductType, ProductCreationType } from "./product.types.ts";
+import type {
+  ProductType,
+  ProductCreationType,
+  paginationParams,
+  searchParams,
+} from "./product.types.ts";
 import type { sourceType } from "../../types/source.types.ts";
 import { Product } from "./product.model.ts";
 import { NotFoundError } from "../../utils/errors.ts";
@@ -27,7 +32,7 @@ class ProductController {
     try {
       const productData: ProductCreationType = req.validated?.body;
       const product: any = await service.addProduct(productData);
-      
+
       return successResponse(res, product, 201);
     } catch (err) {
       next(err);
@@ -55,7 +60,7 @@ class ProductController {
     try {
       const { code, source }: { code: number; source: sourceType } =
         req.validated?.query;
-      
+
       const product = await service.getProductByCode(code, source);
 
       const productData: ProductCreationType = req.validated?.body;
@@ -91,6 +96,30 @@ class ProductController {
       const source = req.source as sourceType;
       const product = await service.getProductByCode(Number(code), source);
       return successResponse(res, product);
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  async getAllProducts(req: Request, res: Response, next: NextFunction) {
+    try {
+      const source: sourceType = req.source as sourceType;
+
+      const paginationParams: paginationParams = {
+        page: req.validated?.query.page,
+        limit: req.validated?.query.limit,
+      };
+
+      const searchParams: searchParams = {
+        code: req.validated?.query.code,
+        type: req.validated?.query.type,
+        name: req.validated?.query.name,
+        serial_number: req.validated?.query.serial_number,
+      };
+
+      const products = await service.getAllProducts(source, paginationParams, searchParams);
+
+      return successResponse(res, products);
     } catch (err) {
       next(err);
     }
