@@ -113,9 +113,9 @@ class SupplyController {
 
   async getAllSupplies(req: Request, res: Response, next: NextFunction) {
     try {
-      const supplies = await service.getAllSupplies();
-      if (supplies.success) {
-        return successResponse(res, supplies.data);
+      const result = await service.getAllSupplies();
+      if (result.success) {
+        return successResponse(res, result.supplies);
       } else {
         return errorResponse(res, "Supplies are not found", 404);
       }

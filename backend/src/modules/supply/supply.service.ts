@@ -39,13 +39,11 @@ class SupplyService {
     const transaction = await sequelize.transaction();
 
     try {
-      // Проверяем продукт
       const product = await Product.findByPk(supply.productId, { transaction });
       if (!product) {
         throw new NotFoundError("Product not found");
       }
 
-      // Создаём SupplyItem
       const newSupplyItem = await SupplyItem.create(
         {
           supplyId,
@@ -57,7 +55,6 @@ class SupplyService {
         { transaction },
       );
 
-      // Обновляем продукт
       product.purchase_price = supply.purchasePrice ?? product.purchase_price;
       product.sale_price = supply.salePrice ?? product.sale_price;
       product.minimum_quantity = supply.minQuantity ?? product.minimum_quantity;
@@ -66,7 +63,6 @@ class SupplyService {
 
       await product.save({ transaction });
 
-      // Коммитим транзакцию
       await transaction.commit();
 
       return { supplyItem: newSupplyItem.toJSON(), product: product.toJSON() };
@@ -109,7 +105,6 @@ class SupplyService {
         );
       }
 
-      // Откат количества и цен
       product.quantity = Math.max(product.quantity - supplyItem.quantity, 0);
       product.purchase_price =
         supplyItem.oldPurchasePrice !== null
@@ -120,11 +115,9 @@ class SupplyService {
           ? Number(supplyItem.oldSalePrice)
           : product.sale_price;
 
-      // Сохраняем продукт и удаляем supplyItem
       await product.save({ transaction });
       await supplyItem.destroy({ transaction });
 
-      // Коммитим транзакцию
       await transaction.commit();
 
       return { success: true };
@@ -147,7 +140,6 @@ class SupplyService {
     const transaction = await sequelize.transaction();
 
     try {
-      // Находим SupplyItem сразу с Supply и Product
       const supplyItem = await SupplyItem.findOne({
         where: { id: itemId, supplyId },
         include: [
@@ -166,13 +158,10 @@ class SupplyService {
         throw new BadRequestError("Cannot update item in a completed supply");
       }
 
-      // Сохраняем старые цены на случай отката
       supplyItem.oldPurchasePrice = supplyItem.purchasePrice;
       supplyItem.oldSalePrice = supplyItem.salePrice;
 
-      // Корректируем количество на продукте
       if (data.quantity !== undefined) {
-        // убираем старое количество, добавляем новое
         product.quantity =
           product.quantity - supplyItem.quantity + data.quantity;
         supplyItem.quantity = data.quantity;
@@ -196,7 +185,6 @@ class SupplyService {
       const totalCost = Number(supplyItem.purchasePrice) * supplyItem.quantity;
       supplyItem.totalCost = String(totalCost);
 
-      // Сохраняем изменения
       await product.save({ transaction });
       await supplyItem.save({ transaction });
 
@@ -226,11 +214,37 @@ class SupplyService {
   }
 
   async getAllSupplies() {
-    const supplies = await Supply.findAll();
+    const supplies = await Supply.findAll({
+      include: [
+        {
+          model: SupplyItem,
+          as: "items",
+          attributes: {
+            exclude: [
+              "supplyId",
+              "oldPurchasePrice",
+              "oldSalePrice",
+              "supplyId",
+              "totalCost",
+            ],
+          },
+          include: [
+            {
+              model: Product,
+              as: "product",
+              attributes: ["name", "quantity", "type", "code"],
+            },
+          ],
+        },
+      ],
+      order: [["createdAt", "DESC"]],
+    });
     if (!supplies) {
       throw new NotFoundError("Supplies not found");
     }
-    return { success: true, data: { supplies } };
+    // const result = supplies.map((s) => ({...s, items: s.items.map(i => )}));
+
+    return { success: true, supplies };
   }
 
   async getSupplyInfo(supplyId: number) {
@@ -250,7 +264,7 @@ class SupplyService {
         ],
       })
     )?.toJSON();
-    
+
     if (!supply) {
       throw new NotFoundError("Supply is not found");
     }

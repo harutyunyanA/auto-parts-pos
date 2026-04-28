@@ -5,6 +5,7 @@ export type SupplyType = {
   supplierId: number | null;
   totalCost: string | null;
   source: sourceType;
+  // items: SupplyItemType[];
   status: "draft" | "completed";
   createdAt: Date;
   updatedAt: Date;
