@@ -7,6 +7,7 @@ import type {
   searchParams,
 } from "./product.types.ts";
 import { NotFoundError } from "../../utils/errors.ts";
+import { Op } from "sequelize";
 
 class ProductServices {
   async getProductByCode(code: number, source: sourceType) {
@@ -50,18 +51,34 @@ class ProductServices {
     paginationParams: paginationParams,
     searchParams: searchParams,
   ) {
-    const { page = 1, limit = 500 } = paginationParams;
+    console.log("hellllo", searchParams.code);
+
+    const { page = 1, limit = 20 } = paginationParams;
     const offset = (page - 1) * limit;
 
     const where: Record<string, any> = {
       source: source,
     };
 
-    Object.entries(searchParams).forEach(([key, value]) => {
-      if (value !== undefined) {
-        where[key] = value;
-      }
-    });
+    if (searchParams.code) {
+      where.code = searchParams.code;
+    }
+
+    if (searchParams.name) {
+      where.name = { [Op.like]: `%${searchParams.name}%` };
+    }
+
+    if (searchParams.type) {
+      where.type = { [Op.like]: `%${searchParams.type}%` };
+    }
+
+    if (searchParams.serial_number) {
+      where.serial_number = { [Op.like]: `%${searchParams.serial_number}%` };
+    }
+
+    if (searchParams.WXQP) {
+      where.WXQP = { [Op.like]: `%${searchParams.WXQP}%` };
+    }
 
     const result = await Product.findAndCountAll({
       where,

@@ -1,42 +1,139 @@
-import { useQuery } from "@tanstack/react-query";
-import { Flex } from "antd";
+import { Button, Flex, Input, Modal, theme } from "antd";
+import { Products } from "../modules/products/products";
 import { useState } from "react";
-import type { ApiResponse } from "../types/api.types";
-import type { IProduct } from "../modules/products/types";
-import api from "../api/client";
+import { CloseOutlined } from "@ant-design/icons";
+import { ProductHistory } from "../modules/history/history";
 
+const { Search } = Input;
 export function Base() {
-  const [page, setPage] = useState(1);
+  const searcParamsObj = {
+    name: "",
+    type: "",
+    serial_number: "",
+    code: "",
+    WXQP: "",
+  };
+  const [searchParams, setSearchParams] = useState(searcParamsObj);
+  const [activeFilters, setActiveFilters] = useState(searcParamsObj);
+  const [isProductHistoryOpen, setIsProductHistoryOpen] =
+    useState<boolean>(false);
+  const [isDeficitModalOpen, setIsDeficitModalOpen] = useState<boolean>(false);
+  const { token } = theme.useToken();
+  const handleSearch = (key: string, value: string) => {
+    if (activeFilters[key] === value) return;
+    setActiveFilters((prev) => ({
+      ...prev,
+      [key]: value,
+    }));
+  };
 
-  const { data } = useQuery({
-    queryKey: ["products/all", page],
-    queryFn: () =>
-      api
-        .get<ApiResponse<IProduct[]>>("/product/all", {
-          params: {
-            page,
-          },
-        })
-        .then((res) => res.data.data),
-
-    staleTime: 1000 * 60 * 30,
-    gcTime: 1000 * 60 * 60,
-  });
-
-  console.log(data, page);
   return (
     <>
-      <Flex vertical>
-        <section style={{ flex: 3 }} id="filter">
-          Category
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: "16px",
+          height: "calc(100vh - 160px)",
+        }}
+      >
+        {/* <Flex vertical gap={"large"}> */}
+        <section style={{ flex: 1, minHeight: 0 }} id="filter">
+          <Flex gap={"medium"} justify="start">
+            <Search
+              allowClear={{ clearIcon: <CloseOutlined /> }}
+              placeholder="Code"
+              value={searchParams.code}
+              onChange={(e) => {
+                const value = e.target.value.replace(/\D/g, "");
+                setSearchParams((prev) => ({ ...prev, code: value }));
+              }}
+              onSearch={(value) => handleSearch("code", value)}
+            />
+            <Search
+              placeholder="Name"
+              allowClear={{ clearIcon: <CloseOutlined /> }}
+              value={searchParams.name}
+              onChange={(e) =>
+                setSearchParams((prev) => ({ ...prev, name: e.target.value }))
+              }
+              onSearch={(value) => handleSearch("name", value)}
+            />
+            <Search
+              placeholder="Type"
+              allowClear={{ clearIcon: <CloseOutlined /> }}
+              value={searchParams.type}
+              onChange={(e) =>
+                setSearchParams((prev) => ({ ...prev, type: e.target.value }))
+              }
+              onSearch={(value) => handleSearch("type", value)}
+            />
+            <Search
+              placeholder="OEM"
+              allowClear={{ clearIcon: <CloseOutlined /> }}
+              value={searchParams.serial_number}
+              onChange={(e) =>
+                setSearchParams((prev) => ({
+                  ...prev,
+                  serial_number: e.target.value,
+                }))
+              }
+              onSearch={(value) => handleSearch("serial_number", value)}
+            />
+            <Search
+              placeholder="WXQP"
+              allowClear={{ clearIcon: <CloseOutlined /> }}
+              value={searchParams.WXQP}
+              onChange={(e) =>
+                setSearchParams((prev) => ({
+                  ...prev,
+                  WXQP: e.target.value,
+                }))
+              }
+              onSearch={(value) => handleSearch("WXQP", value)}
+            />
+          </Flex>
         </section>
-        <section style={{ flex: 8 }} id="main">
-          Subcategory
+        <section
+          style={{
+            flex: 10,
+            minHeight: 0,
+            overflowY: "auto",
+            // border: `1px solid ${token.colorBorder}`,
+            // borderRadius: token.borderRadiusLG,
+          }}
+          id="main"
+        >
+          <Products filters={activeFilters} />
         </section>
-        <section style={{ flex: 1 }} id="pagination">
-          Items
+        <section style={{ flex: 1 }} id="btns">
+          <Flex gap={"medium"} justify="start">
+            <Button size="large" onClick={() => setIsProductHistoryOpen(true)}>
+              History
+            </Button>
+            <Button size="large" onClick={() => setIsDeficitModalOpen(true)}>
+              Deficites
+            </Button>
+          </Flex>
         </section>
-      </Flex>
+        {/* </Flex> */}
+      </div>
+      <Modal
+        open={isProductHistoryOpen}
+        onOk={() => setIsProductHistoryOpen(false)}
+        onCancel={() => setIsProductHistoryOpen(false)}
+        width={"fit-content"}
+      >
+        <ProductHistory />
+      </Modal>
+      <Modal
+        open={isDeficitModalOpen}
+        onOk={() => setIsDeficitModalOpen(false)}
+        onCancel={() => setIsDeficitModalOpen(false)}
+        width={"fit-content"}
+      >
+        <p>Deficites</p>
+      </Modal>
     </>
   );
 }

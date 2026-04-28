@@ -7,7 +7,7 @@ import {
   PlusOutlined,
   UnlockOutlined,
 } from "@ant-design/icons";
-import { Button, Flex, InputNumber, Pagination, theme } from "antd";
+import { Button, Flex, Pagination, theme } from "antd";
 import { ClientsList } from "../components/ClientsList";
 import { useCurrentDate } from "../store/useDateStore";
 import { useSource } from "../store/useAuthStore";
@@ -223,36 +223,6 @@ export default function Sales() {
                   ]?.totalAmount?.toLocaleString() || 0}
                 </Text>
               </Flex>
-              {/* <Flex justify="space-between" align="center">
-                <Text strong>Paid</Text>
-                <InputNumber
-                  min={0}
-                  value={paid}
-                  onChange={(val) => setPaid(val || 0)}
-                  style={{ width: "100px" }}
-                />
-              </Flex>
-              <Flex justify="space-between" align="center">
-                <Text strong>Rest</Text>
-                <Text
-                  style={{
-                    border: `1px solid ${token.colorBorder}`,
-                    borderRadius: token.borderRadiusLG,
-                    padding: "4px 8px",
-                    minWidth: "100px",
-                    textAlign: "right",
-                    color:
-                      (carts?.[currentCartPage - 1]?.totalAmount || 0) - paid <
-                      0
-                        ? token.colorError
-                        : token.colorText,
-                  }}
-                >
-                  {(
-                    (carts?.[currentCartPage - 1]?.totalAmount || 0) - paid
-                  ).toLocaleString()}
-                </Text>
-              </Flex> */}
             </Flex>
           </Flex>
         </section>

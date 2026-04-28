@@ -1,7 +1,6 @@
-import { Input, Table, message, Modal } from "antd";
+import { Input, Table, message, Modal, theme } from "antd";
 import type { ColumnsType } from "antd/es/table";
-import type { ICart, ICartItem } from "./types";
-import { useQueryClient } from "@tanstack/react-query";
+import type { ICart } from "./types";
 import { useState, useRef, useEffect } from "react";
 import { useCurrentDate } from "../../store/useDateStore";
 import { usePurchasePriceStore } from "../../store/usePurchasePriceStore";
@@ -12,27 +11,31 @@ interface CartProps {
 }
 
 export function Cart({ cart }: CartProps) {
-  const queryClient = useQueryClient();
   const currentDate = useCurrentDate();
   const setActivePrice = usePurchasePriceStore((state) => state.setActivePrice);
   const [focusTarget, setFocusTarget] = useState<{
     id: number | "new";
     field: "code" | "quantity" | "price";
   }>({ id: "new", field: "code" });
-
+  const { token } = theme.useToken();
   const inputRefs = useRef<Record<string, any>>({});
-
-  const { mutationAdd, mutationQty, mutationPrice, mutationDelete, mutationStatusToggle } =
-    useCartMutations({
-      cartId: cart.id,
-      currentDate,
-      setFocusTarget,
-    });
+  const {
+    mutationAdd,
+    mutationQty,
+    mutationPrice,
+    mutationDelete,
+    mutationStatusToggle,
+  } = useCartMutations({
+    cartId: cart.id,
+    currentDate,
+    setFocusTarget,
+  });
 
   const showReopenModal = (originalValue: any, inputKey: string) => {
     Modal.confirm({
       title: "Cart is closed",
-      content: "This cart is completed. Would you like to open it to make changes?",
+      content:
+        "This cart is completed. Would you like to open it to make changes?",
       okText: "Open",
       cancelText: "Cancel",
       onOk: () => {
@@ -46,8 +49,6 @@ export function Cart({ cart }: CartProps) {
       },
     });
   };
-
-    
 
   const handleCodeChange = async (record: any, code: string) => {
     if (!code) return;
@@ -73,17 +74,23 @@ export function Cart({ cart }: CartProps) {
     }
   };
 
-  const fields: ("code" | "quantity" | "price")[] = ["code", "quantity", "price"];
+  const fields: ("code" | "quantity" | "price")[] = [
+    "code",
+    "quantity",
+    "price",
+  ];
 
   const handleKeyDown = (
     e: React.KeyboardEvent,
     record: any,
-    field: "code" | "quantity" | "price"
+    field: "code" | "quantity" | "price",
   ) => {
     if (!["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(e.key))
       return;
 
-    const currentIndex = dataSource.findIndex((item) => item.key === record.key);
+    const currentIndex = dataSource.findIndex(
+      (item) => item.key === record.key,
+    );
     const fieldIndex = fields.indexOf(field);
 
     let nextIndex = currentIndex;
@@ -101,7 +108,6 @@ export function Cart({ cart }: CartProps) {
 
     const nextRecord = dataSource[nextIndex];
 
-    // If moving onto the "new" row, only "code" is available
     if (
       (nextRecord as any).isNew &&
       (nextField === "quantity" || nextField === "price")
@@ -142,7 +148,10 @@ export function Cart({ cart }: CartProps) {
           }}
           onPressEnter={(e: any) => {
             if (cart.status === "completed") {
-              showReopenModal(text, record.isNew ? "new-code" : `${record.id}-code`);
+              showReopenModal(
+                text,
+                record.isNew ? "new-code" : `${record.id}-code`,
+              );
               return;
             }
             handleCodeChange(record, e.target.value);
@@ -157,16 +166,16 @@ export function Cart({ cart }: CartProps) {
       title: "OEM",
       dataIndex: "serialNumber",
       key: "serialNumber",
-      width: 200,
+      width: 150,
     },
-    { title: "WXQP", dataIndex: "WXQP", key: "WXQP", width: 200 },
-    { title: "Name", dataIndex: "name", key: "name" },
+    { title: "WXQP", dataIndex: "WXQP", key: "WXQP", width: 150 },
     { title: "Type", dataIndex: "type", key: "type", width: 70 },
+    { title: "Name", dataIndex: "name", key: "name" },
     {
       title: "Quantity",
       dataIndex: "quantity",
       key: "quantity",
-      width: 70,
+      width: 80,
       align: "center",
       render: (text: any, record: any) =>
         record.isNew ? null : (
@@ -266,9 +275,24 @@ export function Cart({ cart }: CartProps) {
       columns={columns}
       dataSource={dataSource}
       pagination={false}
-      rowKey="key"
-      size="small"
+      // rowKey="key"
+      // size="small"
+      // bordered
+      rowKey={"id"}
       bordered
+      sticky
+      style={{
+        wordWrap: "break-word",
+        wordBreak: "break-word",
+        whiteSpace: "normal",
+        height: "100%",
+        border: `1px solid ${token.colorBorder}`,
+        minHeight: 0,
+        overflowY: "auto",
+        borderRadius: token.borderRadiusLG,
+      }}
+      size="small"
+      scroll={{ y: "calc(100vh - 370px)" }}
       onRow={(record: any) => ({
         onClick: () => {
           if (!record.isNew) setActivePrice(record.purchase_price);

@@ -28,6 +28,7 @@ export type searchParams = {
   type?: string;
   name?: string;
   serial_number?: string;
+  WXQP?: string;
 };
 
 export type paginationParams = {

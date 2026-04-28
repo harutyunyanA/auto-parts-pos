@@ -115,9 +115,15 @@ class ProductController {
         type: req.validated?.query.type,
         name: req.validated?.query.name,
         serial_number: req.validated?.query.serial_number,
+        WXQP: req.validated?.query.WXQP,
       };
 
-      const products = await service.getAllProducts(source, paginationParams, searchParams);
+
+      const products = await service.getAllProducts(
+        source,
+        paginationParams,
+        searchParams,
+      );
 
       return successResponse(res, products);
     } catch (err) {

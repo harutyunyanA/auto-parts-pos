@@ -146,8 +146,12 @@ export const paginationQuerySchema = z.object({
   body: z.object({}).optional(),
   query: z.object({
     serial_number: z.string().optional(),
+    WXQP: z.string().optional(),
     code: z
-      .preprocess((val) => Number(val), z.number().int().positive())
+      .preprocess(
+        (val) => (val === "" || val === undefined ? undefined : Number(val)),
+        z.number().int().positive().optional(),
+      )
       .optional(),
     type: z.string().optional(),
     name: z.string().optional(),
@@ -158,7 +162,7 @@ export const paginationQuerySchema = z.object({
     limit: z
       .preprocess((val) => Number(val), z.number().int().positive())
       .optional()
-      .default(500),
+      .default(100),
   }),
   params: z.object({}).optional(),
 });

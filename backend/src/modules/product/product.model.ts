@@ -117,3 +117,4 @@ Product.afterCreate(async (product) => {
     await product.update({ code: product.id });
   }
 });
+

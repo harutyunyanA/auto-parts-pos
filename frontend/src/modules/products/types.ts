@@ -1,5 +1,17 @@
+import type { ISupplier } from "../suppliers/types";
+
 export interface IProduct {
   id: number;
   name: string;
-  price: number;
+  type: string;
+  serial_number: string;
+  code: number;
+  WXQP: string;
+  source: string;
+  quantity: number;
+  minimum_quantity: number;
+  purchase_price: number;
+  sale_price: number;
+  supplier_id: number;
+  supplier?: ISupplier;
 }

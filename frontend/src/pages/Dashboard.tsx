@@ -10,7 +10,6 @@ export default function Dashboard() {
         Welcome to the AutoParts POS system. Here you can see an overview of
         your business.
       </Paragraph>
-      
     </>
   );
 }
