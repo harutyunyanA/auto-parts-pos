@@ -31,7 +31,9 @@ class ProductController {
   async addProduct(req: Request, res: Response, next: NextFunction) {
     try {
       const productData: ProductCreationType = req.validated?.body;
-      const product: any = await service.addProduct(productData);
+      const source: sourceType = req.source as sourceType;
+
+      const product: any = await service.addProduct({ ...productData, source });
 
       return successResponse(res, product, 201);
     } catch (err) {
@@ -117,7 +119,6 @@ class ProductController {
         serial_number: req.validated?.query.serial_number,
         WXQP: req.validated?.query.WXQP,
       };
-
 
       const products = await service.getAllProducts(
         source,

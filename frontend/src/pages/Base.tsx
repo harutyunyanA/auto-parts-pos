@@ -1,8 +1,9 @@
-import { Button, Flex, Input, Modal, theme } from "antd";
+import { Button, Flex, Input, Modal } from "antd";
 import { Products } from "../modules/products/products";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { CloseOutlined } from "@ant-design/icons";
 import { ProductHistory } from "../modules/history/history";
+import { AddProduct } from "../modules/addProduct";
 
 const { Search } = Input;
 export function Base() {
@@ -18,7 +19,9 @@ export function Base() {
   const [isProductHistoryOpen, setIsProductHistoryOpen] =
     useState<boolean>(false);
   const [isDeficitModalOpen, setIsDeficitModalOpen] = useState<boolean>(false);
-  const { token } = theme.useToken();
+  const [isAddProductModalOpen, setIsAddProductModalOpen] =
+    useState<boolean>(false);
+  const tableContainerRef = useRef<HTMLDivElement>(null);
   const handleSearch = (key: string, value: string) => {
     if (activeFilters[key] === value) return;
     setActiveFilters((prev) => ({
@@ -37,12 +40,12 @@ export function Base() {
           height: "calc(100vh - 160px)",
         }}
       >
-        {/* <Flex vertical gap={"large"}> */}
-        <section style={{ flex: 1, minHeight: 0 }} id="filter">
-          <Flex gap={"medium"} justify="start">
+        <section id="filter">
+          <Flex gap={"middle"} justify="start" wrap="wrap">
             <Search
               allowClear={{ clearIcon: <CloseOutlined /> }}
               placeholder="Code"
+              style={{ minWidth: 150, flex: "1 1 150px" }}
               value={searchParams.code}
               onChange={(e) => {
                 const value = e.target.value.replace(/\D/g, "");
@@ -53,6 +56,7 @@ export function Base() {
             <Search
               placeholder="Name"
               allowClear={{ clearIcon: <CloseOutlined /> }}
+              style={{ minWidth: 150, flex: "1 1 150px" }}
               value={searchParams.name}
               onChange={(e) =>
                 setSearchParams((prev) => ({ ...prev, name: e.target.value }))
@@ -62,6 +66,7 @@ export function Base() {
             <Search
               placeholder="Type"
               allowClear={{ clearIcon: <CloseOutlined /> }}
+              style={{ minWidth: 150, flex: "1 1 150px" }}
               value={searchParams.type}
               onChange={(e) =>
                 setSearchParams((prev) => ({ ...prev, type: e.target.value }))
@@ -71,6 +76,7 @@ export function Base() {
             <Search
               placeholder="OEM"
               allowClear={{ clearIcon: <CloseOutlined /> }}
+              style={{ minWidth: 150, flex: "1 1 150px" }}
               value={searchParams.serial_number}
               onChange={(e) =>
                 setSearchParams((prev) => ({
@@ -83,6 +89,7 @@ export function Base() {
             <Search
               placeholder="WXQP"
               allowClear={{ clearIcon: <CloseOutlined /> }}
+              style={{ minWidth: 150, flex: "1 1 150px" }}
               value={searchParams.WXQP}
               onChange={(e) =>
                 setSearchParams((prev) => ({
@@ -95,28 +102,29 @@ export function Base() {
           </Flex>
         </section>
         <section
+          ref={tableContainerRef}
           style={{
-            flex: 10,
+            flex: 1,
             minHeight: 0,
-            overflowY: "auto",
-            // border: `1px solid ${token.colorBorder}`,
-            // borderRadius: token.borderRadiusLG,
+            overflow: "hidden",
           }}
           id="main"
         >
-          <Products filters={activeFilters} />
+          <Products filters={activeFilters} containerRef={tableContainerRef} />
         </section>
-        <section style={{ flex: 1 }} id="btns">
-          <Flex gap={"medium"} justify="start">
+        <section id="btns">
+          <Flex gap={"middle"} justify="start" wrap="wrap">
             <Button size="large" onClick={() => setIsProductHistoryOpen(true)}>
               History
             </Button>
             <Button size="large" onClick={() => setIsDeficitModalOpen(true)}>
               Deficites
             </Button>
+            <Button size="large" onClick={() => setIsAddProductModalOpen(true)}>
+              Add Product
+            </Button>
           </Flex>
         </section>
-        {/* </Flex> */}
       </div>
       <Modal
         open={isProductHistoryOpen}
@@ -133,6 +141,14 @@ export function Base() {
         width={"fit-content"}
       >
         <p>Deficites</p>
+      </Modal>
+      <Modal
+        open={isAddProductModalOpen}
+        onOk={() => setIsAddProductModalOpen(false)}
+        onCancel={() => setIsAddProductModalOpen(false)}
+        width={"fit-content"}
+      >
+        <AddProduct />
       </Modal>
     </>
   );

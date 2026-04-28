@@ -51,7 +51,6 @@ class ProductServices {
     paginationParams: paginationParams,
     searchParams: searchParams,
   ) {
-    console.log("hellllo", searchParams.code);
 
     const { page = 1, limit = 20 } = paginationParams;
     const offset = (page - 1) * limit;

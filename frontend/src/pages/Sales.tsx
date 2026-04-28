@@ -157,7 +157,6 @@ export default function Sales() {
           style={{
             flex: 10,
             minHeight: 0,
-            overflowY: "auto",
             border: `1px solid ${token.colorBorder}`,
             borderRadius: token.borderRadiusLG,
           }}

@@ -1,15 +1,44 @@
-import { useEffect, useState } from "react";
+import { type RefObject, useEffect, useState } from "react";
 import type { IProduct } from "./types";
 import { Flex, Pagination, Table } from "antd";
 import { useQuery } from "@tanstack/react-query";
 import type { ApiResponse } from "../../types/api.types";
 import api from "../../api/client";
-import { theme } from "antd";
 
-export function Products({ filters }: { filters: any }) {
+function useContainerHeight(containerRef: RefObject<HTMLElement | null>) {
+  const [height, setHeight] = useState(400);
+
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+
+    const observer = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        const h = entry.contentRect.height;
+        if (h > 0) setHeight(h);
+      }
+    });
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [containerRef]);
+
+  return height;
+}
+
+export function Products({
+  filters,
+  containerRef,
+}: {
+  filters: any;
+  containerRef: RefObject<HTMLElement | null>;
+}) {
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(20);
-  const { token } = theme.useToken();
+  const containerHeight = useContainerHeight(containerRef);
+  const tableScrollY = Math.max(containerHeight - 90, 200);
+
+  
+
   useEffect(() => {
     setPage(1);
   }, [filters]);
@@ -35,120 +64,107 @@ export function Products({ filters }: { filters: any }) {
   });
 
   return (
-    <>
-      <Flex vertical gap={"large"}>
-        <Table
-          dataSource={data?.items}
-          loading={isLoading}
-          rowKey={"id"}
-          bordered
-          sticky
-          style={{
-            wordWrap: "break-word",
-            wordBreak: "break-word",
-            whiteSpace: "normal",
-            height: "100%",
-            // border: `1px solid ${token.colorBorder}`,
-            minHeight: 0,
-            overflowY: "auto",
-            // borderRadius: token.borderRadiusLG,
-          }}
-          size="small"
-          scroll={{ y: "calc(100vh - 420px)" }}
-          pagination={false}
-          // pagination={{
-          //   disabled: true,
-          //   position: ["bottomLeft"],
-          //   current: page,
-          //   total: data?.total,
-          //   pageSize: limit,
-          //   onChange: (page, limit) => {
-          //     setPage(page);
-          //     setLimit(limit);
-          //   },
-          // }}
-          columns={[
-            {
-              title: "Code",
-              dataIndex: "code",
-              key: "code",
-              align: "center",
-              width: 80,
-            },
-            {
-              title: "Name",
-              dataIndex: "name",
-              key: "name",
-              //  align: "center"
-            },
-            {
-              title: "Type",
-              dataIndex: "type",
-              key: "type",
-              align: "center",
-              width: 80,
-            },
-            {
-              title: "Quantity",
-              dataIndex: "quantity",
-              key: "quantity",
-              align: "center",
-              width: 80,
-            },
-            {
-              title: "Purchase price",
-              dataIndex: "purchase_price",
-              key: "purchase_price",
-              align: "center",
-              width: 120,
-            },
-            {
-              title: "Sale price",
-              dataIndex: "sale_price",
-              key: "sale_price",
-              align: "center",
-              width: 120,
-            },
-            {
-              title: "Supplier",
-              dataIndex: ["supplier", "name"],
-              align: "center",
-              key: "supplier",
-              width: 150,
-            },
-            {
-              title: "Min",
-              dataIndex: "minimum_quantity",
-              key: "minimum_quantity",
-              align: "center",
-              width: 60,
-            },
-            {
-              title: "OEM",
-              dataIndex: "serial_number",
-              key: "serial_number",
-              align: "center",
-              width: 150,
-            },
-            {
-              title: "WXQP",
-              dataIndex: "WXQP",
-              key: "WXQP",
-              align: "center",
-              width: 150,
-            },
-          ]}
-        />
-        <Pagination
-          current={page}
-          total={data?.total}
-          pageSize={limit}
-          onChange={(page, limit) => {
-            setPage(page);
-            setLimit(limit);
-          }}
-        />
-      </Flex>
-    </>
+    <Flex
+      vertical
+      gap={"middle"}
+      style={{ height: "100%", minHeight: 0 }}
+    >
+      <Table
+        dataSource={data?.items}
+        loading={isLoading}
+        rowKey={"id"}
+        bordered
+        sticky
+        style={{
+          wordWrap: "break-word",
+          wordBreak: "break-word",
+          whiteSpace: "normal",
+          flex: 1,
+          minHeight: 0,
+        }}
+        size="small"
+        scroll={{ y: tableScrollY }}
+        pagination={false}
+        columns={[
+          {
+            title: "Code",
+            dataIndex: "code",
+            key: "code",
+            align: "center",
+            width: "7%",
+          },
+          {
+            title: "Name",
+            dataIndex: "name",
+            key: "name",
+          },
+          {
+            title: "Type",
+            dataIndex: "type",
+            key: "type",
+            align: "center",
+            width: "7%",
+          },
+          {
+            title: "Quantity",
+            dataIndex: "quantity",
+            key: "quantity",
+            align: "center",
+            width: "7%",
+          },
+          {
+            title: "Purchase price",
+            dataIndex: "purchase_price",
+            key: "purchase_price",
+            align: "center",
+            width: "10%",
+          },
+          {
+            title: "Sale price",
+            dataIndex: "sale_price",
+            key: "sale_price",
+            align: "center",
+            width: "10%",
+          },
+          {
+            title: "Supplier",
+            dataIndex: ["supplier", "name"],
+            align: "center",
+            key: "supplier",
+            width: "12%",
+          },
+          {
+            title: "Min",
+            dataIndex: "minimum_quantity",
+            key: "minimum_quantity",
+            align: "center",
+            width: "5%",
+          },
+          {
+            title: "OEM",
+            dataIndex: "serial_number",
+            key: "serial_number",
+            align: "center",
+            width: "12%",
+          },
+          {
+            title: "WXQP",
+            dataIndex: "WXQP",
+            key: "WXQP",
+            align: "center",
+            width: "12%",
+          },
+        ]}
+      />
+      <Pagination
+        current={page}
+        total={data?.total}
+        pageSize={limit}
+        onChange={(page, limit) => {
+          setPage(page);
+          setLimit(limit);
+        }}
+      />
+    </Flex>
   );
 }

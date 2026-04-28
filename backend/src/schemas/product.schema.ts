@@ -46,7 +46,7 @@ export const addProductSchema = z.object({
       .nullable()
       .default(null),
 
-    source: z.enum(["soviet", "import"], "Source must be 'soviet' or 'import'"),
+    // source: z.enum(["soviet", "import"], "Source must be 'soviet' or 'import'"),
 
     quantity: z
       .number("Quantity must be a number")
