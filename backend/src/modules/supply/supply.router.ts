@@ -12,12 +12,12 @@ const router = express.Router();
 
 router.use(checkSource);
 
-router.get("/", controller.getAllSupplies)
-router.get("/:supplyId", controller.getSupplyInfo)
+router.get("/", controller.getAllSupplies);
+router.get("/:supplyId", controller.getSupplyInfo);
 router.post(
   "/",
-  // checkSource,
-    // validate(createSupplySchema),
+  checkSource,
+  // validate(createSupplySchema),
   controller.newSupply,
 );
 
@@ -36,6 +36,16 @@ router.patch(
   controller.updateSupplyItem,
 );
 
-router.post("/:supplyId/complete", controller.completeSupply)
-export default router;
+router.patch("/:supplyId/item/:itemId/quantity", controller.updateQuantity);
+router.patch(
+  "/:supplyId/item/:itemId/purchasePrice",
+  controller.updatePurchasePrice,
+);
+router.patch("/:supplyId/item/:itemId/salePrice", controller.updateSalePrice);
+router.patch(
+  "/:supplyId/item/:itemId/minQuantity",
+  controller.updateMinQuantity,
+);
 
+router.patch("/:supplyId/complete", controller.supplyStatusToggle);
+export default router;

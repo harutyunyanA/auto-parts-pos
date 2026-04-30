@@ -85,8 +85,8 @@ class ProductController {
         ),
       );
 
-      // result = await service.updateProduct(code, source, filteredData);
-      // return successResponse(res, result);
+      const result = await service.updateProduct(code, source, filteredData);
+      return successResponse(res, result);
     } catch (err) {
       next(err);
     }

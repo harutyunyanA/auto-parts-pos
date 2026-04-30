@@ -99,10 +99,10 @@ export default function Sales() {
           display: "flex",
           flexDirection: "column",
           gap: "16px",
-          height: "calc(100vh - 160px)",
+          height: "100%",
         }}
       >
-        <section id="header" style={{ flex: 1, minHeight: 0 }}>
+        <section id="header" style={{ flex: "0 0 auto" }}>
           <Flex gap={"large"} align="center">
             <Flex gap={"medium"} align="center">
               <Flex gap={"small"} align="center">
@@ -155,17 +155,17 @@ export default function Sales() {
         <section
           id="main"
           style={{
-            flex: 10,
+            flex: 1,
             minHeight: 0,
-            border: `1px solid ${token.colorBorder}`,
-            borderRadius: token.borderRadiusLG,
+            // border: `1px solid ${token.colorBorder}`,
+            // borderRadius: token.borderRadiusLG,
           }}
         >
           {carts && carts[currentCartPage - 1] && (
             <Cart cart={carts[currentCartPage - 1]} />
           )}
         </section>
-        <section id="btnTools" style={{ flex: 3, minHeight: 0 }}>
+        <section id="btnTools" style={{ flex: "0 0 auto" }}>
           <Flex justify="space-between" align="center">
             <Flex justify="space-between" gap={"small"} vertical>
               <Button size="large">Print</Button>
@@ -225,7 +225,7 @@ export default function Sales() {
             </Flex>
           </Flex>
         </section>
-        <section id="navBar" style={{ flex: 1, minHeight: 0 }}>
+        <section id="navBar" style={{ flex: "0 0 auto" }}>
           <Flex>
             <Button
               icon={<DoubleLeftOutlined />}

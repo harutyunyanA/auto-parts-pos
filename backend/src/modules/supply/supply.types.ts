@@ -5,7 +5,6 @@ export type SupplyType = {
   supplierId: number | null;
   totalCost: string | null;
   source: sourceType;
-  // items: SupplyItemType[];
   status: "draft" | "completed";
   createdAt: Date;
   updatedAt: Date;
@@ -18,11 +17,5 @@ export type SupplyItemType = {
   salePrice: number;
   oldPurchasePrice: number;
   oldSalePrice: number;
-  minQuantity?: number;
-};
-
-export type Supply = {
-  supplierId: number;
-  source: sourceType;
-  items: SupplyItemType[];
+  minQuantity?: number | null;
 };

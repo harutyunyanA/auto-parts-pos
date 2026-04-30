@@ -91,6 +91,7 @@ SupplyItem.init(
     quantity: {
       type: DataTypes.INTEGER,
       allowNull: false,
+      defaultValue: 0,
     },
     purchasePrice: {
       type: DataTypes.DECIMAL(12, 2),
@@ -111,6 +112,7 @@ SupplyItem.init(
     totalCost: {
       type: DataTypes.DECIMAL(12, 2),
       allowNull: false,
+      defaultValue: 0,
     },
     minQuantity: {
       type: DataTypes.INTEGER,

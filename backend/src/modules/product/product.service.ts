@@ -38,12 +38,13 @@ class ProductServices {
   async updateProduct(
     code: number,
     source: sourceType,
-    productData: ProductCreationType,
+    productData: Partial<ProductCreationType>,
   ) {
-    const res = await Product.update(
-      {},
-      { where: { code: code, source: source } },
-    );
+    const product = await Product.findOne({ where: { code, source } });
+    if (!product) throw new NotFoundError("Product not found");
+    
+    await product.update(productData);
+    return product.toJSON();
   }
 
   async getAllProducts(

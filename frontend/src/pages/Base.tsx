@@ -3,7 +3,7 @@ import { Products } from "../modules/products/products";
 import { useRef, useState } from "react";
 import { CloseOutlined } from "@ant-design/icons";
 import { ProductHistory } from "../modules/history/history";
-import { AddProduct } from "../modules/addProduct";
+import { AddProduct } from "../modules/products/addProduct";
 
 const { Search } = Input;
 export function Base() {
@@ -37,10 +37,10 @@ export function Base() {
           display: "flex",
           flexDirection: "column",
           gap: "16px",
-          height: "calc(100vh - 160px)",
+          height: "100%",
         }}
       >
-        <section id="filter">
+        <section id="filter" style={{ flex: "0 0 auto" }}>
           <Flex gap={"middle"} justify="start" wrap="wrap">
             <Search
               allowClear={{ clearIcon: <CloseOutlined /> }}
@@ -112,7 +112,7 @@ export function Base() {
         >
           <Products filters={activeFilters} containerRef={tableContainerRef} />
         </section>
-        <section id="btns">
+        <section id="btns" style={{ flex: "0 0 auto" }}>
           <Flex gap={"middle"} justify="start" wrap="wrap">
             <Button size="large" onClick={() => setIsProductHistoryOpen(true)}>
               History
