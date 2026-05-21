@@ -118,6 +118,20 @@ export function Cart({ cart }: CartProps) {
       return;
     }
 
+    if (
+      (e.ctrlKey || e.metaKey) &&
+      (e.key === "Delete" || e.key === "Backspace")
+    ) {
+      if (record.isNew) return;
+      if (record.quantity > 0) {
+        message.warning("Cannot delete item with quantity > 0");
+        return;
+      }
+      e.preventDefault();
+      mutationDelete.mutate(record.id);
+      return;
+    }
+
     if (!["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(e.key))
       return;
 
@@ -302,13 +316,12 @@ export function Cart({ cart }: CartProps) {
 
     return () => clearTimeout(timer);
   }, [focusTarget, cart.items.length, cart.status]);
-
   return (
     <Table
       columns={columns}
       dataSource={dataSource}
       pagination={false}
-      rowKey={"id"}
+      rowKey="key"
       bordered
       sticky
       style={{
@@ -326,6 +339,9 @@ export function Cart({ cart }: CartProps) {
       onRow={(record: any) => ({
         onClick: () => {
           if (!record.isNew) setActivePrice(record.purchase_price);
+        },
+        onContextMenu: (e) => {
+          e.preventDefault();
         },
       })}
     />

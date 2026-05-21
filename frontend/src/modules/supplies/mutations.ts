@@ -6,7 +6,16 @@ interface UseSupplyMutationsProps {
   supplyId: number | undefined;
   setFocusTarget: (target: {
     id: number | "new";
-    field: "code" | "quantity" | "purchasePrice" | "salePrice" | "minQuantity";
+    field:
+      | "code"
+      | "quantity"
+      | "purchasePriceUsd"
+      | "usdRate"
+      | "weight"
+      | "tax"
+      | "purchasePrice"
+      | "salePrice"
+      | "minQuantity";
   }) => void;
 }
 
@@ -34,14 +43,28 @@ export function useSupplyMutations({
       api.patch(`/supplies/${supplyId}/item/${id}`, data),
     onSuccess: (_res, variables) => {
       queryClient.invalidateQueries({ queryKey: ["supplies"] });
-      
-      // Determine next field to focus
-      const fields: ("quantity" | "purchasePrice" | "salePrice")[] = ["quantity", "purchasePrice", "salePrice"];
-      const currentField = Object.keys(variables.data)[0] as any;
-      const currentIndex = fields.indexOf(currentField);
-      
-      if (currentIndex !== -1 && currentIndex < fields.length - 1) {
-        setFocusTarget({ id: variables.id, field: fields[currentIndex + 1] });
+
+      const nextField: Record<
+        string,
+        | "quantity"
+        | "purchasePriceUsd"
+        | "weight"
+        | "tax"
+        | "purchasePrice"
+        | "salePrice"
+      > = {
+        quantity: "purchasePrice",
+        purchasePrice: "salePrice",
+        purchasePriceUsd: "weight",
+        weight: "tax",
+        tax: "salePrice",
+      };
+
+      const currentField = Object.keys(variables.data)[0];
+      const next = nextField[currentField];
+
+      if (next) {
+        setFocusTarget({ id: variables.id, field: next });
       } else {
         setFocusTarget({ id: "new", field: "code" });
       }

@@ -13,22 +13,21 @@ import Text from "antd/es/typography/Text";
 import api from "../api/client";
 import { useEffect, useRef } from "react";
 import { Supply } from "../modules/supplies/supply";
+import type { ISupply } from "../modules/supplies/types";
 import { queryClient } from "../utils/queryClient";
 import {
   useCurrentSupplyPage,
   useSetCurrentSupplyPage,
 } from "../store/useCurrentSupplyPage";
 import dayjs from "dayjs";
-import { useCurrentDate } from "../store/useDateStore";
 import { SuppliersList } from "../modules/suppliers/suppliersList";
 
 export default function Stock() {
   const currentSupplyPage = useCurrentSupplyPage();
   const setCurrentSupplyPage = useSetCurrentSupplyPage();
-  const date = useCurrentDate();
 
   const { token } = theme.useToken();
-  const { data: supplies } = useQuery({
+  const { data: supplies } = useQuery<ISupply[]>({
     queryKey: ["supplies"],
     queryFn: () => {
       return api.get("/supplies").then((res) => res.data.data);
@@ -54,27 +53,24 @@ export default function Stock() {
   const totalProfit = totals.sale - totals.purchase;
 
   const prevSuppliesLength = useRef<number>(0);
-  const prevDate = useRef<string | null>(null);
+  const isFirstLoad = useRef<boolean>(true);
 
   useEffect(() => {
     if (supplies && supplies.length > 0) {
-      const isNewDate = prevDate.current !== date;
-      const isFirstLoad = prevDate.current === null;
       const lengthIncreased = supplies.length > prevSuppliesLength.current;
 
-      if (isFirstLoad || isNewDate || lengthIncreased) {
+      if (isFirstLoad.current || lengthIncreased) {
         setCurrentSupplyPage(supplies.length);
+        isFirstLoad.current = false;
       }
       prevSuppliesLength.current = supplies.length;
-      prevDate.current = date;
     }
-  }, [supplies, date, setCurrentSupplyPage]);
+  }, [supplies, setCurrentSupplyPage]);
 
   const { mutateAsync: createNewSupply } = useMutation({
     mutationFn: async () => {
       const res = await api.post("/supplies", {
         supplierId: 1,
-        date: dayjs(date).format("YYYY-MM-DD"),
       });
       return res.data.data;
     },
@@ -241,7 +237,7 @@ export default function Stock() {
           <Button
             icon={<DoubleRightOutlined />}
             disabled={!supplies || currentSupplyPage >= supplies.length}
-            onClick={() => setCurrentSupplyPage(supplies.length)}
+            onClick={() => supplies && setCurrentSupplyPage(supplies.length)}
             type="text"
           />
         </Flex>

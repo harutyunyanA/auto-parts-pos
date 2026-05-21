@@ -62,17 +62,17 @@ export function Products({
     gcTime: 1000 * 60 * 10,
   });
 
-  const mutationUpdateMin = useMutation({
-    mutationFn: (vars: { code: number; min: number | null }) =>
-      api.patch(
-        `/product`,
-        { minimum_quantity: vars.min },
-        { params: { code: vars.code, source } },
-      ),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["products"] });
-    },
-  });
+  // const mutationUpdateMin = useMutation({
+  //   mutationFn: (vars: { code: number; min: number | null }) =>
+  //     api.patch(
+  //       `/product`,
+  //       { minimum_quantity: vars.min },
+  //       { params: { code: vars.code, source } },
+  //     ),
+  //   onSuccess: () => {
+  //     queryClient.invalidateQueries({ queryKey: ["products"] });
+  //   },
+  // });
 
   return (
     <Flex vertical gap={"middle"} style={{ height: "100%", minHeight: 0 }}>
@@ -163,7 +163,7 @@ export function Products({
               const isEnabled = text !== null && text !== undefined;
               return (
                 <Flex gap="small" align="center" justify="center">
-                  <Checkbox
+                  {/* <Checkbox
                     checked={isEnabled}
                     onChange={(e) => {
                       const checked = e.target.checked;
@@ -172,28 +172,28 @@ export function Products({
                         min: checked ? 0 : null,
                       });
                     }}
-                  />
+                  /> */}
                   <Input
-                    disabled={!isEnabled}
+                    // disabled={!isEnabled}
                     key={`${record.id}-min-${text}`}
                     defaultValue={isEnabled ? String(text) : ""}
                     variant="borderless"
                     style={{ textAlign: "center", padding: 0, width: "40px" }}
-                    onPressEnter={(e: any) => {
-                      mutationUpdateMin.mutate({
-                        code: record.code,
-                        min: Number(e.target.value),
-                      });
-                    }}
-                    onBlur={(e: any) => {
-                      const val = e.target.value;
-                      if (isEnabled && val !== String(text)) {
-                        mutationUpdateMin.mutate({
-                          code: record.code,
-                          min: Number(val),
-                        });
-                      }
-                    }}
+                    // onPressEnter={(e: any) => {
+                    //   mutationUpdateMin.mutate({
+                    //     code: record.code,
+                    //     min: Number(e.target.value),
+                    //   });
+                    // }}
+                    // onBlur={(e: any) => {
+                    //   const val = e.target.value;
+                    //   if (isEnabled && val !== String(text)) {
+                    //     mutationUpdateMin.mutate({
+                    //       code: record.code,
+                    //       min: Number(val),
+                    //     });
+                    //   }
+                    // }}
                   />
                 </Flex>
               );

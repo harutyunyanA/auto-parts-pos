@@ -12,6 +12,7 @@ export interface IProduct {
   minimum_quantity: number;
   purchase_price: number;
   sale_price: number;
+  weight?: number | null;
   supplier_id: number;
   supplier?: ISupplier;
 }

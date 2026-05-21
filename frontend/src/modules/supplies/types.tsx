@@ -7,7 +7,11 @@ export interface ISupplyItem {
   quantity: number;
   purchasePrice: string;
   salePrice: string;
-  product: Pick<IProduct, "quantity" | "name" | "type" | "code">;
+  purchasePriceUsd: string | null;
+  usdRate: string | null;
+  weight: string | null;
+  tax: string | null;
+  product: Pick<IProduct, "quantity" | "name" | "type" | "code" | "weight">;
   createdAt: string;
   updatedAt: string;
 }
