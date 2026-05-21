@@ -191,9 +191,6 @@ class SupplyService {
         throw new BadRequestError("Cannot update item in a completed supply");
       }
 
-      supplyItem.oldPurchasePrice = supplyItem.purchasePrice;
-      supplyItem.oldSalePrice = supplyItem.salePrice;
-
       const recalcFromUsd = () => {
         const usd = Number(supplyItem.purchasePriceUsd);
         const rate = Number(supplyItem.usdRate);
@@ -216,6 +213,7 @@ class SupplyService {
       if (data.purchasePrice !== undefined) {
         product.purchase_price = data.purchasePrice;
         supplyItem.purchasePrice = String(data.purchasePrice);
+        supplyItem.purchasePriceUsd = null;
       }
 
       if (data.salePrice !== undefined) {
@@ -261,7 +259,6 @@ class SupplyService {
         if (canRecalc()) recalcFromUsd();
       }
 
-      console.log(data);
       const totalCost = Number(supplyItem.purchasePrice) * supplyItem.quantity;
       supplyItem.totalCost = String(totalCost);
 
