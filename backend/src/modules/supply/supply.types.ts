@@ -18,4 +18,8 @@ export type SupplyItemType = {
   oldPurchasePrice: number;
   oldSalePrice: number;
   minQuantity?: number | null;
+  purchasePriceUsd?: number | null;
+  usdRate?: number | null;
+  weight?: number | null;
+  tax?: number | null;
 };

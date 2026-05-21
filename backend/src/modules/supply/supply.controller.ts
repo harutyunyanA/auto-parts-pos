@@ -6,21 +6,9 @@ import service from "./supply.service.ts";
 class SupplyController {
   async newSupply(req: Request, res: Response, next: NextFunction) {
     try {
-      const { supplierId, date } = req.body;
+      const { supplierId } = req.body;
 
-      // if (!supplierId || isNaN(supplierId)) {
-      //   return errorResponse(res, "Supplier id is required");
-      // }
-
-      // if (!date) {
-      //   return errorResponse(res, "Date is required");
-      // }
-
-      const newSupply = await service.createSupply(
-        supplierId,
-        req.source,
-        date,
-      );
+      const newSupply = await service.createSupply(supplierId, req.source);
       return successResponse(res, newSupply);
     } catch (err) {
       next(err);
@@ -165,11 +153,7 @@ class SupplyController {
     }
   }
 
-  async supplyStatusToggle(
-    req: Request,
-    res: Response,
-    next: NextFunction,
-  ) {
+  async supplyStatusToggle(req: Request, res: Response, next: NextFunction) {
     try {
       const { supplyId } = req.params;
 
@@ -190,7 +174,7 @@ class SupplyController {
 
   async getAllSupplies(req: Request, res: Response, next: NextFunction) {
     try {
-      const result = await service.getAllSupplies();
+      const result = await service.getAllSupplies(req.source as any);
       if (result.success) {
         return successResponse(res, result.supplies);
       } else {
@@ -209,7 +193,10 @@ class SupplyController {
         return errorResponse(res, "Supply id is required");
       }
 
-      const supplyItems = await service.getSupplyInfo(Number(supplyId));
+      const supplyItems = await service.getSupplyInfo(
+        Number(supplyId),
+        req.source as any,
+      );
       if (!supplyItems) {
         return errorResponse(res, "Supply is not found", 404);
       } else return successResponse(res, supplyItems.data);

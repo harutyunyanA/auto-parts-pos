@@ -7,18 +7,18 @@ import { Supply, SupplyItem } from "./supply.model.ts";
 import type { SupplyItemType, SupplyType } from "./supply.types.ts";
 import { NotFoundError, BadRequestError } from "../../utils/errors.ts";
 import type { sourceType } from "../../types/source.types.ts";
+import settingsService from "../settings/settings.service.ts";
+import {
+  DEFAULT_USD_RATE_KEY,
+  DEFAULT_TAX_KEY,
+} from "../settings/settings.types.ts";
 
 class SupplyService {
-  async createSupply(supplierId: number, source: string, date: any) {
-    const newSupply = await Supply.create(
-      {
-        supplierId,
-        source,
-        createdAt: date,
-        updatedAt: date,
-      },
-      { silent: true },
-    );
+  async createSupply(supplierId: number, source: string) {
+    const newSupply = await Supply.create({
+      supplierId,
+      source,
+    });
 
     if (!newSupply) {
       throw new BadRequestError("Cannot create new SUPPLY");
@@ -59,6 +59,20 @@ class SupplyService {
         throw new NotFoundError("Product not found");
       }
 
+      const supply = await Supply.findByPk(supplyId);
+      if (!supply) {
+        throw new NotFoundError("Supply not found");
+      }
+
+      if (supply.status === "completed") {
+        throw new BadRequestError("Supply is completed");
+      }
+
+      const [defaultUsdRate, defaultTax] = await Promise.all([
+        settingsService.getNumber(DEFAULT_USD_RATE_KEY),
+        settingsService.getNumber(DEFAULT_TAX_KEY),
+      ]);
+
       const supplyItem = await SupplyItem.create(
         {
           supplyId,
@@ -69,6 +83,12 @@ class SupplyService {
           oldSalePrice: product.sale_price,
           quantity: 0,
           totalCost: 0,
+          purchasePriceUsd: null,
+          usdRate: defaultUsdRate,
+          weight: product.weight,
+          tax: defaultTax,
+          createdAt: supply.createdAt,
+          updatedAt: supply.updatedAt,
         },
         { transaction },
       );
@@ -144,6 +164,10 @@ class SupplyService {
       purchasePrice?: number;
       salePrice?: number;
       minQuantity?: number | null;
+      purchasePriceUsd?: number | null;
+      usdRate?: number | null;
+      weight?: number | null;
+      tax?: number | null;
     },
   ) {
     const transaction = await sequelize.transaction();
@@ -170,6 +194,19 @@ class SupplyService {
       supplyItem.oldPurchasePrice = supplyItem.purchasePrice;
       supplyItem.oldSalePrice = supplyItem.salePrice;
 
+      const recalcFromUsd = () => {
+        const usd = Number(supplyItem.purchasePriceUsd);
+        const rate = Number(supplyItem.usdRate);
+        const tax = Number(supplyItem.tax ?? 0);
+        const weight = Number(supplyItem.weight ?? 0);
+        const newPrice = (usd + weight * tax) * rate;
+        supplyItem.purchasePrice = String(newPrice);
+        product.purchase_price = newPrice;
+      };
+
+      const canRecalc = () =>
+        supplyItem.purchasePriceUsd !== null && supplyItem.usdRate !== null;
+
       if (data.quantity !== undefined) {
         product.quantity =
           product.quantity - supplyItem.quantity + data.quantity;
@@ -191,6 +228,40 @@ class SupplyService {
         supplyItem.minQuantity = data.minQuantity;
       }
 
+      if (data.purchasePriceUsd !== undefined) {
+        supplyItem.purchasePriceUsd =
+          data.purchasePriceUsd === null ? null : String(data.purchasePriceUsd);
+        if (canRecalc()) recalcFromUsd();
+      }
+
+      if (data.usdRate !== undefined) {
+        supplyItem.usdRate =
+          data.usdRate === null ? null : String(data.usdRate);
+        if (canRecalc()) recalcFromUsd();
+      }
+
+      if (data.tax !== undefined) {
+        if (supplyItem.purchasePriceUsd === null) {
+          throw new BadRequestError(
+            "Cannot set tax without purchasePriceUsd",
+          );
+        }
+        supplyItem.tax = data.tax === null ? null : String(data.tax);
+        if (canRecalc()) recalcFromUsd();
+      }
+
+      if (data.weight !== undefined) {
+        if (supplyItem.purchasePriceUsd === null) {
+          throw new BadRequestError(
+            "Cannot set weight without purchasePriceUsd",
+          );
+        }
+        product.weight = data.weight;
+        supplyItem.weight = data.weight === null ? null : String(data.weight);
+        if (canRecalc()) recalcFromUsd();
+      }
+
+      console.log(data);
       const totalCost = Number(supplyItem.purchasePrice) * supplyItem.quantity;
       supplyItem.totalCost = String(totalCost);
 
@@ -359,8 +430,9 @@ class SupplyService {
     return { success: true, data: supply };
   }
 
-  async getAllSupplies() {
+  async getAllSupplies(source: sourceType) {
     const supplies = await Supply.findAll({
+      where: { source },
       include: [
         {
           model: SupplyItem,
@@ -398,9 +470,10 @@ class SupplyService {
     return { success: true, supplies };
   }
 
-  async getSupplyInfo(supplyId: number) {
+  async getSupplyInfo(supplyId: number, source: sourceType) {
     const supply = (
-      await Supply.findByPk(supplyId, {
+      await Supply.findOne({
+        where: { id: supplyId, source },
         include: [
           {
             model: SupplyItem,

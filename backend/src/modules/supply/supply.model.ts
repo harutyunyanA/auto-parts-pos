@@ -61,6 +61,10 @@ export class SupplyItem extends Model {
   declare oldSalePrice: string;
   declare totalCost: string;
   declare minQuantity: number | null;
+  declare purchasePriceUsd: string | null;
+  declare usdRate: string | null;
+  declare weight: string | null;
+  declare tax: string | null;
   declare createdAt: Date;
   declare updatedAt: Date;
 }
@@ -116,6 +120,22 @@ SupplyItem.init(
     },
     minQuantity: {
       type: DataTypes.INTEGER,
+      allowNull: true,
+    },
+    purchasePriceUsd: {
+      type: DataTypes.DECIMAL(12, 2),
+      allowNull: true,
+    },
+    usdRate: {
+      type: DataTypes.DECIMAL(10, 4),
+      allowNull: true,
+    },
+    weight: {
+      type: DataTypes.DECIMAL(10, 3),
+      allowNull: true,
+    },
+    tax: {
+      type: DataTypes.DECIMAL(10, 2),
       allowNull: true,
     },
   },

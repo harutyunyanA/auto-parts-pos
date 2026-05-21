@@ -18,6 +18,7 @@ export class Product
   declare minimum_quantity: number | null;
   declare purchase_price: number;
   declare sale_price: number;
+  declare weight: number | null;
   declare supplier_id: number | null;
   declare createdAt: Date;
   declare updatedAt: Date;

@@ -1,5 +1,8 @@
 import type { Optional } from "sequelize";
 import type { sourceType } from "../../types/source.types.ts";
+import type { CartItem } from "../sale/sale.model.ts";
+import type { CartItemType } from "../sale/sale.types.ts";
+import type { SupplyItem } from "../supply/supply.model.ts";
 
 export type ProductType = {
   id: number;
@@ -13,6 +16,7 @@ export type ProductType = {
   minimum_quantity?: number | null;
   purchase_price: number;
   sale_price: number;
+  weight?: number | null;
   supplier_id: number | null;
   createdAt: Date;
   updatedAt: Date;
@@ -20,7 +24,7 @@ export type ProductType = {
 
 export type ProductCreationType = Optional<
   ProductType,
-  "id" | "serial_number" | "WXQP" | "minimum_quantity" | "code"
+  "id" | "serial_number" | "WXQP" | "minimum_quantity" | "code" | "weight"
 >;
 
 export type searchParams = {
@@ -35,3 +39,34 @@ export type paginationParams = {
   page?: number;
   limit?: number;
 };
+
+// export type SaledProductsHistoryRow = Omit<CartItemType, "productId"> & {
+//   product: {
+//     code: number;
+//     name: string;
+//     serial_number: string;
+//     type: string;
+//   };
+//   createdAt: string;
+// };
+export type SoldProductsHistoryRow = CartItem & {
+  product: {
+    code: number;
+    name: string;
+    serial_number: string;
+    type: string;
+  };
+  createdAt: string;
+};
+
+export type SuppliedProductsHistoryRow = SupplyItem & {
+  product: {
+    code: number;
+    name: string;
+    serial_number: string;
+    type: string;
+  };
+  createdAt: string;
+};
+
+  

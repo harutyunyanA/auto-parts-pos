@@ -68,6 +68,12 @@ export const addProductSchema = z.object({
       .number("Sale price must be a number")
       .nonnegative("Sale price must be non-negative"),
 
+    weight: z
+      .number("Weight must be a number")
+      .nonnegative("Weight must be non-negative")
+      .nullable()
+      .optional(),
+
     supplier_id: z.number("Supplier ID must be a number").nullable().optional(),
   }),
   query: z.object({}).optional(),
@@ -77,14 +83,30 @@ export const addProductSchema = z.object({
 export const updateProductSchema = z.object({
   body: z.object({
     name: z.string().trim().min(1).optional(),
-    type: z.union([z.string(), z.number()]).transform((val) => String(val).trim()).optional(),
+    type: z
+      .union([z.string(), z.number()])
+      .transform((val) => String(val).trim())
+      .optional(),
     code: z.number().int().nonnegative().optional(),
-    serial_number: z.union([z.string(), z.number(), z.null()]).transform((val) => !val || !String(val).trim() ? null : String(val).trim()).nullable().optional(),
-    WXQP: z.union([z.string(), z.number(), z.null()]).transform((val) => !val || !String(val).trim() ? null : String(val).trim()).nullable().optional(),
+    serial_number: z
+      .union([z.string(), z.number(), z.null()])
+      .transform((val) =>
+        !val || !String(val).trim() ? null : String(val).trim(),
+      )
+      .nullable()
+      .optional(),
+    WXQP: z
+      .union([z.string(), z.number(), z.null()])
+      .transform((val) =>
+        !val || !String(val).trim() ? null : String(val).trim(),
+      )
+      .nullable()
+      .optional(),
     quantity: z.number().int().nonnegative().optional(),
     minimum_quantity: z.number().int().nonnegative().nullable().optional(),
     purchase_price: z.number().nonnegative().optional(),
     sale_price: z.number().nonnegative().optional(),
+    weight: z.number().nonnegative().nullable().optional(),
     supplier_id: z.number().nullable().optional(),
   }),
   query: z.object({
@@ -120,4 +142,17 @@ export const paginationQuerySchema = z.object({
       .default(100),
   }),
   params: z.object({}).optional(),
+});
+
+export const getProductHistorySchema = z.object({
+  body: z.object({}).optional(),
+  params: z.object({}).optional(),
+  query: z.object({
+    code: z
+      .preprocess((val) => Number(val), z.number().int().positive())
+      .optional(),
+    oem: z.string().optional(),
+    from: z.string(),
+    to: z.string(),
+  }),
 });

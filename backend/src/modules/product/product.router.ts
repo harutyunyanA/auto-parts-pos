@@ -3,6 +3,7 @@ import controller from "./product.controller.ts";
 import { validate } from "../../middlewares/validate.middleware.ts";
 import {
   addProductSchema,
+  getProductHistorySchema,
   getProductQuerySchema,
   paginationQuerySchema,
   updateProductSchema,
@@ -22,4 +23,6 @@ router.get(
   validate(paginationQuerySchema),
   controller.getAllProducts,
 );
+
+router.get("/history", checkSource, validate(getProductHistorySchema), controller.getHistory)
 export default router;
