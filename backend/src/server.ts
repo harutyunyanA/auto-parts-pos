@@ -4,6 +4,7 @@ import { app } from "./app.ts";
 import logger from "./utils/logger.ts";
 import { setupGracefulShutdown } from "./utils/graceful-shutdown.ts";
 import { sequelize } from "./config/db.ts";
+import settingsService from "./modules/settings/settings.service.ts";
 
 const PORT = process.env.PORT || 4000;
 
@@ -14,6 +15,9 @@ async function start() {
     
     await sequelize.sync({ alter: true });
     logger.info("Tables are synchronized");
+
+    await settingsService.seedDefaults();
+    logger.info("Settings defaults seeded");
 
     const server = app.listen(PORT, () => {
       logger.info(`Server running on port ${PORT}`);

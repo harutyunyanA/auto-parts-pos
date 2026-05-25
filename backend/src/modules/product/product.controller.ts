@@ -75,6 +75,7 @@ class ProductController {
         "minimum_quantity",
         "purchase_price",
         "sale_price",
+        "weight",
         "supplier_id",
         "source",
       ];
@@ -85,8 +86,8 @@ class ProductController {
         ),
       );
 
-      // result = await service.updateProduct(code, source, filteredData);
-      // return successResponse(res, result);
+      const result = await service.updateProduct(code, source, filteredData);
+      return successResponse(res, result);
     } catch (err) {
       next(err);
     }
@@ -127,6 +128,25 @@ class ProductController {
       );
 
       return successResponse(res, products);
+    } catch (err) {
+      next(err);
+    }
+  }
+  async getHistory(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { code, oem, from, to } = req.validated?.query || {};
+      const source = req.source as sourceType;
+
+      if (!code && !oem)
+        return errorResponse(res, "code and oem are required", 400);
+      const history = await service.getProductHistory(
+        code,
+        oem,
+        source,
+        from,
+        to,
+      );
+      return successResponse(res, history);
     } catch (err) {
       next(err);
     }

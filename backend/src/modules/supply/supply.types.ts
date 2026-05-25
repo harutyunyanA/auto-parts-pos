@@ -17,11 +17,9 @@ export type SupplyItemType = {
   salePrice: number;
   oldPurchasePrice: number;
   oldSalePrice: number;
-  minQuantity?: number;
-};
-
-export type Supply = {
-  supplierId: number;
-  source: sourceType;
-  items: SupplyItemType[];
+  minQuantity?: number | null;
+  purchasePriceUsd?: number | null;
+  usdRate?: number | null;
+  weight?: number | null;
+  tax?: number | null;
 };

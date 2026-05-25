@@ -1,6 +1,6 @@
 import { AutoComplete } from 'antd';
 import { useState, useCallback } from 'react';
-import { carSearchOptions } from './data.ts';
+import { carSearchOptions } from '../lib/data.ts';
 
 // Иконки для типов подсказок
 const typeIcon = {

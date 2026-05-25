@@ -58,7 +58,13 @@ export function useCartMutations({
   });
 
   const mutationDelete = useMutation({
-    mutationFn: (id: number) => api.delete(`/sale/${id}`),
+    mutationFn: (id: number) => api.delete(`/sale/item/${id}`),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["carts", currentDate] });
+    },
+    onError: (err: any) => {
+      message.error(err.response?.data?.message || "Failed to delete item");
+    },
   });
 
   const mutationStatusToggle = useMutation({

@@ -77,7 +77,7 @@ export default function MainLayout() {
   };
 
   return (
-    <Layout style={{ minHeight: "100vh" }}>
+    <Layout style={{ height: "100vh", overflow: "hidden" }}>
       <Sider
         trigger={null}
         collapsible
@@ -128,7 +128,7 @@ export default function MainLayout() {
           </Button>
         </div>
       </Sider>
-      <Layout>
+      <Layout style={{ height: "100%", overflow: "hidden" }}>
         <Header
           style={{
             padding: 0,
@@ -185,9 +185,11 @@ export default function MainLayout() {
           style={{
             margin: "24px 16px",
             padding: 24,
-            minHeight: 280,
             background: colorBgContainer,
             borderRadius: borderRadiusLG,
+            overflow: "hidden",
+            display: "flex",
+            flexDirection: "column",
           }}
         >
           <Outlet />

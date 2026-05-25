@@ -8,6 +8,7 @@ import saleRouter from "./modules/sale/sale.router.ts";
 import supplyRouter from "./modules/supply/supply.router.ts";
 import clientsRouter from "./modules/clients/clients.router.ts";
 import supplierRouter from "./modules/supplier/supplier.router.ts";
+import settingsRouter from "./modules/settings/settings.router.ts";
 export const app = express();
 
 app.use(httpLogger);
@@ -28,5 +29,6 @@ app.use("/sale", saleRouter);
 app.use("/supplies", supplyRouter);
 app.use("/clients", clientsRouter);
 app.use("/suppliers", supplierRouter);
+app.use("/settings", settingsRouter);
 
 app.use(errorHandler);

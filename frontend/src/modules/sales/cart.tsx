@@ -61,6 +61,10 @@ export function Cart({ cart }: CartProps) {
     if (record.isNew) {
       mutationAdd.mutate(code);
     } else {
+      if (String(record.code) === String(code)) {
+        setFocusTarget({ id: record.id, field: "quantity" });
+        return;
+      }
       if (record.quantity > 0) {
         message.error("Cannot change code if quantity > 0");
         return;
@@ -85,6 +89,49 @@ export function Cart({ cart }: CartProps) {
     record: any,
     field: "code" | "quantity" | "price",
   ) => {
+    if (e.key === "Escape") {
+      e.preventDefault();
+      e.stopPropagation();
+      const target = e.target as HTMLInputElement;
+      if (target) {
+        const originalValue =
+          field === "code"
+            ? record.code
+            : record[field === "price" ? "priceAtSale" : field];
+        const val = String(originalValue ?? "");
+
+        // React value setter trick to ensure it works even with controlled components
+        const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
+          window.HTMLInputElement.prototype,
+          "value",
+        )?.set;
+        nativeInputValueSetter?.call(target, val);
+
+        // Dispatch events to notify React/Antd about the change
+        target.dispatchEvent(new Event("input", { bubbles: true }));
+        target.dispatchEvent(new Event("change", { bubbles: true }));
+
+        setTimeout(() => {
+          target.select();
+        }, 0);
+      }
+      return;
+    }
+
+    if (
+      (e.ctrlKey || e.metaKey) &&
+      (e.key === "Delete" || e.key === "Backspace")
+    ) {
+      if (record.isNew) return;
+      if (record.quantity > 0) {
+        message.warning("Cannot delete item with quantity > 0");
+        return;
+      }
+      e.preventDefault();
+      mutationDelete.mutate(record.id);
+      return;
+    }
+
     if (!["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(e.key))
       return;
 
@@ -269,16 +316,12 @@ export function Cart({ cart }: CartProps) {
 
     return () => clearTimeout(timer);
   }, [focusTarget, cart.items.length, cart.status]);
-
   return (
     <Table
       columns={columns}
       dataSource={dataSource}
       pagination={false}
-      // rowKey="key"
-      // size="small"
-      // bordered
-      rowKey={"id"}
+      rowKey="key"
       bordered
       sticky
       style={{
@@ -296,6 +339,9 @@ export function Cart({ cart }: CartProps) {
       onRow={(record: any) => ({
         onClick: () => {
           if (!record.isNew) setActivePrice(record.purchase_price);
+        },
+        onContextMenu: (e) => {
+          e.preventDefault();
         },
       })}
     />

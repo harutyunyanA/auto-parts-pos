@@ -8,10 +8,6 @@ class SupplyController {
     try {
       const { supplierId } = req.body;
 
-      if (!supplierId || isNaN(supplierId)) {
-        return errorResponse(res, "Supplier id is required");
-      }
-
       const newSupply = await service.createSupply(supplierId, req.source);
       return successResponse(res, newSupply);
     } catch (err) {
@@ -45,9 +41,14 @@ class SupplyController {
         return errorResponse(res, "Supply id is required", 400);
       }
 
-      const supply = req.validated?.body;
+      // const supply = req.validated?.body;
+      const { code } = req.body;
 
-      const result = await service.addSupplyItem(Number(supplyId), supply);
+      const result = await service.addSupplyItem(
+        code,
+        Number(supplyId),
+        req.source as any,
+      );
       return successResponse(res, result);
     } catch (err) {
       next(err);
@@ -92,7 +93,67 @@ class SupplyController {
     }
   }
 
-  async completeSupply(req: Request, res: Response, next: NextFunction) {
+  async updateQuantity(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { supplyId, itemId } = req.params;
+      const { quantity } = req.body;
+      const result = await service.updateItemQuantity(
+        Number(supplyId),
+        Number(itemId),
+        Number(quantity),
+      );
+      return successResponse(res, result);
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  async updatePurchasePrice(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { supplyId, itemId } = req.params;
+      const { purchasePrice } = req.body;
+      const result = await service.updateItemPurchasePrice(
+        Number(supplyId),
+        Number(itemId),
+        Number(purchasePrice),
+      );
+      return successResponse(res, result);
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  async updateSalePrice(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { supplyId, itemId } = req.params;
+      const { salePrice } = req.body;
+      const result = await service.updateItemSalePrice(
+        Number(supplyId),
+        Number(itemId),
+        Number(salePrice),
+      );
+      return successResponse(res, result);
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  async updateMinQuantity(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { supplyId, itemId } = req.params;
+      const { minQuantity } = req.body;
+      const result = await service.updateItemMinQuantity(
+        Number(supplyId),
+        Number(itemId),
+        Number(minQuantity),
+      );
+      return successResponse(res, result);
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  async supplyStatusToggle(req: Request, res: Response, next: NextFunction) {
     try {
       const { supplyId } = req.params;
 
@@ -100,10 +161,10 @@ class SupplyController {
         return errorResponse(res, "Supply id is required", 400);
       }
 
-      const supply = await service.completeSupply(Number(supplyId));
+      const result = await service.supplyStatusToggle(Number(supplyId));
 
-      if (supply.success) {
-        return successResponse(res, supply.data);
+      if (result.success) {
+        return successResponse(res, result.data);
       }
       return errorResponse(res, "Internal error", 500);
     } catch (err) {
@@ -113,9 +174,9 @@ class SupplyController {
 
   async getAllSupplies(req: Request, res: Response, next: NextFunction) {
     try {
-      const supplies = await service.getAllSupplies();
-      if (supplies.success) {
-        return successResponse(res, supplies.data);
+      const result = await service.getAllSupplies(req.source as any);
+      if (result.success) {
+        return successResponse(res, result.supplies);
       } else {
         return errorResponse(res, "Supplies are not found", 404);
       }
@@ -132,10 +193,13 @@ class SupplyController {
         return errorResponse(res, "Supply id is required");
       }
 
-      const supplyItems = await service.getSupplyInfo(Number(supplyId));
+      const supplyItems = await service.getSupplyInfo(
+        Number(supplyId),
+        req.source as any,
+      );
       if (!supplyItems) {
         return errorResponse(res, "Supply is not found", 404);
-      } else return successResponse(res, supplyItems);
+      } else return successResponse(res, supplyItems.data);
     } catch (err) {
       next(err);
     }

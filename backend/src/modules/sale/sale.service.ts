@@ -17,15 +17,16 @@ import type { TransformedCartType } from "./sale.types.ts";
 
 class SaleService {
   async createCart(source: sourceType, date: any) {
-    const cart = await Cart.create(
-      { source, createdAt: date, updatedAt: date },
-      { silent: true },
-    );
-
-    if (!cart) {
-      throw new InternalServerError("Unable to create new cart");
+    if (dayjs(date).format("YYYY-MM-DD") !== dayjs().format("YYYY-MM-DD")) {
+      const cart = await Cart.create(
+        { source, createdAt: date, updatedAt: date },
+        { silent: true },
+      );
+      return cart.dataValues;
+    } else {
+      const cart = await Cart.create({ source });
+      return cart.dataValues;
     }
-    return cart.dataValues;
   }
 
   async createCartItem(code: number, source: string, cartId: number) {
@@ -36,10 +37,20 @@ class SaleService {
       throw new NotFoundError("Product not found");
     }
 
+    const cart = await Cart.findByPk(cartId);
+    if (!cart) {
+      throw new NotFoundError("Cart not found");
+    }
+    if (cart.status === "completed") {
+      throw new BadRequestError("Cart is completed");
+    }
+
     const newCartItem = await CartItem.create<CartItem>({
       productId: product.id,
       cartId: cartId,
       priceAtSale: product.sale_price,
+      createdAt: cart.createdAt,
+      updatedAt: cart.updatedAt,
     });
 
     if (!newCartItem) {
