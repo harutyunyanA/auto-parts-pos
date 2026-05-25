@@ -133,15 +133,12 @@ class ProductController {
     }
   }
   async getHistory(req: Request, res: Response, next: NextFunction) {
-    console.log("hellllo  ");
     try {
-      console.log(req.validated?.query);
       const { code, oem, from, to } = req.validated?.query || {};
       const source = req.source as sourceType;
 
       if (!code && !oem)
         return errorResponse(res, "code and oem are required", 400);
-      console.log("controller");
       const history = await service.getProductHistory(
         code,
         oem,

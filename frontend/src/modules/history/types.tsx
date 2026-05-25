@@ -1,34 +1,27 @@
-export type IHistory = {
+type HistoryBase = {
   id: number;
-  code: number;
-  serial_number: string;
-  name: string;
-  type: string;
-  saledProduct: SaledProduct | null;
-  suppliedProduct: SuppliedProduct | null;
-  operation: "IN" | "OUT";
-};
-
-export type SaledProduct = {
-  cardId: string;
   quantity: number;
-  salePrice: number;
-  totalCost: number;
-  client?: {
-    id: number;
-    name: string;
-  };
   createdAt: string;
+  product: {
+    code: number;
+    name: string;
+    type: string;
+    serial_number: string;
+  };
 };
 
-export type SuppliedProduct = {
-  supplyId: string;
-  quantity: number;
+export type HistorySoldRow = HistoryBase & {
+  operation: "OUT";
+  cartId: number;
+  priceAtSale: number;
+  totalPrice: number;
+};
+
+export type HistorySuppliedRow = HistoryBase & {
+  operation: "IN";
+  supplyId: number;
   purchasePrice: number;
   totalCost: number;
-  supplier: {
-    id: number;
-    name: string;
-  };
-  createdAt: string;
 };
+
+export type IHistory = HistorySoldRow | HistorySuppliedRow;

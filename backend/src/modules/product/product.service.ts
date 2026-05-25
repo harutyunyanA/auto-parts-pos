@@ -100,23 +100,23 @@ class ProductServices {
   }
 
   async getProductHistory(
-    code: number,
-    oem: string,
+    code: number | undefined,
+    oem: string | undefined,
     source: sourceType,
-    from: string,
-    to: string,
+    from: string | undefined,
+    to: string | undefined,
   ) {
+    const productWhere: Record<string, any> = { source };
+    if (code) productWhere.code = code;
+    if (oem) productWhere.serial_number = oem;
+
+    const dateRange: Record<symbol, Date> = {};
+    if (from) dateRange[Op.gte] = dayjs(from).startOf("day").toDate();
+    if (to) dateRange[Op.lte] = dayjs(to).endOf("day").toDate();
+    const itemWhere = from || to ? { createdAt: dateRange } : {};
+
     const soldProducts = (await CartItem.findAll({
-      where: {
-        ...(from || to
-          ? {
-              createdAt: {
-                ...(from && { [Op.gte]: from }),
-                ...(to && { [Op.lte]: to }),
-              },
-            }
-          : {}),
-      },
+      where: itemWhere,
       attributes: [
         "id",
         "quantity",
@@ -129,25 +129,15 @@ class ProductServices {
         {
           model: Product,
           as: "product",
-          where: { code, source },
+          where: productWhere,
           attributes: ["code", "name", "serial_number", "type"],
           required: true,
         },
       ],
     })) as SoldProductsHistoryRow[];
 
-    console.log("tooo", to);
     const newSupplies = (await SupplyItem.findAll({
-      where: {
-        ...(from || to
-          ? {
-              createdAt: {
-                ...(from && { [Op.gte]: from }),
-                ...(to && { [Op.lte]: to }),
-              },
-            }
-          : {}),
-      },
+      where: itemWhere,
       attributes: [
         "id",
         "quantity",
@@ -160,60 +150,48 @@ class ProductServices {
         {
           model: Product,
           as: "product",
-          where: { code, source },
+          where: productWhere,
           attributes: ["code", "name", "serial_number", "type"],
           required: true,
         },
       ],
     })) as SuppliedProductsHistoryRow[];
 
-    const transformedSoldData = soldProducts.map((i) => {
-      return {
-        id: i.id,
-        cartId: i.cartId,
-        quantity: i.quantity,
-        priceAtSale: i.priceAtSale,
-        totalPrice: i.totalPrice,
-        operation: "OUT",
-        product: {
-          code: i.product?.code,
-          name: i.product?.name,
-          serial_number: i.product?.serial_number,
-          type: i.product?.type,
-        },
-        createdAt: dayjs(i.createdAt).format("YYYY-MM-DD HH:mm:ss"),
-      };
-    });
+    const transformedSoldData = soldProducts.map((i) => ({
+      id: i.id,
+      cartId: i.cartId,
+      quantity: i.quantity,
+      priceAtSale: i.priceAtSale,
+      totalPrice: i.totalPrice,
+      operation: "OUT" as const,
+      product: {
+        code: i.product?.code,
+        name: i.product?.name,
+        serial_number: i.product?.serial_number,
+        type: i.product?.type,
+      },
+      createdAt: dayjs(i.createdAt).format("YYYY-MM-DD HH:mm:ss"),
+    }));
 
-    const transformeSuppliesdData = newSupplies.map((i) => {
-      return {
-        id: i.id,
-        supplyId: i.supplyId,
-        quantity: i.quantity,
-        purchasePrice: i.purchasePrice,
-        totalCost: i.totalCost,
-        createdAt: dayjs(i.createdAt).format("YYYY-MM-DD HH:mm:ss"),
-        product: {
-          code: i.product?.code,
-          name: i.product?.name,
-          serial_number: i.product?.serial_number,
-          type: i.product?.type,
-        },
-      };
-    });
+    const transformeSuppliesdData = newSupplies.map((i) => ({
+      id: i.id,
+      supplyId: i.supplyId,
+      quantity: i.quantity,
+      purchasePrice: i.purchasePrice,
+      totalCost: i.totalCost,
+      operation: "IN" as const,
+      product: {
+        code: i.product?.code,
+        name: i.product?.name,
+        serial_number: i.product?.serial_number,
+        type: i.product?.type,
+      },
+      createdAt: dayjs(i.createdAt).format("YYYY-MM-DD HH:mm:ss"),
+    }));
 
-    const transformedData = [
-      ...transformedSoldData,
-      ...transformeSuppliesdData,
-    ];
-
-    return transformedData.length > 1
-      ? transformedData.sort((a, b) => (b.createdAt > a.createdAt ? -1 : 1))
-      : transformedData;
-
-    // return transformedData.sort((a, b) => {
-    // return b.createdAt.getTime() - a.createdAt.getTime();
-    // });
+    return [...transformedSoldData, ...transformeSuppliesdData].sort((a, b) =>
+      b.createdAt.localeCompare(a.createdAt),
+    );
   }
 }
 

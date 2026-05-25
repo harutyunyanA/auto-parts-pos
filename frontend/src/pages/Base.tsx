@@ -22,7 +22,7 @@ export function Base() {
   const [isAddProductModalOpen, setIsAddProductModalOpen] =
     useState<boolean>(false);
   const tableContainerRef = useRef<HTMLDivElement>(null);
-  const handleSearch = (key: string, value: string) => {
+  const handleSearch = (key: keyof typeof activeFilters, value: string) => {
     if (activeFilters[key] === value) return;
     setActiveFilters((prev) => ({
       ...prev,
@@ -128,8 +128,9 @@ export function Base() {
       </div>
       <Modal
         open={isProductHistoryOpen}
-        onOk={() => setIsProductHistoryOpen(false)}
+        closeIcon={false}
         onCancel={() => setIsProductHistoryOpen(false)}
+        footer={(_, { CancelBtn }) => <CancelBtn />}
         width={"fit-content"}
       >
         <ProductHistory />

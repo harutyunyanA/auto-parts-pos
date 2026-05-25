@@ -258,11 +258,11 @@ export default function Sales() {
         </section>
       </div>
       <Modal
-        title="Product History"
         open={isProductHistoryOpen}
-        footer={null}
-        destroyOnHidden={true}
+        closeIcon={false}
         onCancel={() => setIsProductHistoryOpen(false)}
+        footer={(_, { CancelBtn }) => <CancelBtn />}
+        width={"fit-content"}
       >
         <ProductHistory />
       </Modal>
