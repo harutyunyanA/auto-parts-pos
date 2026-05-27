@@ -6,7 +6,7 @@ type HistoryBase = {
     code: number;
     name: string;
     type: string;
-    serial_number: string;
+    oem: string;
   };
 };
 

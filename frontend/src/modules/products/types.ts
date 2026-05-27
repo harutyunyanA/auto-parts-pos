@@ -4,7 +4,7 @@ export interface IProduct {
   id: number;
   name: string;
   type: string;
-  serial_number: string;
+  oem: string;
   code: number;
   WXQP: string;
   source: string;

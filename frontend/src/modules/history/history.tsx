@@ -75,8 +75,8 @@ export function ProductHistory() {
     },
     {
       title: "OEM",
-      dataIndex: ["product", "serial_number"],
-      key: "serial_number",
+      dataIndex: ["product", "oem"],
+      key: "oem",
     },
     {
       title: "Name",

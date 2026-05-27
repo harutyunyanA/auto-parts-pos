@@ -8,7 +8,7 @@ export type ProductType = {
   id: number;
   name: string;
   type: string;
-  serial_number?: string | null;
+  oem?: string | null;
   WXQP?: string | null;
   code: number | null;
   source: sourceType;
@@ -24,14 +24,14 @@ export type ProductType = {
 
 export type ProductCreationType = Optional<
   ProductType,
-  "id" | "serial_number" | "WXQP" | "minimum_quantity" | "code" | "weight"
+  "id" | "oem" | "WXQP" | "minimum_quantity" | "code" | "weight"
 >;
 
 export type searchParams = {
   code?: number;
   type?: string;
   name?: string;
-  serial_number?: string;
+  oem?: string;
   WXQP?: string;
 };
 
@@ -44,7 +44,7 @@ export type paginationParams = {
 //   product: {
 //     code: number;
 //     name: string;
-//     serial_number: string;
+//     oem: string;
 //     type: string;
 //   };
 //   createdAt: string;
@@ -53,7 +53,7 @@ export type SoldProductsHistoryRow = CartItem & {
   product: {
     code: number;
     name: string;
-    serial_number: string;
+    oem: string;
     type: string;
   };
   createdAt: string;
@@ -63,7 +63,7 @@ export type SuppliedProductsHistoryRow = SupplyItem & {
   product: {
     code: number;
     name: string;
-    serial_number: string;
+    oem: string;
     type: string;
   };
   createdAt: string;

@@ -61,7 +61,7 @@ class SaleService {
       ...newCartItem.dataValues,
       name: product.name,
       type: product.type,
-      serial_number: product.serial_number,
+      oem: product.oem,
       WXQP: product.WXQP,
       quantity_at_store: product.quantity,
     };
@@ -259,7 +259,7 @@ class SaleService {
     const whereProduct: any = { source };
 
     if (code) whereProduct.code = code;
-    if (oem) whereProduct.serial_number = oem;
+    if (oem) whereProduct.oem = oem;
 
     // const productId = (
     //   await Product.findOne({
@@ -283,7 +283,7 @@ class SaleService {
     //     {
     //       model: Product,
     //       as: "product",
-    //       attributes: ["name", "code", "serial_number", "WXQP"],
+    //       attributes: ["name", "code", "oem", "WXQP"],
     //     },
     //   ],
     //   order: [["createdAt", "DESC"]],
@@ -303,7 +303,7 @@ class SaleService {
           model: Product,
           as: "product",
           where: whereProduct,
-          attributes: ["name", "code", "serial_number", "WXQP"],
+          attributes: ["name", "code", "oem", "WXQP"],
         },
       ],
       order: [["createdAt", "DESC"]],

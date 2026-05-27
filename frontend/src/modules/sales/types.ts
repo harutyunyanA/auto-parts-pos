@@ -19,7 +19,7 @@ export interface ICartItem {
   totalPrice: number;
   quantityAtStore: number;
   type: string;
-  serialNumber: string;
+  oem: string | null;
   WXQP: string;
   code: number;
   purchase_price: number;

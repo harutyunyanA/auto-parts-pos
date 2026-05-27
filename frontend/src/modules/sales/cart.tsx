@@ -211,8 +211,8 @@ export function Cart({ cart }: CartProps) {
     },
     {
       title: "OEM",
-      dataIndex: "serialNumber",
-      key: "serialNumber",
+      dataIndex: "oem",
+      key: "oem",
       width: 150,
     },
     { title: "WXQP", dataIndex: "WXQP", key: "WXQP", width: 150 },

@@ -76,8 +76,8 @@ class ProductServices {
       where.type = { [Op.like]: `%${searchParams.type}%` };
     }
 
-    if (searchParams.serial_number) {
-      where.serial_number = { [Op.like]: `%${searchParams.serial_number}%` };
+    if (searchParams.oem) {
+      where.oem = { [Op.like]: `%${searchParams.oem}%` };
     }
 
     if (searchParams.WXQP) {
@@ -108,7 +108,7 @@ class ProductServices {
   ) {
     const productWhere: Record<string, any> = { source };
     if (code) productWhere.code = code;
-    if (oem) productWhere.serial_number = oem;
+    if (oem) productWhere.oem = oem;
 
     const dateRange: Record<symbol, Date> = {};
     if (from) dateRange[Op.gte] = dayjs(from).startOf("day").toDate();
@@ -130,7 +130,7 @@ class ProductServices {
           model: Product,
           as: "product",
           where: productWhere,
-          attributes: ["code", "name", "serial_number", "type"],
+          attributes: ["code", "name", "oem", "type"],
           required: true,
         },
       ],
@@ -151,7 +151,7 @@ class ProductServices {
           model: Product,
           as: "product",
           where: productWhere,
-          attributes: ["code", "name", "serial_number", "type"],
+          attributes: ["code", "name", "oem", "type"],
           required: true,
         },
       ],
@@ -167,7 +167,7 @@ class ProductServices {
       product: {
         code: i.product?.code,
         name: i.product?.name,
-        serial_number: i.product?.serial_number,
+        oem: i.product?.oem,
         type: i.product?.type,
       },
       createdAt: dayjs(i.createdAt).format("YYYY-MM-DD HH:mm:ss"),
@@ -183,7 +183,7 @@ class ProductServices {
       product: {
         code: i.product?.code,
         name: i.product?.name,
-        serial_number: i.product?.serial_number,
+        oem: i.product?.oem,
         type: i.product?.type,
       },
       createdAt: dayjs(i.createdAt).format("YYYY-MM-DD HH:mm:ss"),

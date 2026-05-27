@@ -69,7 +69,7 @@ class ProductController {
       const allowedFields = [
         "name",
         "type",
-        "serial_number",
+        "oem",
         "WXQP",
         "quantity",
         "minimum_quantity",
@@ -117,7 +117,7 @@ class ProductController {
         code: req.validated?.query.code,
         type: req.validated?.query.type,
         name: req.validated?.query.name,
-        serial_number: req.validated?.query.serial_number,
+        oem: req.validated?.query.oem,
         WXQP: req.validated?.query.WXQP,
       };
 

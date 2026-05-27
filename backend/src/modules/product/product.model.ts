@@ -10,7 +10,7 @@ export class Product
   declare id: number;
   declare name: string;
   declare type: string;
-  declare serial_number: string | null;
+  declare oem: string | null;
   declare WXQP: string | null;
   declare code: number | null;
   declare source: sourceType;
@@ -44,7 +44,7 @@ Product.init(
       defaultValue: "-",
     },
 
-    serial_number: {
+    oem: {
       type: DataTypes.STRING,
       allowNull: false,
       defaultValue: "-",

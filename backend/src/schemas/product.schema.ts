@@ -30,7 +30,7 @@ export const addProductSchema = z.object({
       .nonnegative("code must be non-negative")
       .optional(),
 
-    serial_number: z
+    oem: z
       .union([z.string(), z.number(), z.null()])
       .transform((val) =>
         !val || !String(val).trim() ? null : String(val).trim(),
@@ -88,7 +88,7 @@ export const updateProductSchema = z.object({
       .transform((val) => String(val).trim())
       .optional(),
     code: z.number().int().nonnegative().optional(),
-    serial_number: z
+    oem: z
       .union([z.string(), z.number(), z.null()])
       .transform((val) =>
         !val || !String(val).trim() ? null : String(val).trim(),
@@ -122,7 +122,7 @@ export const updateProductSchema = z.object({
 export const paginationQuerySchema = z.object({
   body: z.object({}).optional(),
   query: z.object({
-    serial_number: z.string().optional(),
+    oem: z.string().optional(),
     WXQP: z.string().optional(),
     code: z
       .preprocess(

@@ -201,8 +201,8 @@ export function Products({
           },
           {
             title: "OEM",
-            dataIndex: "serial_number",
-            key: "serial_number",
+            dataIndex: "oem",
+            key: "oem",
             align: "center",
             width: "12%",
           },

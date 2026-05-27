@@ -10,7 +10,7 @@ export function Base() {
   const searcParamsObj = {
     name: "",
     type: "",
-    serial_number: "",
+    oem: "",
     code: "",
     WXQP: "",
   };
@@ -77,14 +77,14 @@ export function Base() {
               placeholder="OEM"
               allowClear={{ clearIcon: <CloseOutlined /> }}
               style={{ minWidth: 150, flex: "1 1 150px" }}
-              value={searchParams.serial_number}
+              value={searchParams.oem}
               onChange={(e) =>
                 setSearchParams((prev) => ({
                   ...prev,
-                  serial_number: e.target.value,
+                  oem: e.target.value,
                 }))
               }
-              onSearch={(value) => handleSearch("serial_number", value)}
+              onSearch={(value) => handleSearch("oem", value)}
             />
             <Search
               placeholder="WXQP"
@@ -145,11 +145,13 @@ export function Base() {
       </Modal>
       <Modal
         open={isAddProductModalOpen}
-        onOk={() => setIsAddProductModalOpen(false)}
-        onCancel={() => setIsAddProductModalOpen(false)}
-        width={"fit-content"}
+        footer={null}
+        closeIcon={false}
+        maskClosable={false}
+        destroyOnClose
+        width={720}
       >
-        <AddProduct />
+        <AddProduct onClose={() => setIsAddProductModalOpen(false)} />
       </Modal>
     </>
   );

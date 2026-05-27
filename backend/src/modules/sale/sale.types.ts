@@ -40,7 +40,7 @@ export type TransformedCartItemType = {
   totalPrice: number;
   name: string;
   type: string;
-  serial_number: string;
+  oem: string;
   WXQP: string;
   quantity_at_store: number;
 }
