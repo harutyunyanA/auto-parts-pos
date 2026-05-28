@@ -24,5 +24,7 @@ router.get(
   controller.getAllProducts,
 );
 
+router.get("/deficit", checkSource, controller.getDeficitProducts);
+
 router.get("/history", checkSource, validate(getProductHistorySchema), controller.getHistory)
 export default router;

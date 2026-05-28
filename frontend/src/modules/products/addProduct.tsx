@@ -17,36 +17,12 @@ import {
 import api from "../../api/client";
 import type { ApiResponse } from "../../types/api.types";
 import type { ISupplier } from "../suppliers/types";
-import type { IProduct } from "./types";
-
-interface AddProductProps {
-  onClose: () => void;
-}
-
-interface AddProductFormValues {
-  name: string;
-  type?: string;
-  oem?: string;
-  WXQP?: string;
-  quantity: number;
-  purchase_price: number;
-  sale_price: number;
-  enable_minimum_quantity?: boolean;
-  minimum_quantity?: number;
-  supplier_id?: number;
-}
-
-interface AddProductPayload {
-  name: string;
-  type?: string;
-  oem?: string | null;
-  WXQP?: string | null;
-  quantity: number;
-  purchase_price: number;
-  sale_price: number;
-  minimum_quantity: number | null;
-  supplier_id?: number | null;
-}
+import type {
+  AddProductFormValues,
+  AddProductPayload,
+  AddProductProps,
+  IProduct,
+} from "./types";
 
 export function AddProduct({ onClose }: AddProductProps) {
   const [form] = Form.useForm<AddProductFormValues>();

@@ -18,6 +18,7 @@ import {
   BulbOutlined,
   UserOutlined,
   DatabaseOutlined,
+  WarningOutlined,
 } from "@ant-design/icons";
 import { useNavigate, useLocation, Outlet, Link } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
@@ -67,6 +68,11 @@ export default function MainLayout() {
       key: "/products",
       icon: <CarOutlined />,
       label: <Link to="/products">Stock</Link>,
+    },
+    {
+      key: "/deficit",
+      icon: <WarningOutlined />,
+      label: <Link to="/deficit">Deficit</Link>,
     },
   ];
 

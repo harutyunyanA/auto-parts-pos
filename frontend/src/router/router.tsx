@@ -6,6 +6,7 @@ import Dashboard from "../pages/Dashboard";
 import Products from "../pages/Products";
 import Sales from "../pages/Sales";
 import { Base } from "../pages/Base";
+import Deficit from "../pages/Deficit";
 
 export const router = createBrowserRouter([
   {
@@ -34,6 +35,10 @@ export const router = createBrowserRouter([
           {
             path: "base",
             element: <Base />,
+          },
+          {
+            path: "deficit",
+            element: <Deficit />,
           },
         ],
       },

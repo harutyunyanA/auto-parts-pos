@@ -132,6 +132,16 @@ class ProductController {
       next(err);
     }
   }
+  async getDeficitProducts(req: Request, res: Response, next: NextFunction) {
+    try {
+      const source = req.source as sourceType;
+      const products = await service.getDeficitProducts(source);
+      return successResponse(res, products);
+    } catch (err) {
+      next(err);
+    }
+  }
+
   async getHistory(req: Request, res: Response, next: NextFunction) {
     try {
       const { code, oem, from, to } = req.validated?.query || {};

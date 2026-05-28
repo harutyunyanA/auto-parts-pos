@@ -16,3 +16,32 @@ export interface IProduct {
   supplier_id: number;
   supplier?: ISupplier;
 }
+
+export interface AddProductProps {
+  onClose: () => void;
+}
+
+export interface AddProductFormValues {
+  name: string;
+  type?: string;
+  oem?: string;
+  WXQP?: string;
+  quantity: number;
+  purchase_price: number;
+  sale_price: number;
+  enable_minimum_quantity?: boolean;
+  minimum_quantity?: number;
+  supplier_id?: number;
+}
+
+export interface AddProductPayload {
+  name: string;
+  type?: string;
+  oem?: string | null;
+  WXQP?: string | null;
+  quantity: number;
+  purchase_price: number;
+  sale_price: number;
+  minimum_quantity: number | null;
+  supplier_id?: number | null;
+}

@@ -99,6 +99,17 @@ class ProductServices {
     return { items: result.rows, total: result.count };
   }
 
+  async getDeficitProducts(source: sourceType) {
+    return await Product.findAll({
+      where: {
+        source,
+        minimum_quantity: { [Op.ne]: null },
+        quantity: { [Op.lte]: { [Op.col]: "minimum_quantity" } },
+      },
+      order: [["code", "ASC"]],
+    });
+  }
+
   async getProductHistory(
     code: number | undefined,
     oem: string | undefined,
