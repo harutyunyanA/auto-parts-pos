@@ -3,6 +3,7 @@ import { ConfigProvider, theme } from 'antd';
 import { useSource } from './store/useAuthStore';
 import { useIsDarkMode } from './store/useThemeStore';
 import { router } from './router/router';
+import BackupOverlay from './components/BackupOverlay';
 import './App.css';
 
 export default function App() {
@@ -19,6 +20,7 @@ export default function App() {
       }}
     >
       <RouterProvider router={router} />
+      <BackupOverlay />
     </ConfigProvider>
   );
 }

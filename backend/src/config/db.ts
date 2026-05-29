@@ -6,7 +6,7 @@ export const sequelize = new Sequelize(
   env.DB_USER as string,
   env.DB_PASSWORD as string,
   {
-    host: "localhost",
+    host: env.DB_HOST,
     dialect: "mysql",
     logging: false,
   },

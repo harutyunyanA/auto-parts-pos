@@ -19,6 +19,7 @@ import {
   UserOutlined,
   DatabaseOutlined,
   WarningOutlined,
+  CloudServerOutlined,
 } from "@ant-design/icons";
 import { useNavigate, useLocation, Outlet, Link } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
@@ -121,8 +122,21 @@ export default function MainLayout() {
             bottom: 16,
             width: "100%",
             padding: "0 16px",
+            display: "flex",
+            flexDirection: "column",
+            gap: 4,
           }}
         >
+          {window.electronAPI && (
+            <Button
+              type="text"
+              icon={<CloudServerOutlined />}
+              block={!collapsed}
+              onClick={() => navigate("/server-setup")}
+            >
+              {!collapsed && "Server"}
+            </Button>
+          )}
           <Button
             type="text"
             danger
