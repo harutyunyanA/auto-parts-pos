@@ -1,12 +1,5 @@
 import { useState } from "react";
-import {
-  Layout,
-  Menu,
-  Button,
-  theme,
-  Typography,
-  DatePicker,
-} from "antd";
+import { Layout, Menu, Button, theme, Typography, DatePicker } from "antd";
 import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
@@ -18,6 +11,7 @@ import {
   DatabaseOutlined,
   WarningOutlined,
   SettingOutlined,
+  BarChartOutlined,
 } from "@ant-design/icons";
 import { useNavigate, useLocation, Outlet, Link } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
@@ -71,6 +65,11 @@ export default function MainLayout() {
       key: "/deficit",
       icon: <WarningOutlined />,
       label: <Link to="/deficit">Deficit</Link>,
+    },
+    {
+      key: "/analytics",
+      icon: <BarChartOutlined />,
+      label: <Link to="/analytics">Analytics</Link>,
     },
   ];
 

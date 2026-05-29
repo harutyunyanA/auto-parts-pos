@@ -16,6 +16,7 @@ export type CartItemType = {
   productId: number;
   quantity: number;
   priceAtSale: number;
+  purchasePriceAtSale: number;
   totalPrice: number;
 };
 

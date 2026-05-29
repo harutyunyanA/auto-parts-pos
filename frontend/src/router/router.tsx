@@ -3,6 +3,7 @@ import UserSelection from "../pages/Auth/UserSelection";
 import MainLayout from "../layouts/MainLayout";
 import SourceGuard from "../components/SourceGuard";
 import Dashboard from "../pages/Dashboard";
+import Analytics from "../pages/Analytics";
 import Products from "../pages/Products";
 import Sales from "../pages/Sales";
 import { Base } from "../pages/Base";
@@ -24,6 +25,10 @@ export const router = createBrowserRouter([
           {
             index: true,
             element: <Dashboard />,
+          },
+          {
+            path: "analytics",
+            element: <Analytics />,
           },
           {
             path: "products",

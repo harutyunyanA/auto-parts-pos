@@ -49,6 +49,7 @@ class SaleService {
       productId: product.id,
       cartId: cartId,
       priceAtSale: product.sale_price,
+      purchasePriceAtSale: product.purchase_price,
       createdAt: cart.createdAt,
       updatedAt: cart.updatedAt,
     });
