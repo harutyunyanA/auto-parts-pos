@@ -18,7 +18,6 @@ export function Base() {
   const [activeFilters, setActiveFilters] = useState(searcParamsObj);
   const [isProductHistoryOpen, setIsProductHistoryOpen] =
     useState<boolean>(false);
-  const [isDeficitModalOpen, setIsDeficitModalOpen] = useState<boolean>(false);
   const [isAddProductModalOpen, setIsAddProductModalOpen] =
     useState<boolean>(false);
   const tableContainerRef = useRef<HTMLDivElement>(null);
@@ -117,9 +116,6 @@ export function Base() {
             <Button size="large" onClick={() => setIsProductHistoryOpen(true)}>
               History
             </Button>
-            <Button size="large" onClick={() => setIsDeficitModalOpen(true)}>
-              Deficites
-            </Button>
             <Button size="large" onClick={() => setIsAddProductModalOpen(true)}>
               Add Product
             </Button>
@@ -134,14 +130,6 @@ export function Base() {
         width={"fit-content"}
       >
         <ProductHistory />
-      </Modal>
-      <Modal
-        open={isDeficitModalOpen}
-        onOk={() => setIsDeficitModalOpen(false)}
-        onCancel={() => setIsDeficitModalOpen(false)}
-        width={"fit-content"}
-      >
-        <p>Deficites</p>
       </Modal>
       <Modal
         open={isAddProductModalOpen}

@@ -3,7 +3,6 @@ import {
   Layout,
   Menu,
   Button,
-  Switch,
   theme,
   Typography,
   DatePicker,
@@ -15,15 +14,15 @@ import {
   ShoppingOutlined,
   CarOutlined,
   LogoutOutlined,
-  BulbOutlined,
   UserOutlined,
   DatabaseOutlined,
   WarningOutlined,
+  SettingOutlined,
 } from "@ant-design/icons";
 import { useNavigate, useLocation, Outlet, Link } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import { useSource, useClearSource } from "../store/useAuthStore";
-import { useIsDarkMode, useToggleTheme } from "../store/useThemeStore";
+import { useIsDarkMode } from "../store/useThemeStore";
 import { useCurrentDate, useSetCurrentDate } from "../store/useDateStore";
 import dayjs from "dayjs";
 
@@ -38,7 +37,6 @@ export default function MainLayout() {
   const source = useSource();
   const clearSource = useClearSource();
   const isDarkMode = useIsDarkMode();
-  const toggleTheme = useToggleTheme();
 
   const currentISO = useCurrentDate();
   const currentDate = dayjs(currentISO);
@@ -121,8 +119,19 @@ export default function MainLayout() {
             bottom: 16,
             width: "100%",
             padding: "0 16px",
+            display: "flex",
+            flexDirection: "column",
+            gap: 4,
           }}
         >
+          <Button
+            type="text"
+            icon={<SettingOutlined />}
+            block={!collapsed}
+            onClick={() => navigate("/settings")}
+          >
+            {!collapsed && "Settings"}
+          </Button>
           <Button
             type="text"
             danger
@@ -163,15 +172,6 @@ export default function MainLayout() {
             />
 
             <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
-              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                <BulbOutlined />
-                <Switch
-                  checked={isDarkMode}
-                  onChange={toggleTheme}
-                  size="small"
-                />
-              </div>
-
               <div
                 style={{
                   padding: "4px 12px",

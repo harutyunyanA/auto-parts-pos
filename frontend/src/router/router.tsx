@@ -7,6 +7,7 @@ import Products from "../pages/Products";
 import Sales from "../pages/Sales";
 import { Base } from "../pages/Base";
 import Deficit from "../pages/Deficit";
+import Settings from "../pages/Settings";
 
 export const router = createBrowserRouter([
   {
@@ -39,6 +40,10 @@ export const router = createBrowserRouter([
           {
             path: "deficit",
             element: <Deficit />,
+          },
+          {
+            path: "settings",
+            element: <Settings />,
           },
         ],
       },
