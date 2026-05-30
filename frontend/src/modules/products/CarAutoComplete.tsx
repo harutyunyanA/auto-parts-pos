@@ -1,11 +1,12 @@
-import { AutoComplete } from 'antd';
-import { useState, useCallback } from 'react';
-import { carSearchOptions } from '../lib/data.ts';
+import { AutoComplete } from "antd";
+import { useState, useCallback } from "react";
+import type { ReactNode } from "react";
+import { carSearchOptions } from "../../lib/data";
 
 // Иконки для типов подсказок
-const typeIcon = {
-  brand: '🚗',
-  model: '📋',
+const typeIcon: Record<string, string> = {
+  brand: "🚗",
+  model: "📋",
 };
 
 interface CarAutoCompleteProps {
@@ -13,19 +14,23 @@ interface CarAutoCompleteProps {
   onChange?: (value: string) => void;
   placeholder?: string;
   style?: React.CSSProperties;
-  [key: string]: any;
+  children?: ReactNode;
+  [key: string]: unknown;
 }
+
+type Option = { value: string; label: ReactNode };
 
 export default function CarAutoComplete({
   value,
   onChange,
-  placeholder = 'Например: BMW X5, Toyota Camry...',
+  placeholder = "e.g. BMW X5, Toyota Camry...",
   style,
+  children,
   ...rest
 }: CarAutoCompleteProps) {
-  const [options, setOptions] = useState([]);
+  const [options, setOptions] = useState<Option[]>([]);
 
-  const handleSearch = useCallback((input) => {
+  const handleSearch = useCallback((input: string) => {
     const q = input?.trim().toLowerCase();
 
     if (!q) {
@@ -56,10 +61,12 @@ export default function CarAutoComplete({
       options={options}
       onSearch={handleSearch}
       filterOption={false}
-      allowClear
-      placeholder={placeholder}
-      style={{ width: '100%', ...style }}
+      style={{ width: "100%", ...style }}
+      // when wrapping a custom input (e.g. Input.Search) let it own these props
+      {...(children ? {} : { allowClear: true, placeholder })}
       {...rest}
-    />
+    >
+      {children}
+    </AutoComplete>
   );
 }

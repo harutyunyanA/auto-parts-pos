@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import { CloseOutlined } from "@ant-design/icons";
 import { ProductHistory } from "../modules/history/history";
 import { AddProduct } from "../modules/products/addProduct";
+import CarAutoComplete from "../modules/products/CarAutoComplete";
 
 const { Search } = Input;
 export function Base() {
@@ -52,26 +53,34 @@ export function Base() {
               }}
               onSearch={(value) => handleSearch("code", value)}
             />
-            <Search
-              placeholder="Name"
-              allowClear={{ clearIcon: <CloseOutlined /> }}
+            <CarAutoComplete
               style={{ minWidth: 150, flex: "1 1 150px" }}
               value={searchParams.name}
-              onChange={(e) =>
-                setSearchParams((prev) => ({ ...prev, name: e.target.value }))
+              onChange={(value) =>
+                setSearchParams((prev) => ({ ...prev, name: value }))
               }
-              onSearch={(value) => handleSearch("name", value)}
-            />
-            <Search
-              placeholder="Type"
-              allowClear={{ clearIcon: <CloseOutlined /> }}
+              onSelect={(value: string) => handleSearch("name", value)}
+            >
+              <Search
+                placeholder="Name"
+                allowClear={{ clearIcon: <CloseOutlined /> }}
+                onSearch={(value) => handleSearch("name", value)}
+              />
+            </CarAutoComplete>
+            <CarAutoComplete
               style={{ minWidth: 150, flex: "1 1 150px" }}
               value={searchParams.type}
-              onChange={(e) =>
-                setSearchParams((prev) => ({ ...prev, type: e.target.value }))
+              onChange={(value) =>
+                setSearchParams((prev) => ({ ...prev, type: value }))
               }
-              onSearch={(value) => handleSearch("type", value)}
-            />
+              onSelect={(value: string) => handleSearch("type", value)}
+            >
+              <Search
+                placeholder="Type"
+                allowClear={{ clearIcon: <CloseOutlined /> }}
+                onSearch={(value) => handleSearch("type", value)}
+              />
+            </CarAutoComplete>
             <Search
               placeholder="OEM"
               allowClear={{ clearIcon: <CloseOutlined /> }}
