@@ -1,6 +1,6 @@
-import { success } from "zod";
 import { sequelize } from "../../config/db.ts";
 import { Product } from "../product/product.model.ts";
+import { Supplier } from "../supplier/supplier.model.ts";
 // import productService from "../product/product.service.ts";
 // import type { ProductType } from "../product/product.types.ts";
 import { Supply, SupplyItem } from "./supply.model.ts";
@@ -431,6 +431,11 @@ class SupplyService {
     const supplies = await Supply.findAll({
       where: { source },
       include: [
+        {
+          model: Supplier,
+          as: "supplier",
+          attributes: ["id", "name", "phone"],
+        },
         {
           model: SupplyItem,
           as: "items",

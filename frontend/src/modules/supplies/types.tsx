@@ -19,6 +19,7 @@ export interface ISupplyItem {
 export interface ISupply {
   id: number;
   supplierId: number;
+  supplier?: { id: number; name: string; phone: string | null } | null;
   status: string;
   source: string;
   items: ISupplyItem[];

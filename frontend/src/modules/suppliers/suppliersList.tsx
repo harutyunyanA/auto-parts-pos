@@ -1,8 +1,10 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import api from "../../api/client";
 import { Dropdown, Space, Input, Divider, theme, Button } from "antd";
 import { DownOutlined, ShopOutlined, SearchOutlined } from "@ant-design/icons";
 import { useState } from "react";
+import { useSuppliers } from "./queries";
+import type { ISupplier } from "./types";
 
 const { useToken } = theme;
 
@@ -15,12 +17,7 @@ export function SuppliersList({ currentSupply }: SuppliersListProps) {
   const queryClient = useQueryClient();
   const [searchValue, setSearchValue] = useState("");
 
-  const { data: suppliers } = useQuery({
-    queryKey: ["suppliers"],
-    queryFn: () => api.get("/suppliers").then((res) => res.data.data),
-    staleTime: 15 * 60 * 1000,
-    gcTime: 20 * 60 * 1000,
-  });
+  const { data: suppliers } = useSuppliers();
 
   const updateSupplierMutation = useMutation({
     mutationFn: (supplierId: number) =>
@@ -31,10 +28,10 @@ export function SuppliersList({ currentSupply }: SuppliersListProps) {
   });
 
   const supplierItems = suppliers
-    ?.filter((s: any) =>
+    ?.filter((s: ISupplier) =>
       s.name.toLowerCase().includes(searchValue.toLowerCase()),
     )
-    .map((s: any) => ({
+    .map((s: ISupplier) => ({
       key: s.id.toString(),
       label: (
         <div onClick={() => updateSupplierMutation.mutate(s.id)}>
@@ -54,7 +51,7 @@ export function SuppliersList({ currentSupply }: SuppliersListProps) {
     }));
 
   const selectedSupplier = suppliers?.find(
-    (s: any) => s.id === currentSupply?.supplierId,
+    (s: ISupplier) => s.id === currentSupply?.supplierId,
   );
 
   return (

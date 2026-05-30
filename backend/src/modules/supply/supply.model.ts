@@ -3,6 +3,7 @@ import { sequelize } from "../../config/db.ts";
 import type { SupplyType } from "./supply.types.ts";
 import type { sourceType } from "../../types/source.types.ts";
 import { Product } from "../product/product.model.ts";
+import { Supplier } from "../supplier/supplier.model.ts";
 import { recalcSupplyTotal } from "../../utils/recalcSupplyTotal.ts";
 
 // -------------------- Supply --------------------
@@ -150,6 +151,13 @@ SupplyItem.init(
 Supply.hasMany(SupplyItem, { foreignKey: "supplyId", as: "items" });
 SupplyItem.belongsTo(Supply, { foreignKey: "supplyId", as: "supply" });
 SupplyItem.belongsTo(Product, { foreignKey: "productId", as: "product" });
+// constraints:false — suppliers are unscoped/global and we don't want
+// sync({ alter: true }) to add or duplicate a FK constraint on every boot.
+Supply.belongsTo(Supplier, {
+  foreignKey: "supplierId",
+  as: "supplier",
+  constraints: false,
+});
 
 //HOOKS
 // CREATE

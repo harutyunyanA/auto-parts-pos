@@ -12,6 +12,7 @@ import {
   WarningOutlined,
   SettingOutlined,
   BarChartOutlined,
+  ShopOutlined,
 } from "@ant-design/icons";
 import { useNavigate, useLocation, Outlet, Link } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
@@ -65,6 +66,11 @@ export default function MainLayout() {
       key: "/deficit",
       icon: <WarningOutlined />,
       label: <Link to="/deficit">Deficit</Link>,
+    },
+    {
+      key: "/suppliers",
+      icon: <ShopOutlined />,
+      label: <Link to="/suppliers">Suppliers</Link>,
     },
     {
       key: "/analytics",
