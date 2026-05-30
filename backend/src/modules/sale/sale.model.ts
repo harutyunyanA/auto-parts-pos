@@ -55,6 +55,7 @@ export class CartItem extends Model implements CartItemType {
   declare productId: number;
   declare quantity: number;
   declare priceAtSale: number;
+  declare purchasePriceAtSale: number;
   declare totalPrice: number;
 }
 
@@ -89,6 +90,11 @@ CartItem.init(
     priceAtSale: {
       type: DataTypes.INTEGER,
       allowNull: false,
+    },
+    purchasePriceAtSale: {
+      type: DataTypes.DECIMAL(12, 2),
+      allowNull: true,
+      defaultValue: 0,
     },
     totalPrice: {
       type: DataTypes.INTEGER,

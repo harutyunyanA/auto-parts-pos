@@ -11,11 +11,12 @@ export async function normalizeCart(cartId: number, transaction?: any) {
       attributes: [
         "productId",
         "priceAtSale",
+        "purchasePriceAtSale",
         [Sequelize.fn("SUM", Sequelize.col("quantity")), "quantity"],
         [Sequelize.fn("SUM", Sequelize.col("totalPrice")), "totalPrice"],
       ],
       where: { cartId, quantity: { [Op.gt]: 0 } },
-      group: ["productId", "priceAtSale"],
+      group: ["productId", "priceAtSale", "purchasePriceAtSale"],
       raw: true,
       transaction: t,
     });
@@ -26,6 +27,7 @@ export async function normalizeCart(cartId: number, transaction?: any) {
       cartId,
       productId: item.productId,
       priceAtSale: item.priceAtSale,
+      purchasePriceAtSale: item.purchasePriceAtSale,
       quantity: item.quantity,
       totalPrice: item.totalPrice,
     }));
