@@ -17,6 +17,7 @@ import {
 import api from "../../api/client";
 import type { ApiResponse } from "../../types/api.types";
 import type { ISupplier } from "../suppliers/types";
+import CarAutoComplete from "./CarAutoComplete";
 import type {
   AddProductFormValues,
   AddProductPayload,
@@ -97,12 +98,12 @@ export function AddProduct({ onClose }: AddProductProps) {
             label="Product Name"
             rules={[{ required: true, message: "Name is required" }]}
           >
-            <Input />
+            <CarAutoComplete />
           </Form.Item>
         </Col>
         <Col span={12}>
           <Form.Item name="type" label="Type">
-            <Input />
+            <CarAutoComplete />
           </Form.Item>
         </Col>
         <Col span={12}>
