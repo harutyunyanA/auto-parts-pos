@@ -9,6 +9,8 @@ import Sales from "../pages/Sales";
 import { Base } from "../pages/Base";
 import Deficit from "../pages/Deficit";
 import Settings from "../pages/Settings";
+import Suppliers from "../pages/Suppliers";
+import SupplierDetail from "../pages/SupplierDetail";
 
 export const router = createBrowserRouter([
   {
@@ -45,6 +47,14 @@ export const router = createBrowserRouter([
           {
             path: "deficit",
             element: <Deficit />,
+          },
+          {
+            path: "suppliers",
+            element: <Suppliers />,
+          },
+          {
+            path: "suppliers/:id",
+            element: <SupplierDetail />,
           },
           {
             path: "settings",
