@@ -1,11 +1,13 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { message } from "antd";
+import { useTranslation } from "react-i18next";
 import api from "../../api/client";
 import type { ApiResponse } from "../../types/api.types";
 import type { ISetting, IUpdateSettingPayload } from "./types";
 
 export function useUpdateSetting() {
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
 
   return useMutation({
     mutationFn: (payload: IUpdateSettingPayload) =>
@@ -14,10 +16,10 @@ export function useUpdateSetting() {
         .then((res) => res.data.data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["settings"] });
-      message.success("Settings saved");
+      message.success(t("toast.settingsSaved"));
     },
     onError: (err: any) => {
-      message.error(err.response?.data?.message || "Failed to save");
+      message.error(err.response?.data?.message || t("toast.failedSave"));
     },
   });
 }

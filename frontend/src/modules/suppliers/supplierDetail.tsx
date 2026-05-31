@@ -15,6 +15,7 @@ import {
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
 import { useSupplierSupplies } from "./queries";
+import { useTranslation } from "react-i18next";
 import type { ISupplierSupply, ISupplierSupplyItem } from "./types";
 
 interface SupplierDetailProps {
@@ -23,6 +24,7 @@ interface SupplierDetailProps {
 
 export function SupplierDetail({ id }: SupplierDetailProps) {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const { data, isLoading } = useSupplierSupplies(id);
 
   if (isLoading) {
@@ -34,7 +36,7 @@ export function SupplierDetail({ id }: SupplierDetailProps) {
   }
 
   if (!data) {
-    return <Empty description="Supplier not found" />;
+    return <Empty description={t("suppliers.notFound")} />;
   }
 
   const { supplier, supplies, stats } = data;
@@ -44,48 +46,48 @@ export function SupplierDetail({ id }: SupplierDetailProps) {
 
   const itemColumns = [
     {
-      title: "Code",
+      title: t("columns.code"),
       dataIndex: ["product", "code"],
       key: "code",
       width: 80,
     },
     {
-      title: "Product",
+      title: t("columns.product"),
       dataIndex: ["product", "name"],
       key: "name",
       width: 200,
       render: (name: string | undefined) => name ?? "—",
     },
     {
-      title: "Type",
+      title: t("columns.type"),
       dataIndex: ["product", "type"],
       key: "type",
       width: 90,
       render: (v: string | null) => v ?? "—",
     },
     {
-      title: "OEM",
+      title: t("columns.oem"),
       dataIndex: ["product", "oem"],
       key: "oem",
       width: 110,
       render: (v: string | null) => v ?? "—",
     },
     {
-      title: "WXQP",
+      title: t("columns.wxqp"),
       dataIndex: ["product", "WXQP"],
       key: "wxqp",
       width: 110,
       render: (v: string | null) => v ?? "—",
     },
     {
-      title: "Qty",
+      title: t("columns.qty"),
       dataIndex: "quantity",
       key: "quantity",
       width: 70,
       align: "right" as const,
     },
     {
-      title: "Purchase",
+      title: t("columns.purchase"),
       dataIndex: "purchasePrice",
       key: "purchasePrice",
       width: 100,
@@ -93,7 +95,7 @@ export function SupplierDetail({ id }: SupplierDetailProps) {
       render: (v: string) => dec(v),
     },
     {
-      title: "Sale",
+      title: t("columns.sale"),
       dataIndex: "salePrice",
       key: "salePrice",
       width: 100,
@@ -101,7 +103,7 @@ export function SupplierDetail({ id }: SupplierDetailProps) {
       render: (v: string | null) => dec(v),
     },
     {
-      title: "USD price",
+      title: t("columns.usdPrice"),
       dataIndex: "purchasePriceUsd",
       key: "purchasePriceUsd",
       width: 100,
@@ -109,7 +111,7 @@ export function SupplierDetail({ id }: SupplierDetailProps) {
       render: (v: string | null) => dec(v),
     },
     {
-      title: "USD rate",
+      title: t("columns.usdRate"),
       dataIndex: "usdRate",
       key: "usdRate",
       width: 100,
@@ -117,7 +119,7 @@ export function SupplierDetail({ id }: SupplierDetailProps) {
       render: (v: string | null) => dec(v, 4),
     },
     {
-      title: "Tax",
+      title: t("columns.tax"),
       dataIndex: "tax",
       key: "tax",
       width: 90,
@@ -125,7 +127,7 @@ export function SupplierDetail({ id }: SupplierDetailProps) {
       render: (v: string | null) => dec(v),
     },
     {
-      title: "Weight",
+      title: t("columns.weight"),
       dataIndex: "weight",
       key: "weight",
       width: 90,
@@ -136,19 +138,19 @@ export function SupplierDetail({ id }: SupplierDetailProps) {
 
   const supplyColumns = [
     {
-      title: "Supply ID",
+      title: t("columns.supplyId"),
       dataIndex: "id",
       key: "id",
       width: 110,
     },
     {
-      title: "Date",
+      title: t("columns.date"),
       dataIndex: "createdAt",
       key: "createdAt",
       render: (v: string) => dayjs(v).format("DD-MM-YYYY HH:mm"),
     },
     {
-      title: "Status",
+      title: t("columns.status"),
       dataIndex: "status",
       key: "status",
       width: 130,
@@ -157,14 +159,14 @@ export function SupplierDetail({ id }: SupplierDetailProps) {
       ),
     },
     {
-      title: "Items",
+      title: t("columns.items"),
       key: "items",
       width: 100,
       align: "right" as const,
       render: (_: unknown, s: ISupplierSupply) => s.items?.length ?? 0,
     },
     {
-      title: "Total cost",
+      title: t("columns.totalCost"),
       dataIndex: "totalCost",
       key: "totalCost",
       width: 140,
@@ -191,13 +193,16 @@ export function SupplierDetail({ id }: SupplierDetailProps) {
       <Row gutter={16}>
         <Col span={6}>
           <Card>
-            <Statistic title="Total supplies" value={stats.totalSupplies} />
+            <Statistic
+              title={t("suppliers.statTotalSupplies")}
+              value={stats.totalSupplies}
+            />
           </Card>
         </Col>
         <Col span={6}>
           <Card>
             <Statistic
-              title="Total spent"
+              title={t("suppliers.statTotalSpent")}
               value={stats.totalSpent}
               precision={2}
             />
@@ -205,13 +210,16 @@ export function SupplierDetail({ id }: SupplierDetailProps) {
         </Col>
         <Col span={6}>
           <Card>
-            <Statistic title="Units delivered" value={stats.totalItems} />
+            <Statistic
+              title={t("suppliers.statUnitsDelivered")}
+              value={stats.totalItems}
+            />
           </Card>
         </Col>
         <Col span={6}>
           <Card>
             <Statistic
-              title="Last supply"
+              title={t("suppliers.statLastSupply")}
               value={
                 stats.lastSupplyAt
                   ? dayjs(stats.lastSupplyAt).format("DD-MM-YYYY")
@@ -223,7 +231,7 @@ export function SupplierDetail({ id }: SupplierDetailProps) {
       </Row>
 
       <Typography.Title level={5} style={{ margin: 0 }}>
-        Supply history
+        {t("suppliers.supplyHistory")}
       </Typography.Title>
 
       <Table

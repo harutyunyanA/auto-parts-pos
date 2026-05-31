@@ -14,6 +14,7 @@ import {
   Typography,
   message,
 } from "antd";
+import { useTranslation } from "react-i18next";
 import api from "../../api/client";
 import type { ApiResponse } from "../../types/api.types";
 import type { ISupplier } from "../suppliers/types";
@@ -26,6 +27,7 @@ import type {
 } from "./types";
 
 export function AddProduct({ onClose }: AddProductProps) {
+  const { t } = useTranslation();
   const [form] = Form.useForm<AddProductFormValues>();
   const enableMinQty = Form.useWatch("enable_minimum_quantity", form);
   const queryClient = useQueryClient();
@@ -52,7 +54,9 @@ export function AddProduct({ onClose }: AddProductProps) {
       form.resetFields();
     },
     onError: (err: any) => {
-      message.error(err.response?.data?.message || "Failed to create product");
+      message.error(
+        err.response?.data?.message || t("toast.failedCreateProduct"),
+      );
     },
   });
 
@@ -60,11 +64,11 @@ export function AddProduct({ onClose }: AddProductProps) {
     return (
       <Result
         status="success"
-        title="Product created"
-        subTitle={`Code: ${createdCode}`}
+        title={t("addProduct.created")}
+        subTitle={`${t("addProduct.codeLabel")}: ${createdCode}`}
         extra={
           <Button type="primary" onClick={onClose}>
-            Close
+            {t("common.close")}
           </Button>
         }
       />
@@ -89,56 +93,58 @@ export function AddProduct({ onClose }: AddProductProps) {
       initialValues={{ quantity: 0, purchase_price: 0, sale_price: 0 }}
     >
       <Typography.Title level={5} style={{ marginTop: 0 }}>
-        Basics
+        {t("addProduct.basics")}
       </Typography.Title>
       <Row gutter={16}>
         <Col span={12}>
           <Form.Item
             name="name"
-            label="Product Name"
-            rules={[{ required: true, message: "Name is required" }]}
+            label={t("addProduct.productName")}
+            rules={[{ required: true, message: t("addProduct.nameRequired") }]}
           >
             <CarAutoComplete />
           </Form.Item>
         </Col>
         <Col span={12}>
-          <Form.Item name="type" label="Type">
+          <Form.Item name="type" label={t("columns.type")}>
             <CarAutoComplete />
           </Form.Item>
         </Col>
         <Col span={12}>
-          <Form.Item name="oem" label="OEM">
+          <Form.Item name="oem" label={t("columns.oem")}>
             <Input />
           </Form.Item>
         </Col>
         <Col span={12}>
-          <Form.Item name="WXQP" label="WXQP">
+          <Form.Item name="WXQP" label={t("columns.wxqp")}>
             <Input />
           </Form.Item>
         </Col>
       </Row>
 
-      <Typography.Title level={5}>Inventory & Pricing</Typography.Title>
+      <Typography.Title level={5}>
+        {t("addProduct.inventoryPricing")}
+      </Typography.Title>
       <Row gutter={16}>
         <Col span={8}>
-          <Form.Item name="quantity" label="Quantity">
+          <Form.Item name="quantity" label={t("columns.quantity")}>
             <InputNumber min={0} style={{ width: "100%" }} />
           </Form.Item>
         </Col>
         <Col span={8}>
-          <Form.Item name="purchase_price" label="Purchase Price">
+          <Form.Item name="purchase_price" label={t("columns.purchasePrice")}>
             <InputNumber min={0} style={{ width: "100%" }} />
           </Form.Item>
         </Col>
         <Col span={8}>
-          <Form.Item name="sale_price" label="Sale Price">
+          <Form.Item name="sale_price" label={t("columns.salePrice")}>
             <InputNumber min={0} style={{ width: "100%" }} />
           </Form.Item>
         </Col>
       </Row>
       <Row gutter={16}>
         <Col span={8}>
-          <Form.Item label="Minimum Quantity">
+          <Form.Item label={t("addProduct.minimumQuantity")}>
             <Flex gap="small" align="center">
               <Form.Item name="minimum_quantity" noStyle>
                 <InputNumber
@@ -159,11 +165,11 @@ export function AddProduct({ onClose }: AddProductProps) {
         </Col>
       </Row>
 
-      <Typography.Title level={5}>Supplier</Typography.Title>
-      <Form.Item name="supplier_id" label="Supplier">
+      <Typography.Title level={5}>{t("columns.supplier")}</Typography.Title>
+      <Form.Item name="supplier_id" label={t("columns.supplier")}>
         <Select
           allowClear
-          placeholder="Select a supplier"
+          placeholder={t("addProduct.selectSupplier")}
           options={suppliers?.map((s) => ({ label: s.name, value: s.id }))}
         />
       </Form.Item>
@@ -171,14 +177,14 @@ export function AddProduct({ onClose }: AddProductProps) {
       <Form.Item style={{ marginBottom: 0 }}>
         <Flex justify="end" gap="small">
           <Button onClick={onClose} disabled={mutation.isPending}>
-            Cancel
+            {t("common.cancel")}
           </Button>
           <Button
             type="primary"
             htmlType="submit"
             loading={mutation.isPending}
           >
-            Create
+            {t("common.create")}
           </Button>
         </Flex>
       </Form.Item>

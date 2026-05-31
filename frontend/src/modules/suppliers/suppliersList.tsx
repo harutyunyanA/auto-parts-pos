@@ -3,6 +3,7 @@ import api from "../../api/client";
 import { Dropdown, Space, Input, Divider, theme, Button } from "antd";
 import { DownOutlined, ShopOutlined, SearchOutlined } from "@ant-design/icons";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useSuppliers } from "./queries";
 import type { ISupplier } from "./types";
 
@@ -13,6 +14,7 @@ interface SuppliersListProps {
 }
 
 export function SuppliersList({ currentSupply }: SuppliersListProps) {
+  const { t } = useTranslation();
   const { token } = useToken();
   const queryClient = useQueryClient();
   const [searchValue, setSearchValue] = useState("");
@@ -72,7 +74,7 @@ export function SuppliersList({ currentSupply }: SuppliersListProps) {
         >
           <div style={{ padding: 8 }}>
             <Input
-              placeholder="Search suppliers..."
+              placeholder={t("suppliers.searchPlaceholder")}
               prefix={<SearchOutlined />}
               value={searchValue}
               onChange={(e) => setSearchValue(e.target.value)}
@@ -96,7 +98,9 @@ export function SuppliersList({ currentSupply }: SuppliersListProps) {
         <Space>
           <ShopOutlined style={{ color: token.colorPrimary }} />
           <span style={{ fontWeight: 500 }}>
-            {selectedSupplier ? selectedSupplier.name : "Select Supplier"}
+            {selectedSupplier
+              ? selectedSupplier.name
+              : t("suppliers.selectSupplier")}
           </span>
           <DownOutlined style={{ fontSize: "10px", opacity: 0.5 }} />
         </Space>

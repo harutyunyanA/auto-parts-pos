@@ -27,8 +27,10 @@ import { useCartMutations } from "../modules/sales/mutations";
 import Modal from "antd/es/modal/Modal";
 import { ProductHistory } from "../modules/history/history";
 import { DaySummary } from "../components/daySummary";
+import { useTranslation } from "react-i18next";
 
 export default function Sales() {
+  const { t } = useTranslation();
   const currentDate = useCurrentDate();
   // const [currentCartPage, setCurrentCartPage] = useState<number>(1);
   const currentCartPage = useCurrentCartPage();
@@ -132,7 +134,9 @@ export default function Sales() {
                 }}
               ></Button>
             </Flex>
-            <p>Receipt {carts?.[currentCartPage - 1]?.id}</p>
+            <p>
+              {t("sales.receipt")} {carts?.[currentCartPage - 1]?.id}
+            </p>
             <ClientsList />
             <p id="purchasedPrice">11EAX{activePrice ?? ""}</p>
             <Button
@@ -168,15 +172,15 @@ export default function Sales() {
         <section id="btnTools" style={{ flex: "0 0 auto" }}>
           <Flex justify="space-between" align="center">
             <Flex justify="space-between" gap={"small"} vertical>
-              <Button size="large">Print</Button>
+              <Button size="large">{t("common.print")}</Button>
               <Button size="large" onClick={() => setIsSummaryOpen(true)}>
-                Summary
+                {t("sales.summary")}
               </Button>
               <Button
                 size="large"
                 onClick={() => setIsProductHistoryOpen(true)}
               >
-                History
+                {t("base.history")}
               </Button>
             </Flex>
             <Flex gap={"small"} align="flex-start">
@@ -202,12 +206,12 @@ export default function Sales() {
                   }
                 }}
               >
-                Card
+                {t("sales.card")}
               </Button>
             </Flex>
             <Flex vertical gap="small" style={{ width: "200px" }}>
               <Flex justify="space-between" align="center">
-                <Text strong>Total</Text>
+                <Text strong>{t("columns.total")}</Text>
                 <Text
                   style={{
                     border: `1px solid ${token.colorBorder}`,
@@ -267,7 +271,7 @@ export default function Sales() {
         <ProductHistory />
       </Modal>
       <Modal
-        title="Summary"
+        title={t("sales.summary")}
         open={isSummaryOpen}
         footer={null}
         destroyOnHidden={true}

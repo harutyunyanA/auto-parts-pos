@@ -4,10 +4,8 @@ import type { ApiResponse } from "../../types/api.types";
 import { useSource } from "../../store/useAuthStore";
 import type {
   ISupplierStat,
-  ITopProduct,
   IDeadStockItem,
   IDateRange,
-  TopProductsSort,
 } from "./types";
 
 const STALE = 5 * 60 * 1000;
@@ -21,33 +19,6 @@ export function useSupplierStats(range: IDateRange) {
       api
         .get<ApiResponse<ISupplierStat[]>>("/analytics/suppliers", {
           params: range,
-        })
-        .then((res) => res.data.data ?? []),
-    staleTime: STALE,
-    gcTime: GC,
-  });
-}
-
-export function useTopProducts(
-  range: IDateRange,
-  by: TopProductsSort,
-  limit = 20,
-) {
-  const source = useSource();
-  return useQuery({
-    queryKey: [
-      "analytics",
-      "top-products",
-      source,
-      range.from,
-      range.to,
-      by,
-      limit,
-    ],
-    queryFn: () =>
-      api
-        .get<ApiResponse<ITopProduct[]>>("/analytics/top-products", {
-          params: { ...range, by, limit },
         })
         .then((res) => res.data.data ?? []),
     staleTime: STALE,

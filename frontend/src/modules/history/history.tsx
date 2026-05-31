@@ -4,6 +4,7 @@ import { useState } from "react";
 import dayjs, { Dayjs } from "dayjs";
 import { CloseOutlined } from "@ant-design/icons";
 import { useQuery } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
 import api from "../../api/client";
 import type { IHistory } from "./types";
 import type { ApiResponse } from "../../types/api.types";
@@ -18,6 +19,7 @@ type AppliedParams = {
 };
 
 export function ProductHistory() {
+  const { t } = useTranslation();
   const [oem, setOEM] = useState<string>("");
   const [code, setCode] = useState<string>("");
   const [date, setDate] = useState<[Dayjs, Dayjs]>([dayjs(), dayjs()]);
@@ -53,13 +55,13 @@ export function ProductHistory() {
 
   const columns: ColumnsType<IHistory> = [
     {
-      title: "Date",
+      title: t("columns.date"),
       dataIndex: "createdAt",
       key: "createdAt",
       width: 160,
     },
     {
-      title: "Operation",
+      title: t("columns.operation"),
       dataIndex: "operation",
       key: "operation",
       width: 100,
@@ -68,54 +70,54 @@ export function ProductHistory() {
       ),
     },
     {
-      title: "Code",
+      title: t("columns.code"),
       dataIndex: ["product", "code"],
       key: "code",
       width: 90,
     },
     {
-      title: "OEM",
+      title: t("columns.oem"),
       dataIndex: ["product", "oem"],
       key: "oem",
     },
     {
-      title: "Name",
+      title: t("columns.name"),
       dataIndex: ["product", "name"],
       key: "name",
     },
     {
-      title: "Type",
+      title: t("columns.type"),
       dataIndex: ["product", "type"],
       key: "type",
     },
     {
-      title: "Qty",
+      title: t("columns.qty"),
       dataIndex: "quantity",
       key: "quantity",
       width: 90,
     },
     {
-      title: "Price",
+      title: t("columns.price"),
       key: "price",
       width: 110,
       render: (_, row) =>
         row.operation === "IN" ? row.purchasePrice : row.priceAtSale,
     },
     {
-      title: "Total",
+      title: t("columns.total"),
       key: "total",
       width: 120,
       render: (_, row) =>
         row.operation === "IN" ? row.totalCost : row.totalPrice,
     },
     {
-      title: "Document",
+      title: t("columns.document"),
       key: "doc",
       width: 110,
       render: (_, row) =>
         row.operation === "IN"
-          ? `Supply #${row.supplyId}`
-          : `Cart #${row.cartId}`,
+          ? t("history.supplyDoc", { id: row.supplyId })
+          : t("history.cartDoc", { id: row.cartId }),
     },
   ];
 
@@ -123,7 +125,7 @@ export function ProductHistory() {
     <div className="flex flex-col gap-4">
       <div className="flex gap-6">
         <Input
-          placeholder="Code"
+          placeholder={t("columns.code")}
           size="large"
           value={code}
           disabled={oem.length > 0}
@@ -137,7 +139,7 @@ export function ProductHistory() {
         />
 
         <Input
-          placeholder="OEM"
+          placeholder={t("columns.oem")}
           size="large"
           value={oem}
           allowClear={{ clearIcon: <CloseOutlined /> }}
@@ -154,7 +156,7 @@ export function ProductHistory() {
           allowClear={false}
         />
         <Button size="large" onClick={handleSearch} loading={isFetching}>
-          Search
+          {t("common.search")}
         </Button>
       </div>
       <Table<IHistory>

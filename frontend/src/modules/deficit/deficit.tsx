@@ -6,8 +6,10 @@ import type { ApiResponse } from "../../types/api.types";
 import type { IProduct } from "../products/types";
 import api from "../../api/client";
 import { useSource } from "../../store/useAuthStore";
+import { useTranslation } from "react-i18next";
 
 export function Deficit() {
+  const { t } = useTranslation();
   const source = useSource();
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(20);
@@ -25,7 +27,7 @@ export function Deficit() {
   return (
     <div className="flex flex-col gap-4 h-full">
       <div className="flex justify-start">
-        <Button icon={<PrinterOutlined />}>Print</Button>
+        <Button icon={<PrinterOutlined />}>{t("common.print")}</Button>
       </div>
       <Table
         dataSource={data}
@@ -48,40 +50,40 @@ export function Deficit() {
       }}
       columns={[
         {
-          title: "№",
+          title: t("columns.num"),
           key: "index",
           align: "center",
           width: "5%",
           render: (_text, _record, index) => (page - 1) * pageSize + index + 1,
         },
         {
-          title: "Code",
+          title: t("columns.code"),
           dataIndex: "code",
           key: "code",
           align: "center",
           width: "10%",
         },
         {
-          title: "Name",
+          title: t("columns.name"),
           dataIndex: "name",
           key: "name",
         },
         {
-          title: "Type",
+          title: t("columns.type"),
           dataIndex: "type",
           key: "type",
           align: "center",
           width: "10%",
         },
         {
-          title: "OEM",
+          title: t("columns.oem"),
           dataIndex: "oem",
           key: "oem",
           align: "center",
           width: "12%",
         },
         {
-          title: "Qty",
+          title: t("columns.qty"),
           dataIndex: "quantity",
           key: "quantity",
           align: "center",
@@ -91,14 +93,14 @@ export function Deficit() {
           ),
         },
         {
-          title: "Min",
+          title: t("columns.min"),
           dataIndex: "minimum_quantity",
           key: "minimum_quantity",
           align: "center",
           width: "8%",
         },
         {
-          title: "Purchase price",
+          title: t("columns.purchasePrice"),
           dataIndex: "purchase_price",
           key: "purchase_price",
           align: "center",

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
 import api from "../api/client";
 import { Dropdown, Space, Input, Divider, theme, Button } from "antd";
 import { DownOutlined, UserOutlined, SearchOutlined } from "@ant-design/icons";
@@ -7,6 +8,7 @@ import { DownOutlined, UserOutlined, SearchOutlined } from "@ant-design/icons";
 const { useToken } = theme;
 
 export function ClientsList() {
+  const { t } = useTranslation();
   const { token } = useToken();
   const [selectedClient, setSelectedClient] = useState<any>(null);
   const [searchValue, setSearchValue] = useState("");
@@ -65,7 +67,7 @@ export function ClientsList() {
         >
           <div style={{ padding: 8 }}>
             <Input
-              placeholder="Search clients..."
+              placeholder={t("sales.searchClients")}
               prefix={<SearchOutlined />}
               value={searchValue}
               onChange={(e) => setSearchValue(e.target.value)}
@@ -81,7 +83,7 @@ export function ClientsList() {
         <Space>
           <UserOutlined style={{ color: token.colorPrimary }} />
           <span style={{ fontWeight: 500 }}>
-            {selectedClient ? selectedClient.name : "Default"}
+            {selectedClient ? selectedClient.name : t("sales.defaultClient")}
           </span>
           <DownOutlined style={{ fontSize: "10px", opacity: 0.5 }} />
         </Space>

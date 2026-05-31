@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import api from "../../api/client";
 import { message } from "antd";
+import { useTranslation } from "react-i18next";
 
 interface UseSupplyMutationsProps {
   supplyId: number | undefined;
@@ -24,6 +25,7 @@ export function useSupplyMutations({
   setFocusTarget,
 }: UseSupplyMutationsProps) {
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
 
   const mutationAdd = useMutation({
     mutationFn: (code: string) =>
@@ -34,7 +36,7 @@ export function useSupplyMutations({
       setFocusTarget({ id: newItem.id, field: "quantity" });
     },
     onError: (err: any) => {
-      message.error(err.response?.data?.message || "Failed to add item");
+      message.error(err.response?.data?.message || t("toast.failedAddItem"));
     },
   });
 
@@ -70,7 +72,7 @@ export function useSupplyMutations({
       }
     },
     onError: (err: any) => {
-      message.error(err.response?.data?.message || "Failed to update item");
+      message.error(err.response?.data?.message || t("toast.failedUpdateItem"));
     },
   });
 
@@ -80,7 +82,7 @@ export function useSupplyMutations({
       queryClient.invalidateQueries({ queryKey: ["supplies"] });
     },
     onError: (err: any) => {
-      message.error(err.response?.data?.message || "Failed to delete item");
+      message.error(err.response?.data?.message || t("toast.failedDeleteItem"));
     },
   });
 
@@ -90,7 +92,7 @@ export function useSupplyMutations({
       queryClient.invalidateQueries({ queryKey: ["supplies"] });
     },
     onError: (err: any) => {
-      message.error(err.response?.data?.message || "Failed to update status");
+      message.error(err.response?.data?.message || t("toast.failedUpdateStatus"));
     },
   });
 

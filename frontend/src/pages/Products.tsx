@@ -21,8 +21,10 @@ import {
 } from "../store/useCurrentSupplyPage";
 import dayjs from "dayjs";
 import { SuppliersList } from "../modules/suppliers/suppliersList";
+import { useTranslation } from "react-i18next";
 
 export default function Stock() {
+  const { t } = useTranslation();
   const currentSupplyPage = useCurrentSupplyPage();
   const setCurrentSupplyPage = useSetCurrentSupplyPage();
 
@@ -76,10 +78,10 @@ export default function Stock() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["supplies"] });
-      message.success("Supply created successfully");
+      message.success(t("toast.supplyCreated"));
     },
     onError: (err: any) => {
-      message.error(err.response?.data?.message || "Failed to create supply");
+      message.error(err.response?.data?.message || t("toast.failedCreateSupply"));
     },
   });
 
@@ -90,10 +92,10 @@ export default function Stock() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["supplies"] });
-      message.success("Status updated");
+      message.success(t("toast.statusUpdated"));
     },
     onError: (err: any) => {
-      message.error(err.response?.data?.message || "Failed to update status");
+      message.error(err.response?.data?.message || t("toast.failedUpdateStatus"));
     },
   });
 
@@ -111,7 +113,7 @@ export default function Stock() {
           <Flex gap="middle" align="center">
             <Flex align="center" gap="small">
               <Text strong style={{ fontSize: "18px" }}>
-                Supply №
+                {t("stock.supplyNo")}
               </Text>
               <Text strong>{currentSupply?.id || "-"}</Text>
             </Flex>
@@ -170,19 +172,19 @@ export default function Stock() {
           <Flex gap="large" align="center">
             <Flex vertical align="end">
               <Text type="secondary" style={{ fontSize: "12px" }}>
-                Purchase
+                {t("columns.purchase")}
               </Text>
               <Text strong>{totals.purchase.toLocaleString()} ֏</Text>
             </Flex>
             <Flex vertical align="end">
               <Text type="secondary" style={{ fontSize: "12px" }}>
-                Sale
+                {t("columns.sale")}
               </Text>
               <Text strong>{totals.sale.toLocaleString()} ֏</Text>
             </Flex>
             <Flex vertical align="end">
               <Text type="secondary" style={{ fontSize: "12px" }}>
-                Profit
+                {t("columns.profit")}
               </Text>
               <Text
                 strong
@@ -212,9 +214,7 @@ export default function Stock() {
           <Supply supply={currentSupply} />
         ) : (
           <Flex align="center" justify="center" style={{ height: "100%" }}>
-            <Text type="secondary">
-              No supplies found. Click + to create one.
-            </Text>
+            <Text type="secondary">{t("stock.noSupplies")}</Text>
           </Flex>
         )}
       </section>

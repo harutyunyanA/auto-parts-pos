@@ -5,9 +5,11 @@ import { CloseOutlined } from "@ant-design/icons";
 import { ProductHistory } from "../modules/history/history";
 import { AddProduct } from "../modules/products/addProduct";
 import CarAutoComplete from "../modules/products/CarAutoComplete";
+import { useTranslation } from "react-i18next";
 
 const { Search } = Input;
 export function Base() {
+  const { t } = useTranslation();
   const searcParamsObj = {
     name: "",
     type: "",
@@ -44,7 +46,7 @@ export function Base() {
           <Flex gap={"middle"} justify="start" wrap="wrap">
             <Search
               allowClear={{ clearIcon: <CloseOutlined /> }}
-              placeholder="Code"
+              placeholder={t("columns.code")}
               style={{ minWidth: 150, flex: "1 1 150px" }}
               value={searchParams.code}
               onChange={(e) => {
@@ -62,7 +64,7 @@ export function Base() {
               onSelect={(value: string) => handleSearch("name", value)}
             >
               <Search
-                placeholder="Name"
+                placeholder={t("columns.name")}
                 allowClear={{ clearIcon: <CloseOutlined /> }}
                 onSearch={(value) => handleSearch("name", value)}
               />
@@ -76,13 +78,13 @@ export function Base() {
               onSelect={(value: string) => handleSearch("type", value)}
             >
               <Search
-                placeholder="Type"
+                placeholder={t("columns.type")}
                 allowClear={{ clearIcon: <CloseOutlined /> }}
                 onSearch={(value) => handleSearch("type", value)}
               />
             </CarAutoComplete>
             <Search
-              placeholder="OEM"
+              placeholder={t("columns.oem")}
               allowClear={{ clearIcon: <CloseOutlined /> }}
               style={{ minWidth: 150, flex: "1 1 150px" }}
               value={searchParams.oem}
@@ -95,7 +97,7 @@ export function Base() {
               onSearch={(value) => handleSearch("oem", value)}
             />
             <Search
-              placeholder="WXQP"
+              placeholder={t("columns.wxqp")}
               allowClear={{ clearIcon: <CloseOutlined /> }}
               style={{ minWidth: 150, flex: "1 1 150px" }}
               value={searchParams.WXQP}
@@ -123,10 +125,10 @@ export function Base() {
         <section id="btns" style={{ flex: "0 0 auto" }}>
           <Flex gap={"middle"} justify="start" wrap="wrap">
             <Button size="large" onClick={() => setIsProductHistoryOpen(true)}>
-              History
+              {t("base.history")}
             </Button>
             <Button size="large" onClick={() => setIsAddProductModalOpen(true)}>
-              Add Product
+              {t("base.addProduct")}
             </Button>
           </Flex>
         </section>

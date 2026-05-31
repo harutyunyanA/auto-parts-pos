@@ -3,6 +3,7 @@ import type { ColumnsType } from "antd/es/table";
 import { useEffect, useRef, useState } from "react";
 import { useSupplyMutations } from "../modules/supplies/mutations";
 import type { ISupplyItem } from "../modules/supplies/types";
+import { useTranslation } from "react-i18next";
 
 const { Text } = Typography;
 
@@ -52,6 +53,7 @@ export function useSupplyTable({ supply }: UseSupplyTableProps): {
     field: FieldType;
   }>({ id: "new", field: "code" });
   const inputRefs = useRef<Record<string, any>>({});
+  const { t } = useTranslation();
 
   const { mutationAdd, mutationUpdate, mutationDelete } = useSupplyMutations({
     supplyId: supply?.id,
@@ -78,14 +80,14 @@ export function useSupplyTable({ supply }: UseSupplyTableProps): {
       return;
     }
     if (record.quantity > 0) {
-      message.error("Cannot change code if quantity > 0");
+      message.error(t("toast.cannotChangeCodeQty"));
       return;
     }
     try {
       await mutationDelete.mutateAsync(record.id);
       mutationAdd.mutate(code);
     } catch (e: any) {
-      message.error(e.response?.data?.message || "Failed to replace item");
+      message.error(e.response?.data?.message || t("toast.failedReplaceItem"));
     }
   };
 
@@ -125,7 +127,7 @@ export function useSupplyTable({ supply }: UseSupplyTableProps): {
     ) {
       if (record.isNew) return;
       if (record.quantity > 0) {
-        message.warning("Cannot delete item with quantity > 0");
+        message.warning(t("toast.cannotDeleteItemQty"));
         return;
       }
       e.preventDefault();
@@ -186,7 +188,7 @@ export function useSupplyTable({ supply }: UseSupplyTableProps): {
 
   const columns: ColumnsType<SupplyTableRow> = [
     {
-      title: "Code",
+      title: t("columns.code"),
       dataIndex: "code",
       key: "code",
       width: 80,
@@ -222,19 +224,19 @@ export function useSupplyTable({ supply }: UseSupplyTableProps): {
       ),
     },
     {
-      title: "Name",
+      title: t("columns.name"),
       key: "name",
       render: (_, record: any) =>
-        record.product?.name || (record.isNew ? "" : "Unknown"),
+        record.product?.name || (record.isNew ? "" : t("common.unknown")),
     },
     {
-      title: "Type",
+      title: t("columns.type"),
       key: "type",
       width: 100,
       render: (_, record: any) => record.product?.type,
     },
     {
-      title: "Qty",
+      title: t("columns.qty"),
       dataIndex: "quantity",
       key: "quantity",
       width: 80,
@@ -266,7 +268,7 @@ export function useSupplyTable({ supply }: UseSupplyTableProps): {
         ),
     },
     {
-      title: "Buy USD",
+      title: t("columns.buyUsd"),
       dataIndex: "purchasePriceUsd",
       key: "purchasePriceUsd",
       width: 100,
@@ -299,7 +301,7 @@ export function useSupplyTable({ supply }: UseSupplyTableProps): {
         ),
     },
     {
-      title: "Rate",
+      title: t("columns.rate"),
       dataIndex: "usdRate",
       key: "usdRate",
       width: 80,
@@ -332,7 +334,7 @@ export function useSupplyTable({ supply }: UseSupplyTableProps): {
         ),
     },
     {
-      title: "Weight kg",
+      title: t("columns.weightKg"),
       dataIndex: "weight",
       key: "weight",
       width: 90,
@@ -372,7 +374,7 @@ export function useSupplyTable({ supply }: UseSupplyTableProps): {
       },
     },
     {
-      title: "TAX $/kg",
+      title: t("columns.taxPerKg"),
       dataIndex: "tax",
       key: "tax",
       width: 90,
@@ -411,7 +413,7 @@ export function useSupplyTable({ supply }: UseSupplyTableProps): {
       },
     },
     {
-      title: "Buy Price",
+      title: t("columns.buyPrice"),
       dataIndex: "purchasePrice",
       key: "purchasePrice",
       width: 100,
@@ -443,7 +445,7 @@ export function useSupplyTable({ supply }: UseSupplyTableProps): {
         ),
     },
     {
-      title: "Sale Price",
+      title: t("columns.salePrice"),
       dataIndex: "salePrice",
       key: "salePrice",
       width: 100,
@@ -475,7 +477,7 @@ export function useSupplyTable({ supply }: UseSupplyTableProps): {
         ),
     },
     {
-      title: "In Stock",
+      title: t("columns.inStock"),
       key: "inStock",
       width: 90,
       align: "center",
@@ -495,7 +497,7 @@ export function useSupplyTable({ supply }: UseSupplyTableProps): {
         ),
     },
     {
-      title: "Min",
+      title: t("columns.min"),
       dataIndex: "minQuantity",
       key: "minQuantity",
       width: 100,
@@ -555,7 +557,7 @@ export function useSupplyTable({ supply }: UseSupplyTableProps): {
       },
     },
     {
-      title: "Profit",
+      title: t("columns.profit"),
       key: "profit",
       width: 80,
       align: "center",

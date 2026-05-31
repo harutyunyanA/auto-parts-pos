@@ -1,5 +1,3 @@
-export type TopProductsSort = "qty" | "revenue";
-
 export interface ISupplierStat {
   supplierId: number | null;
   name: string;
@@ -9,18 +7,6 @@ export interface ISupplierStat {
   cogs: number;
   profit: number;
   soldQty: number;
-}
-
-export interface ITopProduct {
-  productId: number;
-  name: string;
-  code: number | null;
-  oem: string | null;
-  type: string;
-  qtySold: number;
-  revenue: number;
-  cogs: number;
-  profit: number;
 }
 
 export interface IDeadStockItem {

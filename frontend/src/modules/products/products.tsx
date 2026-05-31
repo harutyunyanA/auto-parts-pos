@@ -5,6 +5,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import type { ApiResponse } from "../../types/api.types";
 import api from "../../api/client";
 import { useSource } from "../../store/useAuthStore";
+import { useTranslation } from "react-i18next";
 
 function useContainerHeight(containerRef: RefObject<HTMLElement | null>) {
   const [height, setHeight] = useState(400);
@@ -39,6 +40,7 @@ export function Products({
   const tableScrollY = Math.max(containerHeight - 90, 200);
   const { token } = theme.useToken();
   const source = useSource();
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
 
   useEffect(() => {
@@ -95,26 +97,26 @@ export function Products({
         pagination={false}
         columns={[
           {
-            title: "Code",
+            title: t("columns.code"),
             dataIndex: "code",
             key: "code",
             align: "center",
             width: "7%",
           },
           {
-            title: "Name",
+            title: t("columns.name"),
             dataIndex: "name",
             key: "name",
           },
           {
-            title: "Type",
+            title: t("columns.type"),
             dataIndex: "type",
             key: "type",
             align: "center",
             width: "7%",
           },
           {
-            title: "Quantity",
+            title: t("columns.quantity"),
             dataIndex: "quantity",
             key: "quantity",
             align: "center",
@@ -133,28 +135,28 @@ export function Products({
             ),
           },
           {
-            title: "Purchase price",
+            title: t("columns.purchasePrice"),
             dataIndex: "purchase_price",
             key: "purchase_price",
             align: "center",
             width: "10%",
           },
           {
-            title: "Sale price",
+            title: t("columns.salePrice"),
             dataIndex: "sale_price",
             key: "sale_price",
             align: "center",
             width: "10%",
           },
           {
-            title: "Supplier",
+            title: t("columns.supplier"),
             dataIndex: ["supplier", "name"],
             align: "center",
             key: "supplier",
             width: "12%",
           },
           {
-            title: "Min",
+            title: t("columns.min"),
             dataIndex: "minimum_quantity",
             key: "minimum_quantity",
             align: "center",
@@ -200,14 +202,14 @@ export function Products({
             },
           },
           {
-            title: "OEM",
+            title: t("columns.oem"),
             dataIndex: "oem",
             key: "oem",
             align: "center",
             width: "12%",
           },
           {
-            title: "WXQP",
+            title: t("columns.wxqp"),
             dataIndex: "WXQP",
             key: "WXQP",
             align: "center",

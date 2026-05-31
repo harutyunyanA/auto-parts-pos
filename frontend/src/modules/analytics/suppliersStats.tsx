@@ -1,6 +1,7 @@
 import { Table, Typography, Row, Col, Card, Statistic } from "antd";
 import { useSupplierStats } from "./queries";
 import { money } from "./format";
+import { useTranslation } from "react-i18next";
 import type { ISupplierStat, IDateRange } from "./types";
 
 interface Props {
@@ -8,6 +9,7 @@ interface Props {
 }
 
 export function SuppliersStats({ range }: Props) {
+  const { t } = useTranslation();
   const { data, isLoading } = useSupplierStats(range);
 
   const totals = (data ?? []).reduce(
@@ -25,18 +27,24 @@ export function SuppliersStats({ range }: Props) {
       <Row gutter={16}>
         <Col span={8}>
           <Card size="small">
-            <Statistic title="Total purchased" value={money(totals.purchased)} />
-          </Card>
-        </Col>
-        <Col span={8}>
-          <Card size="small">
-            <Statistic title="Total sold" value={money(totals.sold)} />
+            <Statistic
+              title={t("analytics.totalPurchased")}
+              value={money(totals.purchased)}
+            />
           </Card>
         </Col>
         <Col span={8}>
           <Card size="small">
             <Statistic
-              title="Total profit"
+              title={t("analytics.totalSold")}
+              value={money(totals.sold)}
+            />
+          </Card>
+        </Col>
+        <Col span={8}>
+          <Card size="small">
+            <Statistic
+              title={t("analytics.totalProfit")}
               value={money(totals.profit)}
               valueStyle={{ color: totals.profit >= 0 ? "#3f8600" : "#cf1322" }}
             />
@@ -55,12 +63,12 @@ export function SuppliersStats({ range }: Props) {
         scroll={{ y: "calc(100vh - 360px)" }}
         columns={[
           {
-            title: "Supplier",
+            title: t("columns.supplier"),
             dataIndex: "name",
             key: "name",
           },
           {
-            title: "Supplies",
+            title: t("columns.supplies"),
             dataIndex: "supplyCount",
             key: "supplyCount",
             align: "center",
@@ -68,7 +76,7 @@ export function SuppliersStats({ range }: Props) {
             sorter: (a, b) => a.supplyCount - b.supplyCount,
           },
           {
-            title: "Purchased",
+            title: t("columns.purchased"),
             dataIndex: "purchased",
             key: "purchased",
             align: "right",
@@ -78,7 +86,7 @@ export function SuppliersStats({ range }: Props) {
             render: (v: number) => money(v),
           },
           {
-            title: "Sold",
+            title: t("columns.sold"),
             dataIndex: "sold",
             key: "sold",
             align: "right",
@@ -87,7 +95,7 @@ export function SuppliersStats({ range }: Props) {
             render: (v: number) => money(v),
           },
           {
-            title: "COGS",
+            title: t("columns.cogs"),
             dataIndex: "cogs",
             key: "cogs",
             align: "right",
@@ -95,7 +103,7 @@ export function SuppliersStats({ range }: Props) {
             render: (v: number) => money(v),
           },
           {
-            title: "Profit",
+            title: t("columns.profit"),
             dataIndex: "profit",
             key: "profit",
             align: "right",
