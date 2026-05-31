@@ -17,7 +17,7 @@ export function DaySummary() {
     api
       .get<ApiResponse<ISalesSummary>>(`/sale/summary/${currentDate}`)
       .then((res) => {
-        setDaySummary(res.data.data);
+        setDaySummary(res.data.data ?? null);
       });
   }, [currentDate]);
 

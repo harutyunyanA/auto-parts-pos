@@ -1,7 +1,7 @@
 import { type RefObject, useEffect, useState } from "react";
 import type { IProduct } from "./types";
-import { Flex, Pagination, Table, theme, Checkbox, Input, Typography } from "antd";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { Flex, Pagination, Table, Input, Typography } from "antd";
+import { useQuery } from "@tanstack/react-query";
 import type { ApiResponse } from "../../types/api.types";
 import api from "../../api/client";
 import { useSource } from "../../store/useAuthStore";
@@ -38,10 +38,8 @@ export function Products({
   const [limit, setLimit] = useState(20);
   const containerHeight = useContainerHeight(containerRef);
   const tableScrollY = Math.max(containerHeight - 90, 200);
-  const { token } = theme.useToken();
   const source = useSource();
   const { t } = useTranslation();
-  const queryClient = useQueryClient();
 
   useEffect(() => {
     setPage(1);
@@ -63,18 +61,6 @@ export function Products({
     staleTime: 1000 * 60 * 5,
     gcTime: 1000 * 60 * 10,
   });
-
-  // const mutationUpdateMin = useMutation({
-  //   mutationFn: (vars: { code: number; min: number | null }) =>
-  //     api.patch(
-  //       `/product`,
-  //       { minimum_quantity: vars.min },
-  //       { params: { code: vars.code, source } },
-  //     ),
-  //   onSuccess: () => {
-  //     queryClient.invalidateQueries({ queryKey: ["products"] });
-  //   },
-  // });
 
   return (
     <Flex vertical gap={"middle"} style={{ height: "100%", minHeight: 0 }}>
@@ -165,37 +151,11 @@ export function Products({
               const isEnabled = text !== null && text !== undefined;
               return (
                 <Flex gap="small" align="center" justify="center">
-                  {/* <Checkbox
-                    checked={isEnabled}
-                    onChange={(e) => {
-                      const checked = e.target.checked;
-                      mutationUpdateMin.mutate({
-                        code: record.code,
-                        min: checked ? 0 : null,
-                      });
-                    }}
-                  /> */}
                   <Input
-                    // disabled={!isEnabled}
                     key={`${record.id}-min-${text}`}
                     defaultValue={isEnabled ? String(text) : ""}
                     variant="borderless"
                     style={{ textAlign: "center", padding: 0, width: "40px" }}
-                    // onPressEnter={(e: any) => {
-                    //   mutationUpdateMin.mutate({
-                    //     code: record.code,
-                    //     min: Number(e.target.value),
-                    //   });
-                    // }}
-                    // onBlur={(e: any) => {
-                    //   const val = e.target.value;
-                    //   if (isEnabled && val !== String(text)) {
-                    //     mutationUpdateMin.mutate({
-                    //       code: record.code,
-                    //       min: Number(val),
-                    //     });
-                    //   }
-                    // }}
                   />
                 </Flex>
               );

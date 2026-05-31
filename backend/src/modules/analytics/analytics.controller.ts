@@ -20,28 +20,6 @@ class AnalyticsController {
     }
   }
 
-  async getTopProducts(req: Request, res: Response, next: NextFunction) {
-    try {
-      const { from, to, by, limit } = req.query as {
-        from?: string;
-        to?: string;
-        by?: string;
-        limit?: string;
-      };
-      const data = await service.getTopProducts(
-        req.source as sourceType,
-        from,
-        to,
-        by === "revenue" ? "revenue" : "qty",
-        limit ? Number(limit) : 20,
-      );
-      return successResponse(res, data);
-    } catch (err: any) {
-      logger.error(err.message);
-      next(err);
-    }
-  }
-
   async getDeadStock(req: Request, res: Response, next: NextFunction) {
     try {
       const { days } = req.query as { days?: string };

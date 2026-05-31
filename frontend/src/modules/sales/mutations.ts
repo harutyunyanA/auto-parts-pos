@@ -28,7 +28,7 @@ export function useCartMutations({
     onSuccess: (res) => {
       const newItem = res.data.data;
       queryClient.invalidateQueries({ queryKey: ["carts", currentDate] });
-      setFocusTarget({ id: newItem.id, field: "quantity" });
+      if (newItem) setFocusTarget({ id: newItem.id, field: "quantity" });
     },
     onError: (err: any) => {
       message.error(err.response?.data?.message || t("toast.failedAddItem"));

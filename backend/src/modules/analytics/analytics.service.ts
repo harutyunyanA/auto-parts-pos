@@ -7,8 +7,6 @@ import { Product } from "../product/product.model.ts";
 import { Supplier } from "../supplier/supplier.model.ts";
 import type {
   SupplierStat,
-  TopProduct,
-  TopProductsSort,
   DeadStockItem,
 } from "./analytics.types.ts";
 
@@ -125,70 +123,6 @@ class AnalyticsService {
 
     result.sort((a, b) => b.purchased - a.purchased);
     return result;
-  }
-
-  // Топ проданных товаров по штукам или по выручке.
-  async getTopProducts(
-    source: sourceType,
-    from?: string,
-    to?: string,
-    by: TopProductsSort = "qty",
-    limit = 20,
-  ): Promise<TopProduct[]> {
-    const range = buildDateRange(from, to);
-
-    const items = (await CartItem.findAll({
-      attributes: ["productId", "quantity", "totalPrice", "purchasePriceAtSale"],
-      include: [
-        {
-          model: Product,
-          as: "product",
-          attributes: ["name", "code", "oem", "type"],
-          where: { source },
-          required: true,
-        },
-        {
-          model: Cart,
-          attributes: [],
-          where: {
-            source,
-            status: "completed",
-            ...(range && { createdAt: range }),
-          },
-          required: true,
-        },
-      ],
-      raw: true,
-    })) as any[];
-
-    const map = new Map<number, TopProduct>();
-    for (const it of items) {
-      const id = Number(it.productId);
-      const cur =
-        map.get(id) ??
-        ({
-          productId: id,
-          name: it["product.name"],
-          code: it["product.code"],
-          oem: it["product.oem"],
-          type: it["product.type"],
-          qtySold: 0,
-          revenue: 0,
-          cogs: 0,
-          profit: 0,
-        } as TopProduct);
-      cur.qtySold += Number(it.quantity);
-      cur.revenue += Number(it.totalPrice);
-      cur.cogs += Number(it.purchasePriceAtSale) * Number(it.quantity);
-      cur.profit = cur.revenue - cur.cogs;
-      map.set(id, cur);
-    }
-
-    const arr = [...map.values()];
-    arr.sort((a, b) =>
-      by === "revenue" ? b.revenue - a.revenue : b.qtySold - a.qtySold,
-    );
-    return arr.slice(0, limit);
   }
 
   // Мёртвый сток: товары с остатком, не продававшиеся за последние N дней.

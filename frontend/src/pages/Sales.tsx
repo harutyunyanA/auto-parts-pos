@@ -32,16 +32,13 @@ import { useTranslation } from "react-i18next";
 export default function Sales() {
   const { t } = useTranslation();
   const currentDate = useCurrentDate();
-  // const [currentCartPage, setCurrentCartPage] = useState<number>(1);
   const currentCartPage = useCurrentCartPage();
   const setCurrentCartPage = useSetCurrentCartPage();
   const activePrice = usePurchasePriceStore((state) => state.activePrice);
-  // const [currentCart, setCurrentCart] = useState<ICart | null>(null);
   const source = useSource();
   const queryClient = useQueryClient();
   const { token } = theme.useToken();
   const { Text } = Typography;
-  const [paid, setPaid] = useState<number>(0);
 
   const { data: carts } = useQuery({
     queryKey: ["carts", currentDate, source],
@@ -79,16 +76,11 @@ export default function Sales() {
     }
   }, [carts, currentDate, setCurrentCartPage, source]);
 
-  useEffect(() => {
-    setPaid(0);
-  }, [source, currentDate]);
-
   async function createNewCart() {
     const currentCart = carts?.[currentCartPage - 1];
     if (currentCart && currentCart.status === "draft") {
       await mutationStatusToggle.mutateAsync(currentCart.id);
     }
-    // const date = new Date(currentDate).toISOString();
     await api.post("/sale", { currentDate });
     queryClient.invalidateQueries({
       queryKey: ["carts", currentDate, source],

@@ -7,7 +7,6 @@ const router = express.Router();
 router.use(checkSource);
 
 router.get("/suppliers", controller.getSupplierStats);
-router.get("/top-products", controller.getTopProducts);
 router.get("/dead-stock", controller.getDeadStock);
 
 export default router;

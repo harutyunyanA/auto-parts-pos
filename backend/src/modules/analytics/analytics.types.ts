@@ -1,5 +1,3 @@
-export type TopProductsSort = "qty" | "revenue";
-
 export type SupplierStat = {
   supplierId: number | null;
   name: string;
@@ -9,18 +7,6 @@ export type SupplierStat = {
   cogs: number; // себестоимость проданного
   profit: number; // sold - cogs
   soldQty: number;
-};
-
-export type TopProduct = {
-  productId: number;
-  name: string;
-  code: number | null;
-  oem: string | null;
-  type: string;
-  qtySold: number;
-  revenue: number;
-  cogs: number;
-  profit: number;
 };
 
 export type DeadStockItem = {
