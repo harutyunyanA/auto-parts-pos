@@ -3,13 +3,14 @@ import { Tabs, DatePicker } from "antd";
 import dayjs from "dayjs";
 import type { Dayjs } from "dayjs";
 import { SuppliersStats } from "../modules/analytics/suppliersStats";
-import { TopProducts } from "../modules/analytics/topProducts";
 import { DeadStock } from "../modules/analytics/deadStock";
 import type { IDateRange } from "../modules/analytics/types";
+import { useTranslation } from "react-i18next";
 
 const { RangePicker } = DatePicker;
 
 export default function Analytics() {
+  const { t } = useTranslation();
   const [activeKey, setActiveKey] = useState("suppliers");
   const [dates, setDates] = useState<[Dayjs, Dayjs]>([
     dayjs().startOf("month"),
@@ -42,17 +43,12 @@ export default function Analytics() {
         items={[
           {
             key: "suppliers",
-            label: "Suppliers",
+            label: t("analytics.tabSuppliers"),
             children: <SuppliersStats range={range} />,
           },
           {
-            key: "top",
-            label: "Top Products",
-            children: <TopProducts range={range} />,
-          },
-          {
             key: "dead",
-            label: "Dead Stock",
+            label: t("analytics.tabDeadStock"),
             children: <DeadStock />,
           },
         ]}

@@ -2,20 +2,22 @@ import { useState } from "react";
 import { Table, Typography, Segmented, Space, Card, Statistic } from "antd";
 import { useDeadStock } from "./queries";
 import { money } from "./format";
+import { useTranslation } from "react-i18next";
 import type { IDeadStockItem } from "./types";
 
-const DAY_OPTIONS = [
-  { label: "30 days", value: 30 },
-  { label: "90 days", value: 90 },
-  { label: "180 days", value: 180 },
-  { label: "365 days", value: 365 },
-];
+const DAY_VALUES = [30, 90, 180, 365];
 
 export function DeadStock() {
   const [days, setDays] = useState(90);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(50);
+  const { t } = useTranslation();
   const { data, isLoading } = useDeadStock(days);
+
+  const dayOptions = DAY_VALUES.map((value) => ({
+    label: `${value} ${t("analytics.daysLabel")}`,
+    value,
+  }));
 
   const frozenTotal = (data ?? []).reduce((sum, p) => sum + p.frozenValue, 0);
 
@@ -28,16 +30,18 @@ export function DeadStock() {
     <div className="flex flex-col gap-4 h-full">
       <Space size="large" align="center">
         <Space>
-          <Typography.Text type="secondary">No sales within:</Typography.Text>
+          <Typography.Text type="secondary">
+            {t("analytics.noSalesWithin")}
+          </Typography.Text>
           <Segmented<number>
             value={days}
             onChange={handleDaysChange}
-            options={DAY_OPTIONS}
+            options={dayOptions}
           />
         </Space>
         <Card size="small">
           <Statistic
-            title="Frozen capital"
+            title={t("analytics.frozenCapital")}
             value={money(frozenTotal)}
             valueStyle={{ color: "#cf1322" }}
           />
@@ -59,7 +63,7 @@ export function DeadStock() {
           placement: ["bottomStart"],
           size: "middle",
           pageSizeOptions: [50, 100, 200, 500],
-          showTotal: (total) => `${total} items`,
+          showTotal: (total) => `${total} ${t("analytics.items")}`,
           onChange: (nextPage, nextPageSize) => {
             setPage(nextPage);
             setPageSize(nextPageSize);
@@ -67,40 +71,40 @@ export function DeadStock() {
         }}
         columns={[
           {
-            title: "№",
+            title: t("columns.num"),
             key: "index",
             align: "center",
             width: "5%",
             render: (_t, _r, index) => (page - 1) * pageSize + index + 1,
           },
           {
-            title: "Code",
+            title: t("columns.code"),
             dataIndex: "code",
             key: "code",
             align: "center",
             width: "10%",
           },
           {
-            title: "Name",
+            title: t("columns.name"),
             dataIndex: "name",
             key: "name",
           },
           {
-            title: "Type",
+            title: t("columns.type"),
             dataIndex: "type",
             key: "type",
             align: "center",
             width: "10%",
           },
           {
-            title: "OEM",
+            title: t("columns.oem"),
             dataIndex: "oem",
             key: "oem",
             align: "center",
             width: "12%",
           },
           {
-            title: "Qty",
+            title: t("columns.qty"),
             dataIndex: "quantity",
             key: "quantity",
             align: "center",
@@ -108,7 +112,7 @@ export function DeadStock() {
             sorter: (a, b) => a.quantity - b.quantity,
           },
           {
-            title: "Purchase price",
+            title: t("columns.purchasePrice"),
             dataIndex: "purchase_price",
             key: "purchase_price",
             align: "right",
@@ -116,7 +120,7 @@ export function DeadStock() {
             render: (v: number) => money(v),
           },
           {
-            title: "Frozen value",
+            title: t("columns.frozenValue"),
             dataIndex: "frozenValue",
             key: "frozenValue",
             align: "right",

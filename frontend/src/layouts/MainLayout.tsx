@@ -15,6 +15,7 @@ import {
   ShopOutlined,
 } from "@ant-design/icons";
 import { useNavigate, useLocation, Outlet, Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { useQueryClient } from "@tanstack/react-query";
 import { useSource, useClearSource } from "../store/useAuthStore";
 import { useIsDarkMode } from "../store/useThemeStore";
@@ -25,6 +26,7 @@ const { Header, Sider, Content } = Layout;
 const { Text } = Typography;
 
 export default function MainLayout() {
+  const { t } = useTranslation();
   const [collapsed, setCollapsed] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
@@ -45,37 +47,37 @@ export default function MainLayout() {
     {
       key: "/",
       icon: <DashboardOutlined />,
-      label: <Link to="/">Dashboard</Link>,
+      label: <Link to="/">{t("menu.dashboard")}</Link>,
     },
     {
       key: "/base",
       icon: <DatabaseOutlined />,
-      label: <Link to="/base">Base</Link>,
+      label: <Link to="/base">{t("menu.base")}</Link>,
     },
     {
       key: "/sales",
       icon: <ShoppingOutlined />,
-      label: <Link to="/sales">Sales</Link>,
+      label: <Link to="/sales">{t("menu.sales")}</Link>,
     },
     {
       key: "/products",
       icon: <CarOutlined />,
-      label: <Link to="/products">Stock</Link>,
+      label: <Link to="/products">{t("menu.stock")}</Link>,
     },
     {
       key: "/deficit",
       icon: <WarningOutlined />,
-      label: <Link to="/deficit">Deficit</Link>,
+      label: <Link to="/deficit">{t("menu.deficit")}</Link>,
     },
     {
       key: "/suppliers",
       icon: <ShopOutlined />,
-      label: <Link to="/suppliers">Suppliers</Link>,
+      label: <Link to="/suppliers">{t("menu.suppliers")}</Link>,
     },
     {
       key: "/analytics",
       icon: <BarChartOutlined />,
-      label: <Link to="/analytics">Analytics</Link>,
+      label: <Link to="/analytics">{t("menu.analytics")}</Link>,
     },
   ];
 
@@ -109,7 +111,7 @@ export default function MainLayout() {
               fontSize: collapsed ? 12 : 18,
             }}
           >
-            {collapsed ? "POS" : "AutoParts POS"}
+            {collapsed ? t("layout.appNameShort") : t("layout.appName")}
           </Text>
         </div>
         <Menu
@@ -135,7 +137,7 @@ export default function MainLayout() {
             block={!collapsed}
             onClick={() => navigate("/settings")}
           >
-            {!collapsed && "Settings"}
+            {!collapsed && t("layout.settings")}
           </Button>
           <Button
             type="text"
@@ -144,7 +146,7 @@ export default function MainLayout() {
             block={!collapsed}
             onClick={handleLogout}
           >
-            {!collapsed && "Log Out"}
+            {!collapsed && t("layout.logout")}
           </Button>
         </div>
       </Sider>
@@ -186,7 +188,7 @@ export default function MainLayout() {
               >
                 <UserOutlined style={{ marginRight: 8 }} />
                 <Text strong style={{ textTransform: "uppercase" }}>
-                  {source || "Guest"}
+                  {source || t("layout.guest")}
                 </Text>
               </div>
             </div>

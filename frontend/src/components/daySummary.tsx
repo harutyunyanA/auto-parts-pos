@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import type { ISalesSummary } from "../modules/sales/types";
 import { useCurrentDate } from "../store/useDateStore";
 import api from "../api/client";
@@ -7,6 +8,7 @@ import { Divider, Flex, Spin } from "antd";
 import Text from "antd/es/typography/Text";
 
 export function DaySummary() {
+  const { t } = useTranslation();
   const currentDate = useCurrentDate();
 
   const [daySummary, setDaySummary] = useState<ISalesSummary | null>(null);
@@ -22,7 +24,7 @@ export function DaySummary() {
   if (!daySummary) {
     return (
       <Flex justify="center" align="center" style={{ height: "100%" }}>
-        <Spin description="Loading..." size="large" />
+        <Spin description={t("common.loading")} size="large" />
       </Flex>
     );
   }
@@ -32,13 +34,18 @@ export function DaySummary() {
       <Flex vertical>
         <Flex vertical gap={"small"}>
           <Text strong>
-            Cash paid: {daySummary.totalIncome - daySummary.totalCardIncome}
+            {t("summary.cashPaid")}:{" "}
+            {daySummary.totalIncome - daySummary.totalCardIncome}
           </Text>
-          <Text strong>Card paid: {daySummary.totalCardIncome}</Text>
+          <Text strong>
+            {t("summary.cardPaid")}: {daySummary.totalCardIncome}
+          </Text>
         </Flex>
         <Divider />
         <Flex>
-          <Text>Total income: {daySummary.totalIncome}</Text>
+          <Text>
+            {t("summary.totalIncome")}: {daySummary.totalIncome}
+          </Text>
         </Flex>
       </Flex>
     </>

@@ -1,4 +1,5 @@
 import { Form, Input, Button, Flex } from "antd";
+import { useTranslation } from "react-i18next";
 import { useCreateSupplier, useUpdateSupplier } from "./mutations";
 import type { ICreateSupplierPayload, ISupplier } from "./types";
 
@@ -8,6 +9,7 @@ interface SupplierFormProps {
 }
 
 export function SupplierForm({ supplier, onClose }: SupplierFormProps) {
+  const { t } = useTranslation();
   const [form] = Form.useForm<ICreateSupplierPayload>();
   const isEdit = !!supplier;
 
@@ -36,23 +38,23 @@ export function SupplierForm({ supplier, onClose }: SupplierFormProps) {
     >
       <Form.Item
         name="name"
-        label="Name"
-        rules={[{ required: true, message: "Name is required" }]}
+        label={t("columns.name")}
+        rules={[{ required: true, message: t("supplierForm.nameRequired") }]}
       >
-        <Input placeholder="Supplier name" />
+        <Input placeholder={t("supplierForm.namePlaceholder")} />
       </Form.Item>
 
-      <Form.Item name="phone" label="Phone">
-        <Input placeholder="Phone (optional)" />
+      <Form.Item name="phone" label={t("columns.phone")}>
+        <Input placeholder={t("supplierForm.phonePlaceholder")} />
       </Form.Item>
 
       <Form.Item style={{ marginBottom: 0 }}>
         <Flex justify="end" gap="small">
           <Button onClick={onClose} disabled={mutation.isPending}>
-            Cancel
+            {t("common.cancel")}
           </Button>
           <Button type="primary" htmlType="submit" loading={mutation.isPending}>
-            {isEdit ? "Save" : "Create"}
+            {isEdit ? t("common.save") : t("common.create")}
           </Button>
         </Flex>
       </Form.Item>

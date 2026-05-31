@@ -5,6 +5,7 @@ import { useState, useRef, useEffect } from "react";
 import { useCurrentDate } from "../../store/useDateStore";
 import { usePurchasePriceStore } from "../../store/usePurchasePriceStore";
 import { useCartMutations } from "./mutations";
+import { useTranslation } from "react-i18next";
 
 interface CartProps {
   cart: ICart;
@@ -12,6 +13,7 @@ interface CartProps {
 
 export function Cart({ cart }: CartProps) {
   const currentDate = useCurrentDate();
+  const { t } = useTranslation();
   const setActivePrice = usePurchasePriceStore((state) => state.setActivePrice);
   const [focusTarget, setFocusTarget] = useState<{
     id: number | "new";
@@ -33,11 +35,10 @@ export function Cart({ cart }: CartProps) {
 
   const showReopenModal = (originalValue: any, inputKey: string) => {
     Modal.confirm({
-      title: "Cart is closed",
-      content:
-        "This cart is completed. Would you like to open it to make changes?",
-      okText: "Open",
-      cancelText: "Cancel",
+      title: t("cart.closedTitle"),
+      content: t("cart.closedContent"),
+      okText: t("cart.open"),
+      cancelText: t("common.cancel"),
       onOk: () => {
         mutationStatusToggle.mutate(cart.id);
       },
@@ -66,14 +67,14 @@ export function Cart({ cart }: CartProps) {
         return;
       }
       if (record.quantity > 0) {
-        message.error("Cannot change code if quantity > 0");
+        message.error(t("toast.cannotChangeCodeQty"));
         return;
       }
       try {
         await mutationDelete.mutateAsync(record.id);
         mutationAdd.mutate(code);
       } catch (e: any) {
-        message.error(e.response?.data?.message || "Failed to replace item");
+        message.error(e.response?.data?.message || t("toast.failedReplaceItem"));
       }
     }
   };
@@ -124,7 +125,7 @@ export function Cart({ cart }: CartProps) {
     ) {
       if (record.isNew) return;
       if (record.quantity > 0) {
-        message.warning("Cannot delete item with quantity > 0");
+        message.warning(t("toast.cannotDeleteItemQty"));
         return;
       }
       e.preventDefault();
@@ -173,7 +174,7 @@ export function Cart({ cart }: CartProps) {
 
   const columns: ColumnsType<any> = [
     {
-      title: "Code",
+      title: t("columns.code"),
       dataIndex: "code",
       key: "code",
       width: 70,
@@ -210,16 +211,16 @@ export function Cart({ cart }: CartProps) {
       ),
     },
     {
-      title: "OEM",
+      title: t("columns.oem"),
       dataIndex: "oem",
       key: "oem",
       width: 150,
     },
-    { title: "WXQP", dataIndex: "WXQP", key: "WXQP", width: 150 },
-    { title: "Type", dataIndex: "type", key: "type", width: 70 },
-    { title: "Name", dataIndex: "name", key: "name" },
+    { title: t("columns.wxqp"), dataIndex: "WXQP", key: "WXQP", width: 150 },
+    { title: t("columns.type"), dataIndex: "type", key: "type", width: 70 },
+    { title: t("columns.name"), dataIndex: "name", key: "name" },
     {
-      title: "Quantity",
+      title: t("columns.quantity"),
       dataIndex: "quantity",
       key: "quantity",
       width: 80,
@@ -250,7 +251,7 @@ export function Cart({ cart }: CartProps) {
         ),
     },
     {
-      title: "Price",
+      title: t("columns.price"),
       dataIndex: "priceAtSale",
       key: "priceAtSale",
       width: 100,
@@ -283,9 +284,9 @@ export function Cart({ cart }: CartProps) {
           />
         ),
     },
-    { title: "Total", dataIndex: "totalPrice", key: "totalPrice", width: 70 },
+    { title: t("columns.total"), dataIndex: "totalPrice", key: "totalPrice", width: 70 },
     {
-      title: "Stock",
+      title: t("columns.stock"),
       dataIndex: "quantityAtStore",
       key: "quantityAtStore",
       width: 70,

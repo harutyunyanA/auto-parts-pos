@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { message } from "antd";
+import { useTranslation } from "react-i18next";
 import api from "../../api/client";
 import type { ApiResponse } from "../../types/api.types";
 import type {
@@ -18,6 +19,7 @@ function errMessage(err: any, fallback: string) {
 
 export function useCreateSupplier() {
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
 
   return useMutation({
     mutationFn: (payload: ICreateSupplierPayload) =>
@@ -26,16 +28,17 @@ export function useCreateSupplier() {
         .then((res) => res.data.data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["suppliers"] });
-      message.success("Supplier created");
+      message.success(t("toast.supplierCreated"));
     },
     onError: (err: any) => {
-      message.error(errMessage(err, "Failed to create supplier"));
+      message.error(errMessage(err, t("toast.failedCreateSupplier")));
     },
   });
 }
 
 export function useUpdateSupplier(id: number) {
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
 
   return useMutation({
     mutationFn: (payload: IUpdateSupplierPayload) =>
@@ -44,25 +47,26 @@ export function useUpdateSupplier(id: number) {
         .then((res) => res.data.data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["suppliers"] });
-      message.success("Supplier updated");
+      message.success(t("toast.supplierUpdated"));
     },
     onError: (err: any) => {
-      message.error(errMessage(err, "Failed to update supplier"));
+      message.error(errMessage(err, t("toast.failedUpdateSupplier")));
     },
   });
 }
 
 export function useDeleteSupplier() {
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
 
   return useMutation({
     mutationFn: (id: number) => api.delete(`/suppliers/${id}`),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["suppliers"] });
-      message.success("Supplier deleted");
+      message.success(t("toast.supplierDeleted"));
     },
     onError: (err: any) => {
-      message.error(errMessage(err, "Failed to delete supplier"));
+      message.error(errMessage(err, t("toast.failedDeleteSupplier")));
     },
   });
 }

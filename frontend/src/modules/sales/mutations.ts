@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import api from "../../api/client";
 import { message } from "antd";
+import { useTranslation } from "react-i18next";
 import type { ApiResponse } from "../../types/api.types";
 import type { ICartItem } from "./types";
 
@@ -19,6 +20,7 @@ export function useCartMutations({
   setFocusTarget,
 }: UseCartMutationsProps) {
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
 
   const mutationAdd = useMutation({
     mutationFn: (code: string) =>
@@ -29,7 +31,7 @@ export function useCartMutations({
       setFocusTarget({ id: newItem.id, field: "quantity" });
     },
     onError: (err: any) => {
-      message.error(err.response?.data?.message || "Failed to add item");
+      message.error(err.response?.data?.message || t("toast.failedAddItem"));
     },
   });
 
@@ -41,7 +43,7 @@ export function useCartMutations({
       setFocusTarget({ id: variables.id, field: "price" });
     },
     onError: (err: any) => {
-      message.error(err.response?.data?.message || "Failed to update quantity");
+      message.error(err.response?.data?.message || t("toast.failedUpdateQty"));
     },
   });
 
@@ -53,7 +55,7 @@ export function useCartMutations({
       setFocusTarget({ id: "new", field: "code" });
     },
     onError: (err: any) => {
-      message.error(err.response?.data?.message || "Failed to update price");
+      message.error(err.response?.data?.message || t("toast.failedUpdatePrice"));
     },
   });
 
@@ -63,7 +65,7 @@ export function useCartMutations({
       queryClient.invalidateQueries({ queryKey: ["carts", currentDate] });
     },
     onError: (err: any) => {
-      message.error(err.response?.data?.message || "Failed to delete item");
+      message.error(err.response?.data?.message || t("toast.failedDeleteItem"));
     },
   });
 
@@ -71,10 +73,10 @@ export function useCartMutations({
     mutationFn: (id: number) => api.patch(`/sale/${id}/change-status/`),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["carts", currentDate] });
-      message.success("Status updated");
+      message.success(t("toast.statusUpdated"));
     },
     onError: (err: any) => {
-      message.error(err.response?.data?.message || "Failed to update status");
+      message.error(err.response?.data?.message || t("toast.failedUpdateStatus"));
     },
   });
 
@@ -85,7 +87,7 @@ export function useCartMutations({
     },
     onError: (err: any) => {
       message.error(
-        err.response?.data?.message || "Failed to make card payment",
+        err.response?.data?.message || t("toast.failedCardPayment"),
       );
     },
   });
