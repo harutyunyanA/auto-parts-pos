@@ -16,14 +16,18 @@ app.use(httpLogger);
 app.use(helmet());
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL,
+    origin: [
+      "https://auto-parts-pos-35bj.onrender.com",
+      "https://thinkly.fun",
+      "http://localhost:5173",
+    ],
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     credentials: true,
   }),
 );
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(errorHandler);
 
 app.use("/product", productRouter);
 app.use("/sale", saleRouter);
