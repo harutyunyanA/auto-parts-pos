@@ -3,13 +3,11 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   Button,
   Checkbox,
-  Col,
   Flex,
   Form,
   Input,
   InputNumber,
   Result,
-  Row,
   Select,
   Typography,
   message,
@@ -95,75 +93,59 @@ export function AddProduct({ onClose }: AddProductProps) {
       <Typography.Title level={5} style={{ marginTop: 0 }}>
         {t("addProduct.basics")}
       </Typography.Title>
-      <Row gutter={16}>
-        <Col span={12}>
-          <Form.Item
-            name="name"
-            label={t("addProduct.productName")}
-            rules={[{ required: true, message: t("addProduct.nameRequired") }]}
-          >
-            <CarAutoComplete />
-          </Form.Item>
-        </Col>
-        <Col span={12}>
-          <Form.Item name="type" label={t("columns.type")}>
-            <CarAutoComplete />
-          </Form.Item>
-        </Col>
-        <Col span={12}>
-          <Form.Item name="oem" label={t("columns.oem")}>
-            <Input />
-          </Form.Item>
-        </Col>
-        <Col span={12}>
-          <Form.Item name="WXQP" label={t("columns.wxqp")}>
-            <Input />
-          </Form.Item>
-        </Col>
-      </Row>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4">
+        <Form.Item
+          name="name"
+          label={t("addProduct.productName")}
+          rules={[{ required: true, message: t("addProduct.nameRequired") }]}
+        >
+          <CarAutoComplete />
+        </Form.Item>
+        <Form.Item name="type" label={t("columns.type")}>
+          <CarAutoComplete />
+        </Form.Item>
+        <Form.Item name="oem" label={t("columns.oem")}>
+          <Input />
+        </Form.Item>
+        <Form.Item name="WXQP" label={t("columns.wxqp")}>
+          <Input />
+        </Form.Item>
+      </div>
 
       <Typography.Title level={5}>
         {t("addProduct.inventoryPricing")}
       </Typography.Title>
-      <Row gutter={16}>
-        <Col span={8}>
-          <Form.Item name="quantity" label={t("columns.quantity")}>
-            <InputNumber min={0} style={{ width: "100%" }} />
-          </Form.Item>
-        </Col>
-        <Col span={8}>
-          <Form.Item name="purchase_price" label={t("columns.purchasePrice")}>
-            <InputNumber min={0} style={{ width: "100%" }} />
-          </Form.Item>
-        </Col>
-        <Col span={8}>
-          <Form.Item name="sale_price" label={t("columns.salePrice")}>
-            <InputNumber min={0} style={{ width: "100%" }} />
-          </Form.Item>
-        </Col>
-      </Row>
-      <Row gutter={16}>
-        <Col span={8}>
-          <Form.Item label={t("addProduct.minimumQuantity")}>
-            <Flex gap="small" align="center">
-              <Form.Item name="minimum_quantity" noStyle>
-                <InputNumber
-                  min={0}
-                  disabled={!enableMinQty}
-                  style={{ width: "100%" }}
-                />
-              </Form.Item>
-              <Form.Item
-                name="enable_minimum_quantity"
-                valuePropName="checked"
-                noStyle
-              >
-                <Checkbox />
-              </Form.Item>
-            </Flex>
-          </Form.Item>
-        </Col>
-      </Row>
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-x-4">
+        <Form.Item name="quantity" label={t("columns.quantity")}>
+          <InputNumber min={0} style={{ width: "100%" }} />
+        </Form.Item>
+        <Form.Item name="purchase_price" label={t("columns.purchasePrice")}>
+          <InputNumber min={0} style={{ width: "100%" }} />
+        </Form.Item>
+        <Form.Item name="sale_price" label={t("columns.salePrice")}>
+          <InputNumber min={0} style={{ width: "100%" }} />
+        </Form.Item>
+      </div>
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-x-4">
+        <Form.Item label={t("addProduct.minimumQuantity")}>
+          <Flex gap="small" align="center">
+            <Form.Item name="minimum_quantity" noStyle>
+              <InputNumber
+                min={0}
+                disabled={!enableMinQty}
+                style={{ width: "100%" }}
+              />
+            </Form.Item>
+            <Form.Item
+              name="enable_minimum_quantity"
+              valuePropName="checked"
+              noStyle
+            >
+              <Checkbox />
+            </Form.Item>
+          </Flex>
+        </Form.Item>
+      </div>
 
       <Typography.Title level={5}>{t("columns.supplier")}</Typography.Title>
       <Form.Item name="supplier_id" label={t("columns.supplier")}>

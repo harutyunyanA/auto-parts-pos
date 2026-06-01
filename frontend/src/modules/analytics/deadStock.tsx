@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Table, Typography, Segmented, Space, Card, Statistic } from "antd";
 import { useDeadStock } from "./queries";
 import { money } from "./format";
+import { useContainerHeight } from "../../hooks/useContainerHeight";
 import { useTranslation } from "react-i18next";
 import type { IDeadStockItem } from "./types";
 
@@ -13,6 +14,11 @@ export function DeadStock() {
   const [pageSize, setPageSize] = useState(50);
   const { t } = useTranslation();
   const { data, isLoading } = useDeadStock(days);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const containerHeight = useContainerHeight(containerRef);
+  // deadStock keeps antd's internal pagination (client-side sorters depend on it),
+  // so the offset must clear thead + the taller pagination row (with showSizeChanger/showTotal).
+  const tableScrollY = Math.max(containerHeight - 130, 200);
 
   const dayOptions = DAY_VALUES.map((value) => ({
     label: `${value} ${t("analytics.daysLabel")}`,
@@ -48,6 +54,7 @@ export function DeadStock() {
         </Card>
       </Space>
 
+      <div ref={containerRef} className="flex-1 min-h-0">
       <Table<IDeadStockItem>
         dataSource={data}
         loading={isLoading}
@@ -55,7 +62,7 @@ export function DeadStock() {
         sticky
         bordered
         size="small"
-        scroll={{ y: "calc(100vh - 400px)" }}
+        scroll={{ x: 850, y: tableScrollY }}
         pagination={{
           current: page,
           pageSize,
@@ -74,7 +81,7 @@ export function DeadStock() {
             title: t("columns.num"),
             key: "index",
             align: "center",
-            width: "5%",
+            width: 60,
             render: (_t, _r, index) => (page - 1) * pageSize + index + 1,
           },
           {
@@ -82,33 +89,36 @@ export function DeadStock() {
             dataIndex: "code",
             key: "code",
             align: "center",
-            width: "10%",
+            width: 90,
           },
           {
             title: t("columns.name"),
             dataIndex: "name",
             key: "name",
+            ellipsis: true,
           },
           {
             title: t("columns.type"),
             dataIndex: "type",
             key: "type",
             align: "center",
-            width: "10%",
+            width: 90,
+            ellipsis: true,
           },
           {
             title: t("columns.oem"),
             dataIndex: "oem",
             key: "oem",
             align: "center",
-            width: "12%",
+            width: 130,
+            ellipsis: true,
           },
           {
             title: t("columns.qty"),
             dataIndex: "quantity",
             key: "quantity",
             align: "center",
-            width: "8%",
+            width: 80,
             sorter: (a, b) => a.quantity - b.quantity,
           },
           {
@@ -116,7 +126,7 @@ export function DeadStock() {
             dataIndex: "purchase_price",
             key: "purchase_price",
             align: "right",
-            width: "13%",
+            width: 120,
             render: (v: number) => money(v),
           },
           {
@@ -124,7 +134,7 @@ export function DeadStock() {
             dataIndex: "frozenValue",
             key: "frozenValue",
             align: "right",
-            width: "15%",
+            width: 130,
             sorter: (a, b) => a.frozenValue - b.frozenValue,
             defaultSortOrder: "descend",
             render: (v: number) => (
@@ -133,6 +143,7 @@ export function DeadStock() {
           },
         ]}
       />
+      </div>
     </div>
   );
 }

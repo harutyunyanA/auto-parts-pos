@@ -97,7 +97,7 @@ export default function Sales() {
         }}
       >
         <section id="header" style={{ flex: "0 0 auto" }}>
-          <Flex gap={"large"} align="center">
+          <Flex gap={"large"} align="center" wrap="wrap">
             <Flex gap={"medium"} align="center">
               <Flex gap={"small"} align="center">
                 <Button
@@ -162,22 +162,18 @@ export default function Sales() {
           )}
         </section>
         <section id="btnTools" style={{ flex: "0 0 auto" }}>
-          <Flex justify="space-between" align="center">
+          <Flex justify="space-between" align="center" wrap="wrap" gap="middle">
             <Flex justify="space-between" gap={"small"} vertical>
-              <Button size="large">{t("common.print")}</Button>
-              <Button size="large" onClick={() => setIsSummaryOpen(true)}>
+              <Button>{t("common.print")}</Button>
+              <Button onClick={() => setIsSummaryOpen(true)}>
                 {t("sales.summary")}
               </Button>
-              <Button
-                size="large"
-                onClick={() => setIsProductHistoryOpen(true)}
-              >
+              <Button onClick={() => setIsProductHistoryOpen(true)}>
                 {t("base.history")}
               </Button>
             </Flex>
             <Flex gap={"small"} align="flex-start">
               <Button
-                size="large"
                 disabled={
                   carts?.[currentCartPage - 1]?.status === "draft" ||
                   carts?.[currentCartPage - 1]?.totalAmount === 0
@@ -186,7 +182,6 @@ export default function Sales() {
                 Receipt
               </Button>
               <Button
-                size="large"
                 disabled={
                   carts?.[currentCartPage - 1]?.status === "draft" ||
                   carts?.[currentCartPage - 1]?.totalAmount === 0

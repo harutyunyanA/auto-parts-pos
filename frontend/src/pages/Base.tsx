@@ -124,10 +124,10 @@ export function Base() {
         </section>
         <section id="btns" style={{ flex: "0 0 auto" }}>
           <Flex gap={"middle"} justify="start" wrap="wrap">
-            <Button size="large" onClick={() => setIsProductHistoryOpen(true)}>
+            <Button onClick={() => setIsProductHistoryOpen(true)}>
               {t("base.history")}
             </Button>
-            <Button size="large" onClick={() => setIsAddProductModalOpen(true)}>
+            <Button onClick={() => setIsAddProductModalOpen(true)}>
               {t("base.addProduct")}
             </Button>
           </Flex>
