@@ -5,27 +5,8 @@ import { useQuery } from "@tanstack/react-query";
 import type { ApiResponse } from "../../types/api.types";
 import api from "../../api/client";
 import { useSource } from "../../store/useAuthStore";
+import { useContainerHeight } from "../../hooks/useContainerHeight";
 import { useTranslation } from "react-i18next";
-
-function useContainerHeight(containerRef: RefObject<HTMLElement | null>) {
-  const [height, setHeight] = useState(400);
-
-  useEffect(() => {
-    const el = containerRef.current;
-    if (!el) return;
-
-    const observer = new ResizeObserver((entries) => {
-      for (const entry of entries) {
-        const h = entry.contentRect.height;
-        if (h > 0) setHeight(h);
-      }
-    });
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, [containerRef]);
-
-  return height;
-}
 
 export function Products({
   filters,
@@ -70,16 +51,9 @@ export function Products({
         rowKey={"id"}
         sticky
         bordered
-        style={{
-          wordWrap: "break-word",
-          wordBreak: "break-word",
-          whiteSpace: "normal",
-          height: "100%",
-          minHeight: 0,
-          overflow: "hidden",
-        }}
+        style={{ height: "100%", minHeight: 0, overflow: "hidden" }}
         size="small"
-        scroll={{ y: tableScrollY }}
+        scroll={{ x: 1140, y: tableScrollY }}
         pagination={false}
         columns={[
           {
@@ -87,26 +61,28 @@ export function Products({
             dataIndex: "code",
             key: "code",
             align: "center",
-            width: "7%",
+            width: 80,
           },
           {
             title: t("columns.name"),
             dataIndex: "name",
             key: "name",
+            ellipsis: true,
           },
           {
             title: t("columns.type"),
             dataIndex: "type",
             key: "type",
             align: "center",
-            width: "7%",
+            width: 90,
+            ellipsis: true,
           },
           {
             title: t("columns.quantity"),
             dataIndex: "quantity",
             key: "quantity",
             align: "center",
-            width: "7%",
+            width: 80,
             render: (text, record) => (
               <Typography.Text
                 type={
@@ -125,28 +101,29 @@ export function Products({
             dataIndex: "purchase_price",
             key: "purchase_price",
             align: "center",
-            width: "10%",
+            width: 110,
           },
           {
             title: t("columns.salePrice"),
             dataIndex: "sale_price",
             key: "sale_price",
             align: "center",
-            width: "10%",
+            width: 110,
           },
           {
             title: t("columns.supplier"),
             dataIndex: ["supplier", "name"],
             align: "center",
             key: "supplier",
-            width: "12%",
+            width: 140,
+            ellipsis: true,
           },
           {
             title: t("columns.min"),
             dataIndex: "minimum_quantity",
             key: "minimum_quantity",
             align: "center",
-            width: "8%",
+            width: 90,
             render: (text, record) => {
               const isEnabled = text !== null && text !== undefined;
               return (
@@ -166,14 +143,16 @@ export function Products({
             dataIndex: "oem",
             key: "oem",
             align: "center",
-            width: "12%",
+            width: 130,
+            ellipsis: true,
           },
           {
             title: t("columns.wxqp"),
             dataIndex: "WXQP",
             key: "WXQP",
             align: "center",
-            width: "12%",
+            width: 130,
+            ellipsis: true,
           },
         ]}
       />

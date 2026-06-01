@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Table,
   Button,
   Modal,
+  Pagination,
   Popconfirm,
   Space,
   Flex,
@@ -20,6 +21,7 @@ import {
 import { useSuppliers } from "./queries";
 import { useDeleteSupplier } from "./mutations";
 import { SupplierForm } from "./supplierForm";
+import { useContainerHeight } from "../../hooks/useContainerHeight";
 import { useTranslation } from "react-i18next";
 import type { ISupplier } from "./types";
 
@@ -28,10 +30,15 @@ export function SuppliersTable() {
   const navigate = useNavigate();
   const { data: suppliers, isLoading } = useSuppliers();
   const deleteMutation = useDeleteSupplier();
+  const containerRef = useRef<HTMLDivElement>(null);
+  const containerHeight = useContainerHeight(containerRef);
+  const tableScrollY = Math.max(containerHeight - 52, 160);
 
   const [modalOpen, setModalOpen] = useState(false);
   const [editing, setEditing] = useState<ISupplier | null>(null);
   const [search, setSearch] = useState("");
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(20);
 
   const openCreate = () => {
     setEditing(null);
@@ -48,18 +55,20 @@ export function SuppliersTable() {
   const filtered = (suppliers ?? []).filter((s) =>
     s.name.toLowerCase().includes(search.toLowerCase()),
   );
+  const paged = filtered.slice((page - 1) * pageSize, page * pageSize);
 
   const columns = [
     {
       title: t("columns.name"),
       dataIndex: "name",
       key: "name",
+      ellipsis: true,
     },
     {
       title: t("columns.phone"),
       dataIndex: "phone",
       key: "phone",
-      width: "25%",
+      width: 180,
       render: (phone: string | null) => phone || "—",
     },
     {
@@ -107,7 +116,10 @@ export function SuppliersTable() {
             placeholder={t("suppliers.searchPlaceholder")}
             prefix={<SearchOutlined />}
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              setPage(1);
+            }}
             style={{ width: 240 }}
           />
           <Button type="primary" icon={<PlusOutlined />} onClick={openCreate}>
@@ -116,15 +128,28 @@ export function SuppliersTable() {
         </Space>
       </Flex>
 
-      <Table
-        dataSource={filtered}
-        columns={columns}
-        rowKey="id"
-        loading={isLoading}
-        bordered
-        sticky
-        scroll={{ y: "calc(100vh - 320px)" }}
-        pagination={{ defaultPageSize: 20, showSizeChanger: true }}
+      <div ref={containerRef} className="flex-1 min-h-0 overflow-hidden">
+        <Table
+          dataSource={paged}
+          columns={columns}
+          rowKey="id"
+          loading={isLoading}
+          bordered
+          sticky
+          scroll={{ x: 600, y: tableScrollY }}
+          pagination={false}
+        />
+      </div>
+      <Pagination
+        className="shrink-0"
+        current={page}
+        pageSize={pageSize}
+        total={filtered.length}
+        showSizeChanger
+        onChange={(nextPage, nextPageSize) => {
+          setPage(nextPage);
+          setPageSize(nextPageSize);
+        }}
       />
 
       <Modal

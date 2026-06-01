@@ -1,8 +1,8 @@
 import { useNavigate } from "react-router-dom";
+import { useRef, useState } from "react";
 import {
   Card,
-  Col,
-  Row,
+  Pagination,
   Statistic,
   Table,
   Tag,
@@ -15,6 +15,7 @@ import {
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
 import { useSupplierSupplies } from "./queries";
+import { useContainerHeight } from "../../hooks/useContainerHeight";
 import { useTranslation } from "react-i18next";
 import type { ISupplierSupply, ISupplierSupplyItem } from "./types";
 
@@ -26,6 +27,11 @@ export function SupplierDetail({ id }: SupplierDetailProps) {
   const navigate = useNavigate();
   const { t } = useTranslation();
   const { data, isLoading } = useSupplierSupplies(id);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const containerHeight = useContainerHeight(containerRef);
+  const tableScrollY = Math.max(containerHeight - 52, 120);
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
 
   if (isLoading) {
     return (
@@ -56,6 +62,7 @@ export function SupplierDetail({ id }: SupplierDetailProps) {
       dataIndex: ["product", "name"],
       key: "name",
       width: 200,
+      ellipsis: true,
       render: (name: string | undefined) => name ?? "—",
     },
     {
@@ -63,6 +70,7 @@ export function SupplierDetail({ id }: SupplierDetailProps) {
       dataIndex: ["product", "type"],
       key: "type",
       width: 90,
+      ellipsis: true,
       render: (v: string | null) => v ?? "—",
     },
     {
@@ -70,6 +78,7 @@ export function SupplierDetail({ id }: SupplierDetailProps) {
       dataIndex: ["product", "oem"],
       key: "oem",
       width: 110,
+      ellipsis: true,
       render: (v: string | null) => v ?? "—",
     },
     {
@@ -77,6 +86,7 @@ export function SupplierDetail({ id }: SupplierDetailProps) {
       dataIndex: ["product", "WXQP"],
       key: "wxqp",
       width: 110,
+      ellipsis: true,
       render: (v: string | null) => v ?? "—",
     },
     {
@@ -147,6 +157,7 @@ export function SupplierDetail({ id }: SupplierDetailProps) {
       title: t("columns.date"),
       dataIndex: "createdAt",
       key: "createdAt",
+      ellipsis: true,
       render: (v: string) => dayjs(v).format("DD-MM-YYYY HH:mm"),
     },
     {
@@ -176,7 +187,7 @@ export function SupplierDetail({ id }: SupplierDetailProps) {
   ];
 
   return (
-    <Flex vertical gap="middle" style={{ height: "100%", minHeight: 0 }}>
+    <Flex vertical gap="small" style={{ height: "100%", minHeight: 0 }}>
       <Flex align="center" gap="middle">
         <Button
           icon={<ArrowLeftOutlined />}
@@ -190,58 +201,51 @@ export function SupplierDetail({ id }: SupplierDetailProps) {
         )}
       </Flex>
 
-      <Row gutter={16}>
-        <Col span={6}>
-          <Card>
-            <Statistic
-              title={t("suppliers.statTotalSupplies")}
-              value={stats.totalSupplies}
-            />
-          </Card>
-        </Col>
-        <Col span={6}>
-          <Card>
-            <Statistic
-              title={t("suppliers.statTotalSpent")}
-              value={stats.totalSpent}
-              precision={2}
-            />
-          </Card>
-        </Col>
-        <Col span={6}>
-          <Card>
-            <Statistic
-              title={t("suppliers.statUnitsDelivered")}
-              value={stats.totalItems}
-            />
-          </Card>
-        </Col>
-        <Col span={6}>
-          <Card>
-            <Statistic
-              title={t("suppliers.statLastSupply")}
-              value={
-                stats.lastSupplyAt
-                  ? dayjs(stats.lastSupplyAt).format("DD-MM-YYYY")
-                  : "—"
-              }
-            />
-          </Card>
-        </Col>
-      </Row>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+        <Card size="small">
+          <Statistic
+            title={t("suppliers.statTotalSupplies")}
+            value={stats.totalSupplies}
+          />
+        </Card>
+        <Card size="small">
+          <Statistic
+            title={t("suppliers.statTotalSpent")}
+            value={stats.totalSpent}
+            precision={2}
+          />
+        </Card>
+        <Card size="small">
+          <Statistic
+            title={t("suppliers.statUnitsDelivered")}
+            value={stats.totalItems}
+          />
+        </Card>
+        <Card size="small">
+          <Statistic
+            title={t("suppliers.statLastSupply")}
+            value={
+              stats.lastSupplyAt
+                ? dayjs(stats.lastSupplyAt).format("DD-MM-YYYY")
+                : "—"
+            }
+          />
+        </Card>
+      </div>
 
       <Typography.Title level={5} style={{ margin: 0 }}>
         {t("suppliers.supplyHistory")}
       </Typography.Title>
 
+      <div ref={containerRef} className="flex-1 min-h-0 overflow-hidden">
       <Table
-        dataSource={supplies}
+        dataSource={supplies.slice((page - 1) * pageSize, page * pageSize)}
         columns={supplyColumns}
         rowKey="id"
         bordered
         sticky
-        pagination={{ defaultPageSize: 10, showSizeChanger: true }}
-        scroll={{ y: "calc(100vh - 500px)" }}
+        pagination={false}
+        scroll={{ x: 640, y: tableScrollY }}
         expandable={{
           expandedRowRender: (s: ISupplierSupply) => (
             <Table
@@ -254,6 +258,18 @@ export function SupplierDetail({ id }: SupplierDetailProps) {
             />
           ),
           rowExpandable: (s: ISupplierSupply) => (s.items?.length ?? 0) > 0,
+        }}
+      />
+      </div>
+      <Pagination
+        className="shrink-0"
+        current={page}
+        pageSize={pageSize}
+        total={supplies.length}
+        showSizeChanger
+        onChange={(nextPage, nextPageSize) => {
+          setPage(nextPage);
+          setPageSize(nextPageSize);
         }}
       />
     </Flex>

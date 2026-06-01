@@ -93,6 +93,9 @@ export default function MainLayout() {
         trigger={null}
         collapsible
         collapsed={collapsed}
+        breakpoint="lg"
+        collapsedWidth="80"
+        onBreakpoint={(broken) => setCollapsed(broken)}
         theme={isDarkMode ? "dark" : "light"}
       >
         <div
@@ -152,14 +155,8 @@ export default function MainLayout() {
       </Sider>
       <Layout style={{ height: "100%", overflow: "hidden" }}>
         <Header
-          style={{
-            padding: 0,
-            background: colorBgContainer,
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            paddingRight: 24,
-          }}
+          className="flex items-center justify-between gap-2 pr-2 lg:pr-6"
+          style={{ padding: 0, background: colorBgContainer }}
         >
           <Button
             type="text"
@@ -168,7 +165,7 @@ export default function MainLayout() {
             style={{ fontSize: "16px", width: 64, height: 64 }}
           />
 
-          <div style={{ display: "flex", alignItems: "center", gap: 24 }}>
+          <div className="flex flex-wrap items-center justify-end gap-2 lg:gap-6">
             <DatePicker
               value={currentDate}
               onChange={(date) => date && setCurrentDate(date)}
@@ -178,31 +175,25 @@ export default function MainLayout() {
               variant="filled"
             />
 
-            <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
-              <div
-                style={{
-                  padding: "4px 12px",
-                  background: isDarkMode ? "#1f1f1f" : "#f5f5f5",
-                  borderRadius: 20,
-                }}
-              >
-                <UserOutlined style={{ marginRight: 8 }} />
-                <Text strong style={{ textTransform: "uppercase" }}>
-                  {source || t("layout.guest")}
-                </Text>
-              </div>
+            <div
+              style={{
+                padding: "4px 12px",
+                background: isDarkMode ? "#1f1f1f" : "#f5f5f5",
+                borderRadius: 20,
+              }}
+            >
+              <UserOutlined style={{ marginRight: 8 }} />
+              <Text strong style={{ textTransform: "uppercase" }}>
+                {source || t("layout.guest")}
+              </Text>
             </div>
           </div>
         </Header>
         <Content
+          className="flex flex-col overflow-hidden m-2 p-3 lg:m-6 lg:p-6"
           style={{
-            margin: "24px 16px",
-            padding: 24,
             background: colorBgContainer,
             borderRadius: borderRadiusLG,
-            overflow: "hidden",
-            display: "flex",
-            flexDirection: "column",
           }}
         >
           <Outlet />

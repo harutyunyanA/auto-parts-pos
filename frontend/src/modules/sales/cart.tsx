@@ -4,6 +4,7 @@ import type { ICart } from "./types";
 import { useState, useRef, useEffect } from "react";
 import { useCurrentDate } from "../../store/useDateStore";
 import { usePurchasePriceStore } from "../../store/usePurchasePriceStore";
+import { useContainerHeight } from "../../hooks/useContainerHeight";
 import { useCartMutations } from "./mutations";
 import { useTranslation } from "react-i18next";
 
@@ -21,6 +22,9 @@ export function Cart({ cart }: CartProps) {
   }>({ id: "new", field: "code" });
   const { token } = theme.useToken();
   const inputRefs = useRef<Record<string, any>>({});
+  const containerRef = useRef<HTMLDivElement>(null);
+  const containerHeight = useContainerHeight(containerRef);
+  const tableScrollY = Math.max(containerHeight - 48, 200);
   const {
     mutationAdd,
     mutationQty,
@@ -215,10 +219,17 @@ export function Cart({ cart }: CartProps) {
       dataIndex: "oem",
       key: "oem",
       width: 150,
+      ellipsis: true,
     },
-    { title: t("columns.wxqp"), dataIndex: "WXQP", key: "WXQP", width: 150 },
+    {
+      title: t("columns.wxqp"),
+      dataIndex: "WXQP",
+      key: "WXQP",
+      width: 150,
+      ellipsis: true,
+    },
     { title: t("columns.type"), dataIndex: "type", key: "type", width: 70 },
-    { title: t("columns.name"), dataIndex: "name", key: "name" },
+    { title: t("columns.name"), dataIndex: "name", key: "name", ellipsis: true },
     {
       title: t("columns.quantity"),
       dataIndex: "quantity",
@@ -318,33 +329,32 @@ export function Cart({ cart }: CartProps) {
     return () => clearTimeout(timer);
   }, [focusTarget, cart.items.length, cart.status]);
   return (
-    <Table
-      columns={columns}
-      dataSource={dataSource}
-      pagination={false}
-      rowKey="key"
-      bordered
-      sticky
-      style={{
-        wordWrap: "break-word",
-        wordBreak: "break-word",
-        whiteSpace: "normal",
-        height: "100%",
-        border: `1px solid ${token.colorBorder}`,
-        minHeight: 0,
-        overflowY: "auto",
-        borderRadius: token.borderRadiusLG,
-      }}
-      size="small"
-      scroll={{ y: "calc(100vh - 370px)" }}
-      onRow={(record: any) => ({
-        onClick: () => {
-          if (!record.isNew) setActivePrice(record.purchase_price);
-        },
-        onContextMenu: (e) => {
-          e.preventDefault();
-        },
-      })}
-    />
+    <div ref={containerRef} className="flex flex-col h-full min-h-0">
+      <Table
+        columns={columns}
+        dataSource={dataSource}
+        pagination={false}
+        rowKey="key"
+        bordered
+        sticky
+        style={{
+          height: "100%",
+          border: `1px solid ${token.colorBorder}`,
+          minHeight: 0,
+          overflow: "hidden",
+          borderRadius: token.borderRadiusLG,
+        }}
+        size="small"
+        scroll={{ x: 920, y: tableScrollY }}
+        onRow={(record: any) => ({
+          onClick: () => {
+            if (!record.isNew) setActivePrice(record.purchase_price);
+          },
+          onContextMenu: (e) => {
+            e.preventDefault();
+          },
+        })}
+      />
+    </div>
   );
 }

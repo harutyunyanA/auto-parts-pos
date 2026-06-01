@@ -226,6 +226,7 @@ export function useSupplyTable({ supply }: UseSupplyTableProps): {
     {
       title: t("columns.name"),
       key: "name",
+      ellipsis: true,
       render: (_, record: any) =>
         record.product?.name || (record.isNew ? "" : t("common.unknown")),
     },
@@ -233,6 +234,7 @@ export function useSupplyTable({ supply }: UseSupplyTableProps): {
       title: t("columns.type"),
       key: "type",
       width: 100,
+      ellipsis: true,
       render: (_, record: any) => record.product?.type,
     },
     {
