@@ -201,6 +201,33 @@ class SaleController {
       next(err);
     }
   }
+  async setCartClient(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { cartId } = req.params;
+      const { clientId } = req.body;
+
+      if (!cartId || isNaN(Number(cartId))) {
+        return errorResponse(res, "cartId required", 400);
+      }
+
+      const normalizedClientId =
+        clientId === null || clientId === undefined ? null : Number(clientId);
+
+      if (normalizedClientId !== null && isNaN(normalizedClientId)) {
+        return errorResponse(res, "clientId must be a number or null", 400);
+      }
+
+      const result = await service.setCartClient(
+        Number(cartId),
+        normalizedClientId,
+      );
+      return successResponse(res, result);
+    } catch (err: any) {
+      logger.error(err.message);
+      next(err);
+    }
+  }
+
   async getProductHistory(req: Request, res: Response, next: NextFunction) {
     try {
       const { code, oem } = req.validated?.body;

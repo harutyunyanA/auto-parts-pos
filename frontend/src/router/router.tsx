@@ -11,6 +11,8 @@ import Deficit from "../pages/Deficit";
 import Settings from "../pages/Settings";
 import Suppliers from "../pages/Suppliers";
 import SupplierDetail from "../pages/SupplierDetail";
+import Clients from "../pages/Clients";
+import ClientDetail from "../pages/ClientDetail";
 
 export const router = createBrowserRouter([
   {
@@ -55,6 +57,14 @@ export const router = createBrowserRouter([
           {
             path: "suppliers/:id",
             element: <SupplierDetail />,
+          },
+          {
+            path: "clients",
+            element: <Clients />,
+          },
+          {
+            path: "clients/:id",
+            element: <ClientDetail />,
           },
           {
             path: "settings",

@@ -129,7 +129,7 @@ export default function Sales() {
             <p>
               {t("sales.receipt")} {carts?.[currentCartPage - 1]?.id}
             </p>
-            <ClientsList />
+            <ClientsList cart={carts?.[currentCartPage - 1]} />
             <p id="purchasedPrice">11EAX{activePrice ?? ""}</p>
             <Button
               icon={

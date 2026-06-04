@@ -3,6 +3,7 @@ import type { CartType, CartItemType } from "./sale.types.ts";
 import type { sourceType } from "../../types/source.types.ts";
 import { sequelize } from "../../config/db.ts";
 import { Product } from "../product/product.model.ts";
+import { Client } from "../clients/clients.model.ts";
 import { recalcCartTotal } from "../../utils/recalcCartTotal.ts";
 
 export class Cart extends Model implements CartType {
@@ -11,6 +12,8 @@ export class Cart extends Model implements CartType {
   declare totalAmount: number;
   declare paymentMethod: "cash" | "card";
   declare source: sourceType;
+  declare clientId: number | null;
+  declare bonusPaid: boolean;
   declare createdAt: Date;
   declare updatedAt: Date;
 }
@@ -40,6 +43,19 @@ Cart.init(
     source: {
       type: DataTypes.ENUM("soviet", "import"),
       allowNull: false,
+    },
+    clientId: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      references: {
+        model: "clients",
+        key: "id",
+      },
+    },
+    bonusPaid: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false,
     },
   },
   {
@@ -113,6 +129,16 @@ CartItem.init(
 Cart.hasMany(CartItem, {
   foreignKey: "cartId",
   as: "items",
+});
+
+Client.hasMany(Cart, {
+  foreignKey: "clientId",
+  as: "carts",
+});
+
+Cart.belongsTo(Client, {
+  foreignKey: "clientId",
+  as: "client",
 });
 
 CartItem.belongsTo(Cart, {

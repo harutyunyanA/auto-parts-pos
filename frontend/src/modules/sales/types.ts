@@ -1,10 +1,10 @@
 export interface ICart {
   id: number;
-  //   clientId: number;
-  //   clientName: string;
+  clientId: number | null;
+  client?: { id: number; name: string } | null;
+  bonusPaid: boolean;
   totalAmount: number;
   status: "draft" | "completed";
-  //   totalItems: number;
   paymentMethod: "cash" | "card";
   createdAt: string;
   updatedAt: string;

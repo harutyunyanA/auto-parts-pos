@@ -5,6 +5,7 @@ import { Product } from "../product/product.model.ts";
 import productService from "../product/product.service.ts";
 import type { ProductType } from "../product/product.types.ts";
 import { Cart, CartItem } from "./sale.model.ts";
+import { Client } from "../clients/clients.model.ts";
 import dayjs from "dayjs";
 import { normalizeCart } from "../../utils/normalize-cart.ts";
 import {
@@ -218,6 +219,11 @@ class SaleService {
             },
           ],
         },
+        {
+          model: Client,
+          as: "client",
+          attributes: ["id", "name"],
+        },
       ],
     });
 
@@ -252,6 +258,24 @@ class SaleService {
     }
 
     cart.paymentMethod = "card";
+    await cart.save();
+    return cart;
+  }
+
+  async setCartClient(cartId: number, clientId: number | null) {
+    const cart = await Cart.findByPk(cartId);
+    if (!cart) {
+      throw new NotFoundError(`Cart: ${cartId} is not found`);
+    }
+
+    if (clientId !== null) {
+      const client = await Client.findByPk(clientId);
+      if (!client) {
+        throw new NotFoundError(`Client: ${clientId} is not found`);
+      }
+    }
+
+    cart.clientId = clientId;
     await cart.save();
     return cart;
   }
