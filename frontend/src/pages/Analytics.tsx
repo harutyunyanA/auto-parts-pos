@@ -25,15 +25,14 @@ export default function Analytics() {
   return (
     <div className="flex flex-col gap-4 h-full">
       <Tabs
+        className="flex-1 min-h-0 [&_.ant-tabs-content]:h-full [&_.ant-tabs-tabpane]:h-full"
         activeKey={activeKey}
         onChange={setActiveKey}
         tabBarExtraContent={
           activeKey !== "dead" ? (
             <RangePicker
               value={dates}
-              onChange={(d) =>
-                d && d[0] && d[1] && setDates([d[0], d[1]])
-              }
+              onChange={(d) => d && d[0] && d[1] && setDates([d[0], d[1]])}
               allowClear={false}
               maxDate={dayjs()}
               variant="filled"

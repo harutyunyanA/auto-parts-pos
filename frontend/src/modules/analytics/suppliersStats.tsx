@@ -73,7 +73,7 @@ export function SuppliersStats({ range }: Props) {
               dataIndex: "supplyCount",
               key: "supplyCount",
               align: "center",
-              width: 90,
+              width: 110,
               sorter: (a, b) => a.supplyCount - b.supplyCount,
             },
             {

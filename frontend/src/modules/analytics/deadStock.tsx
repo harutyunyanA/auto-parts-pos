@@ -16,9 +16,11 @@ export function DeadStock() {
   const { data, isLoading } = useDeadStock(days);
   const containerRef = useRef<HTMLDivElement>(null);
   const containerHeight = useContainerHeight(containerRef);
-  // deadStock keeps antd's internal pagination (client-side sorters depend on it),
-  // so the offset must clear thead + the taller pagination row (with showSizeChanger/showTotal).
-  const tableScrollY = Math.max(containerHeight - 130, 200);
+  // deadStock keeps antd's internal pagination inside the table, so scroll.y must
+  // reserve room for thead (~39px) + the pagination row (16px margin + 32px + 16px margin)
+  // + bordered edges (~2px) ≈ 105px. Bump this up if the pagination ever wraps to 2 lines
+  // on a narrow window (the last row would slide under it).
+  const tableScrollY = Math.max(containerHeight - 105, 200);
 
   const dayOptions = DAY_VALUES.map((value) => ({
     label: `${value} ${t("analytics.daysLabel")}`,

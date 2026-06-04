@@ -237,41 +237,44 @@ export function SupplierDetail({ id }: SupplierDetailProps) {
         {t("suppliers.supplyHistory")}
       </Typography.Title>
 
-      <div ref={containerRef} className="flex-1 min-h-0 overflow-hidden">
-      <Table
-        dataSource={supplies.slice((page - 1) * pageSize, page * pageSize)}
-        columns={supplyColumns}
-        rowKey="id"
-        bordered
-        sticky
-        pagination={false}
-        scroll={{ x: 640, y: tableScrollY }}
-        expandable={{
-          expandedRowRender: (s: ISupplierSupply) => (
-            <Table
-              dataSource={s.items}
-              columns={itemColumns}
-              rowKey={(item: ISupplierSupplyItem) => item.id}
-              size="small"
-              pagination={false}
-              scroll={{ x: "max-content" }}
-            />
-          ),
-          rowExpandable: (s: ISupplierSupply) => (s.items?.length ?? 0) > 0,
-        }}
-      />
-      </div>
-      <Pagination
-        className="shrink-0"
-        current={page}
-        pageSize={pageSize}
-        total={supplies.length}
-        showSizeChanger
-        onChange={(nextPage, nextPageSize) => {
-          setPage(nextPage);
-          setPageSize(nextPageSize);
-        }}
-      />
+        <div
+          ref={containerRef}
+          className="flex flex-col min-h-0 overflow-scroll"
+        >
+          <Table
+            dataSource={supplies.slice((page - 1) * pageSize, page * pageSize)}
+            columns={supplyColumns}
+            rowKey="id"
+            bordered
+            sticky
+            pagination={false}
+            scroll={{ x: 640, y: tableScrollY }}
+            expandable={{
+              expandedRowRender: (s: ISupplierSupply) => (
+                <Table
+                  dataSource={s.items}
+                  columns={itemColumns}
+                  rowKey={(item: ISupplierSupplyItem) => item.id}
+                  size="small"
+                  pagination={false}
+                  scroll={{ x: "max-content" }}
+                />
+              ),
+              rowExpandable: (s: ISupplierSupply) => (s.items?.length ?? 0) > 0,
+            }}
+          />
+        </div>
+        <Pagination
+          className="shrink-0"
+          current={page}
+          pageSize={pageSize}
+          total={supplies.length}
+          showSizeChanger
+          onChange={(nextPage, nextPageSize) => {
+            setPage(nextPage);
+            setPageSize(nextPageSize);
+          }}
+        />
     </Flex>
   );
 }
