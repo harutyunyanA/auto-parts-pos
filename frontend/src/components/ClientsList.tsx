@@ -1,43 +1,61 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import api from "../api/client";
 import { Dropdown, Space, Input, Divider, theme, Button } from "antd";
 import { DownOutlined, UserOutlined, SearchOutlined } from "@ant-design/icons";
+import { useSetCartClient } from "../modules/sales/mutations";
+import type { ApiResponse } from "../types/api.types";
+import type { ICart } from "../modules/sales/types";
+import type { IClient } from "../modules/clients/types";
 
 const { useToken } = theme;
 
-export function ClientsList() {
+interface ClientsListProps {
+  cart: ICart | undefined;
+}
+
+export function ClientsList({ cart }: ClientsListProps) {
   const { t } = useTranslation();
   const { token } = useToken();
-  const [selectedClient, setSelectedClient] = useState<any>(null);
   const [searchValue, setSearchValue] = useState("");
+  const setCartClient = useSetCartClient();
 
   const { data } = useQuery({
     queryKey: ["clients"],
-    queryFn: () => api.get("/clients").then((res) => res.data.data),
+    queryFn: () =>
+      api
+        .get<ApiResponse<IClient[]>>("/clients")
+        .then((res) => res.data.data ?? []),
     staleTime: 60 * 60 * 1000,
   });
 
-  // Set default client once data is loaded
-  useEffect(() => {
-    if (data && data.length > 0 && !selectedClient) {
-      setSelectedClient(data[0]);
-    }
-  }, [data, selectedClient]);
+  const assign = (clientId: number | null) => {
+    if (!cart) return;
+    if (cart.clientId === clientId) return;
+    setCartClient.mutate({ cartId: cart.id, clientId });
+  };
 
-  const clientItems = data
-    ?.filter((client: any) =>
-      client.name.toLowerCase().includes(searchValue.toLowerCase()),
-    )
-    .map((client: any) => ({
+  const filteredClients = (data ?? []).filter((client) =>
+    client.name.toLowerCase().includes(searchValue.toLowerCase()),
+  );
+
+  const clientItems = [
+    {
+      key: "none",
+      label: (
+        <div onClick={() => assign(null)}>
+          <Space>
+            <UserOutlined />
+            {t("sales.noClient")}
+          </Space>
+        </div>
+      ),
+    },
+    ...filteredClients.map((client) => ({
       key: client.id.toString(),
       label: (
-        <div
-          onClick={() => {
-            setSelectedClient(client);
-          }}
-        >
+        <div onClick={() => assign(client.id)}>
           <Space>
             <UserOutlined />
             {client.name}
@@ -51,10 +69,15 @@ export function ClientsList() {
           </Space>
         </div>
       ),
-    }));
+    })),
+  ];
+
+  const label = cart?.client?.name ?? t("sales.noClient");
+  const isLocked = !cart || cart.status === "completed";
 
   return (
     <Dropdown
+      disabled={isLocked}
       menu={{ items: clientItems }}
       trigger={["click"]}
       popupRender={(menu) => (
@@ -79,12 +102,10 @@ export function ClientsList() {
         </div>
       )}
     >
-      <Button type="text" style={{ padding: "4px 8px" }}>
+      <Button type="text" style={{ padding: "4px 8px" }} loading={setCartClient.isPending}>
         <Space>
           <UserOutlined style={{ color: token.colorPrimary }} />
-          <span style={{ fontWeight: 500 }}>
-            {selectedClient ? selectedClient.name : t("sales.defaultClient")}
-          </span>
+          <span style={{ fontWeight: 500 }}>{label}</span>
           <DownOutlined style={{ fontSize: "10px", opacity: 0.5 }} />
         </Space>
       </Button>

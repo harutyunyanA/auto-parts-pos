@@ -13,14 +13,70 @@ import {
   BulbOutlined,
   DollarOutlined,
   GlobalOutlined,
+  GiftOutlined,
 } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
 import { useIsDarkMode, useToggleTheme } from "../../store/useThemeStore";
 import { useSettings } from "./queries";
 import { useUpdateSetting } from "./mutations";
-import { DEFAULT_USD_RATE_KEY } from "./types";
+import {
+  DEFAULT_USD_RATE_KEY,
+  BONUS_PERCENT_SOVIET_KEY,
+  BONUS_PERCENT_IMPORT_KEY,
+} from "./types";
 
 const { Title, Text } = Typography;
+
+interface BonusRowProps {
+  settingKey: string;
+  label: string;
+}
+
+function BonusRow({ settingKey, label }: BonusRowProps) {
+  const { t } = useTranslation();
+  const { data: settings, isLoading } = useSettings();
+  const updateSetting = useUpdateSetting();
+
+  const [value, setValue] = useState<number | null>(null);
+  const saved = settings?.find((s) => s.key === settingKey)?.value;
+
+  useEffect(() => {
+    if (saved !== undefined) {
+      setValue(Number(saved));
+    }
+  }, [saved]);
+
+  const isDirty =
+    value !== null && saved !== undefined && Number(saved) !== value;
+
+  return (
+    <Space direction="vertical" style={{ width: "100%" }} size={4}>
+      <Text strong>{label}</Text>
+      <Space>
+        <InputNumber
+          value={value}
+          onChange={setValue}
+          min={0}
+          max={100}
+          step={1}
+          disabled={isLoading}
+          style={{ width: 160 }}
+        />
+        <Button
+          type="primary"
+          loading={updateSetting.isPending}
+          disabled={!isDirty}
+          onClick={() => {
+            if (value === null) return;
+            updateSetting.mutate({ key: settingKey, value: String(value) });
+          }}
+        >
+          {t("common.save")}
+        </Button>
+      </Space>
+    </Space>
+  );
+}
 
 export function Settings() {
   const { t, i18n } = useTranslation();
@@ -129,6 +185,27 @@ export function Settings() {
               {t("common.save")}
             </Button>
           </Space>
+        </Space>
+
+        <Divider />
+
+        <Space direction="vertical" style={{ width: "100%" }} size="middle">
+          <Space>
+            <GiftOutlined />
+            <div>
+              <Text strong>{t("settings.bonusTitle")}</Text>
+              <br />
+              <Text type="secondary">{t("settings.bonusHint")}</Text>
+            </div>
+          </Space>
+          <BonusRow
+            settingKey={BONUS_PERCENT_SOVIET_KEY}
+            label={t("settings.bonusPercentSoviet")}
+          />
+          <BonusRow
+            settingKey={BONUS_PERCENT_IMPORT_KEY}
+            label={t("settings.bonusPercentImport")}
+          />
         </Space>
       </Card>
     </div>

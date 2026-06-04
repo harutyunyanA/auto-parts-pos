@@ -6,6 +6,8 @@ export type CartType = {
   totalAmount: number;
   paymentMethod: "cash" | "card";
   source: sourceType;
+  clientId: number | null;
+  bonusPaid: boolean;
   createdAt: Date;
   updatedAt: Date;
 };

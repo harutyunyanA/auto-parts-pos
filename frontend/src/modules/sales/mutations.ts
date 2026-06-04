@@ -101,3 +101,24 @@ export function useCartMutations({
     mutationCardPayment,
   };
 }
+
+export function useSetCartClient() {
+  const queryClient = useQueryClient();
+  const { t } = useTranslation();
+
+  return useMutation({
+    mutationFn: ({
+      cartId,
+      clientId,
+    }: {
+      cartId: number;
+      clientId: number | null;
+    }) => api.patch(`/sale/${cartId}/client`, { clientId }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["carts"] });
+    },
+    onError: (err: any) => {
+      message.error(err.response?.data?.message || t("toast.failedSetClient"));
+    },
+  });
+}
