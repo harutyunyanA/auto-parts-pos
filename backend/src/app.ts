@@ -10,6 +10,7 @@ import clientsRouter from "./modules/clients/clients.router.ts";
 import supplierRouter from "./modules/supplier/supplier.router.ts";
 import settingsRouter from "./modules/settings/settings.router.ts";
 import analyticsRouter from "./modules/analytics/analytics.router.ts";
+import discountRouter from "./modules/discount/discount.router.ts";
 export const app = express();
 
 app.use(httpLogger);
@@ -36,5 +37,6 @@ app.use("/clients", clientsRouter);
 app.use("/suppliers", supplierRouter);
 app.use("/settings", settingsRouter);
 app.use("/analytics", analyticsRouter);
+app.use("/discounts", discountRouter);
 
 app.use(errorHandler);

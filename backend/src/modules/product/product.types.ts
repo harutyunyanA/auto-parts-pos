@@ -16,6 +16,7 @@ export type ProductType = {
   minimum_quantity?: number | null;
   purchase_price: number;
   sale_price: number;
+  discount: number;
   weight?: number | null;
   supplier_id: number | null;
   createdAt: Date;
@@ -24,7 +25,7 @@ export type ProductType = {
 
 export type ProductCreationType = Optional<
   ProductType,
-  "id" | "oem" | "WXQP" | "minimum_quantity" | "code" | "weight"
+  "id" | "oem" | "WXQP" | "minimum_quantity" | "code" | "weight" | "discount"
 >;
 
 export type searchParams = {

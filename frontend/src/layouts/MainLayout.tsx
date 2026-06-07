@@ -14,6 +14,7 @@ import {
   BarChartOutlined,
   ShopOutlined,
   TeamOutlined,
+  PercentageOutlined,
 } from "@ant-design/icons";
 import { useNavigate, useLocation, Outlet, Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -79,6 +80,11 @@ export default function MainLayout() {
       key: "/clients",
       icon: <TeamOutlined />,
       label: <Link to="/clients">{t("menu.clients")}</Link>,
+    },
+    {
+      key: "/discounts",
+      icon: <PercentageOutlined />,
+      label: <Link to="/discounts">{t("menu.discounts")}</Link>,
     },
     {
       key: "/analytics",

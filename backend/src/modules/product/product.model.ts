@@ -18,6 +18,7 @@ export class Product
   declare minimum_quantity: number | null;
   declare purchase_price: number;
   declare sale_price: number;
+  declare discount: number;
   declare weight: number | null;
   declare supplier_id: number | null;
   declare createdAt: Date;
@@ -86,6 +87,12 @@ Product.init(
 
     sale_price: {
       type: DataTypes.FLOAT,
+      allowNull: false,
+      defaultValue: 0,
+    },
+
+    discount: {
+      type: DataTypes.DECIMAL(5, 2),
       allowNull: false,
       defaultValue: 0,
     },

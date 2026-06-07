@@ -1,6 +1,15 @@
-import { Input, Table, message, Modal, theme } from "antd";
+import { Input, Table, message, Modal, theme, Tooltip } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import type { ICart } from "./types";
+
+// Discount % derived from the original list price vs the (possibly reduced)
+// sale price snapshot. Returns 0 when there is no reduction.
+function discountPct(record: any): number {
+  const orig = Number(record.sale_price);
+  const final = Number(record.priceAtSale);
+  if (!(orig > 0) || final >= orig) return 0;
+  return Math.round((1 - final / orig) * 100);
+}
 import { useState, useRef, useEffect } from "react";
 import { useCurrentDate } from "../../store/useDateStore";
 import { usePurchasePriceStore } from "../../store/usePurchasePriceStore";
@@ -218,14 +227,14 @@ export function Cart({ cart }: CartProps) {
       title: t("columns.oem"),
       dataIndex: "oem",
       key: "oem",
-      width: 150,
+      width: 130,
       ellipsis: true,
     },
     {
       title: t("columns.wxqp"),
       dataIndex: "WXQP",
       key: "WXQP",
-      width: 150,
+      width: 130,
       ellipsis: true,
     },
     { title: t("columns.type"), dataIndex: "type", key: "type", width: 70 },
@@ -262,6 +271,19 @@ export function Cart({ cart }: CartProps) {
         ),
     },
     {
+      title: t("columns.discount"),
+      key: "discount",
+      width: 80,
+      align: "center",
+      render: (_: any, record: any) => {
+        if (record.isNew) return null;
+        const pct = discountPct(record);
+        return pct > 0 ? (
+          <span style={{ color: token.colorError }}>-{pct}%</span>
+        ) : null;
+      },
+    },
+    {
       title: t("columns.price"),
       dataIndex: "priceAtSale",
       key: "priceAtSale",
@@ -269,38 +291,46 @@ export function Cart({ cart }: CartProps) {
       align: "center",
       render: (text: any, record: any) =>
         record.isNew ? null : (
-          <Input
-            key={`${record.id}-price-${text}`}
-            ref={(el) => {
-              inputRefs.current[`${record.id}-price`] = el;
-            }}
-            defaultValue={text}
-            onFocus={(e) => {
-              e.target.select();
-              setActivePrice(record.purchase_price);
-            }}
-            onPressEnter={(e: any) => {
-              if (cart.status === "completed") {
-                showReopenModal(text, `${record.id}-price`);
-                return;
-              }
-              mutationPrice.mutate({
-                id: record.id,
-                price: Number(e.target.value),
-              });
-            }}
-            onKeyDown={(e) => handleKeyDown(e, record, "price")}
-            variant="borderless"
-            style={{ width: "100%", padding: "0" }}
-          />
+          <Tooltip
+            title={
+              discountPct(record) > 0
+                ? `${t("sales.originalPrice")}: ${record.sale_price}`
+                : ""
+            }
+          >
+            <Input
+              key={`${record.id}-price-${text}`}
+              ref={(el) => {
+                inputRefs.current[`${record.id}-price`] = el;
+              }}
+              defaultValue={text}
+              onFocus={(e) => {
+                e.target.select();
+                setActivePrice(record.purchase_price);
+              }}
+              onPressEnter={(e: any) => {
+                if (cart.status === "completed") {
+                  showReopenModal(text, `${record.id}-price`);
+                  return;
+                }
+                mutationPrice.mutate({
+                  id: record.id,
+                  price: Number(e.target.value),
+                });
+              }}
+              onKeyDown={(e) => handleKeyDown(e, record, "price")}
+              variant="borderless"
+              style={{ width: "100%", padding: "0" }}
+            />
+          </Tooltip>
         ),
     },
-    { title: t("columns.total"), dataIndex: "totalPrice", key: "totalPrice", width: 70 },
+    { title: t("columns.total"), dataIndex: "totalPrice", key: "totalPrice", width: 80 },
     {
       title: t("columns.stock"),
       dataIndex: "quantityAtStore",
       key: "quantityAtStore",
-      width: 70,
+      width: 80,
     },
   ];
 
@@ -345,7 +375,7 @@ export function Cart({ cart }: CartProps) {
           borderRadius: token.borderRadiusLG,
         }}
         size="small"
-        scroll={{ x: 920, y: tableScrollY }}
+        scroll={{ x: 990, y: tableScrollY }}
         onRow={(record: any) => ({
           onClick: () => {
             if (!record.isNew) setActivePrice(record.purchase_price);

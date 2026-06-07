@@ -46,10 +46,17 @@ class SaleService {
       throw new BadRequestError("Cart is completed");
     }
 
+    // Apply the product discount (%) to the sale price snapshot. COGS
+    // (purchasePriceAtSale) is left untouched so profit shrinks on its own.
+    const discountPercent = Number(product.discount) || 0;
+    const priceAtSale = Math.round(
+      product.sale_price * (1 - discountPercent / 100),
+    );
+
     const newCartItem = await CartItem.create<CartItem>({
       productId: product.id,
       cartId: cartId,
-      priceAtSale: product.sale_price,
+      priceAtSale,
       purchasePriceAtSale: product.purchase_price,
       createdAt: cart.createdAt,
       updatedAt: cart.updatedAt,

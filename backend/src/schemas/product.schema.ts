@@ -106,6 +106,11 @@ export const updateProductSchema = z.object({
     minimum_quantity: z.number().int().nonnegative().nullable().optional(),
     purchase_price: z.number().nonnegative().optional(),
     sale_price: z.number().nonnegative().optional(),
+    discount: z
+      .number("Discount must be a number")
+      .min(0, "Discount cannot be negative")
+      .max(100, "Discount cannot exceed 100%")
+      .optional(),
     weight: z.number().nonnegative().nullable().optional(),
     supplier_id: z.number().nullable().optional(),
   }),
