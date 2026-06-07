@@ -15,6 +15,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import api from "../api/client";
 import { useEffect, useState, useRef } from "react";
 import { Cart } from "../modules/sales/cart";
+import { printSale } from "../modules/sales/printSale";
 import type { ICart } from "../modules/sales/types";
 import type { ApiResponse } from "../types/api.types";
 import {
@@ -164,7 +165,14 @@ export default function Sales() {
         <section id="btnTools" style={{ flex: "0 0 auto" }}>
           <Flex justify="space-between" align="center" wrap="wrap" gap="middle">
             <Flex justify="space-between" gap={"small"} vertical>
-              <Button>{t("common.print")}</Button>
+              <Button
+                onClick={() => {
+                  const cart = carts?.[currentCartPage - 1];
+                  if (cart) printSale(cart, t);
+                }}
+              >
+                {t("common.print")}
+              </Button>
               <Button onClick={() => setIsSummaryOpen(true)}>
                 {t("sales.summary")}
               </Button>

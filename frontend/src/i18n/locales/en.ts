@@ -157,6 +157,11 @@ const en = {
       noClient: "No client",
       originalPrice: "Original price",
     },
+    print: {
+      saleTitle: "Sale receipt",
+      deficitTitle: "Deficit list",
+      empty: "No items to print",
+    },
     stock: {
       supplyNo: "Supply №",
       noSupplies: "No supplies found. Click + to create one.",

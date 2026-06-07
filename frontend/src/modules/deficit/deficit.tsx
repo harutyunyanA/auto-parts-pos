@@ -8,6 +8,7 @@ import api from "../../api/client";
 import { useSource } from "../../store/useAuthStore";
 import { useContainerHeight } from "../../hooks/useContainerHeight";
 import { useTranslation } from "react-i18next";
+import { printDeficit } from "./printDeficit";
 
 export function Deficit() {
   const { t } = useTranslation();
@@ -31,7 +32,12 @@ export function Deficit() {
   return (
     <div className="flex flex-col gap-4 h-full">
       <div className="flex justify-start">
-        <Button icon={<PrinterOutlined />}>{t("common.print")}</Button>
+        <Button
+          icon={<PrinterOutlined />}
+          onClick={() => printDeficit(data ?? [], t)}
+        >
+          {t("common.print")}
+        </Button>
       </div>
       <div ref={containerRef} className="flex-1 min-h-0 overflow-hidden">
       <Table

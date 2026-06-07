@@ -158,6 +158,11 @@ const hy = {
       noClient: "Առանց հաճախորդի",
       originalPrice: "Սկզբնական գին",
     },
+    print: {
+      saleTitle: "Վաճառքի կտրոն",
+      deficitTitle: "Դեֆիցիտի ցուցակ",
+      empty: "Տպելու տվյալներ չկան",
+    },
     stock: {
       supplyNo: "Մատակարարում №",
       noSupplies: "Մատակարարումներ չկան։ Սեղմեք +՝ ստեղծելու համար։",

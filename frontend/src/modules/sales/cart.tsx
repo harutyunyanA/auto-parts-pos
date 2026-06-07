@@ -1,15 +1,7 @@
 import { Input, Table, message, Modal, theme, Tooltip } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import type { ICart } from "./types";
-
-// Discount % derived from the original list price vs the (possibly reduced)
-// sale price snapshot. Returns 0 when there is no reduction.
-function discountPct(record: any): number {
-  const orig = Number(record.sale_price);
-  const final = Number(record.priceAtSale);
-  if (!(orig > 0) || final >= orig) return 0;
-  return Math.round((1 - final / orig) * 100);
-}
+import { discountPct } from "./discount";
 import { useState, useRef, useEffect } from "react";
 import { useCurrentDate } from "../../store/useDateStore";
 import { usePurchasePriceStore } from "../../store/usePurchasePriceStore";
