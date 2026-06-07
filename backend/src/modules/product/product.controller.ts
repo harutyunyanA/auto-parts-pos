@@ -75,6 +75,7 @@ class ProductController {
         "minimum_quantity",
         "purchase_price",
         "sale_price",
+        "discount",
         "weight",
         "supplier_id",
         "source",

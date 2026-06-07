@@ -13,6 +13,7 @@ import Suppliers from "../pages/Suppliers";
 import SupplierDetail from "../pages/SupplierDetail";
 import Clients from "../pages/Clients";
 import ClientDetail from "../pages/ClientDetail";
+import Discounts from "../pages/Discounts";
 
 export const router = createBrowserRouter([
   {
@@ -65,6 +66,10 @@ export const router = createBrowserRouter([
           {
             path: "clients/:id",
             element: <ClientDetail />,
+          },
+          {
+            path: "discounts",
+            element: <Discounts />,
           },
           {
             path: "settings",
