@@ -21,6 +21,7 @@ import { useTranslation } from "react-i18next";
 import { useQueryClient } from "@tanstack/react-query";
 import { useSource, useClearSource } from "../store/useAuthStore";
 import { useIsDarkMode } from "../store/useThemeStore";
+import { useCompact } from "../hooks/useCompact";
 import { useCurrentDate, useSetCurrentDate } from "../store/useDateStore";
 import dayjs from "dayjs";
 
@@ -36,6 +37,8 @@ export default function MainLayout() {
   const source = useSource();
   const clearSource = useClearSource();
   const isDarkMode = useIsDarkMode();
+  const compact = useCompact();
+  const headerHeight = compact ? 48 : 64;
 
   const currentISO = useCurrentDate();
   const currentDate = dayjs(currentISO);
@@ -113,7 +116,7 @@ export default function MainLayout() {
         <div
           className="demo-logo-vertical"
           style={{
-            height: 64,
+            height: headerHeight,
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
@@ -168,13 +171,13 @@ export default function MainLayout() {
       <Layout style={{ height: "100%", overflow: "hidden" }}>
         <Header
           className="flex items-center justify-between gap-2 pr-2 lg:pr-6"
-          style={{ padding: 0, background: colorBgContainer }}
+          style={{ padding: 0, height: headerHeight, background: colorBgContainer }}
         >
           <Button
             type="text"
             icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
             onClick={() => setCollapsed(!collapsed)}
-            style={{ fontSize: "16px", width: 64, height: 64 }}
+            style={{ fontSize: "16px", width: headerHeight, height: headerHeight }}
           />
 
           <div className="flex flex-wrap items-center justify-end gap-2 lg:gap-6">
@@ -202,7 +205,9 @@ export default function MainLayout() {
           </div>
         </Header>
         <Content
-          className="flex flex-col overflow-hidden m-2 p-3 lg:m-6 lg:p-6"
+          className={`flex flex-col overflow-hidden ${
+            compact ? "m-2 p-3" : "m-2 p-3 lg:m-6 lg:p-6"
+          }`}
           style={{
             background: colorBgContainer,
             borderRadius: borderRadiusLG,
