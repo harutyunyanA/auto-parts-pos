@@ -84,6 +84,10 @@ class ProductServices {
       where.WXQP = { [Op.like]: `%${searchParams.WXQP}%` };
     }
 
+    if (searchParams.discounted) {
+      where.discount = { [Op.gt]: 0 };
+    }
+
     const result = await Product.findAndCountAll({
       where,
       limit,

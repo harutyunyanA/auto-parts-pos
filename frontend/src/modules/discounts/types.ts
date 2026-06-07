@@ -13,6 +13,15 @@ export interface IBulkDiscountRule {
   discount: number;
 }
 
+// Persisted rule returned by GET /discounts/rules. Numeric fields arrive as
+// strings (DECIMAL) from the API, so treat them with Number() when displaying.
+export interface IDiscountRule {
+  id: number;
+  minProfit: number;
+  maxProfit: number | null;
+  discount: number;
+}
+
 export interface ISetProductDiscountPayload {
   code: number;
   discount: number;

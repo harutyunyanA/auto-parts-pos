@@ -57,10 +57,54 @@ export function useBulkDiscount() {
         .then((res) => res.data.data),
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["products"] });
+      queryClient.invalidateQueries({ queryKey: ["discount-rules"] });
       message.success(t("toast.discountApplied", { n: data?.updated ?? 0 }));
     },
     onError: (err: any) => {
       message.error(errMessage(err, t("toast.failedApplyDiscount")));
+    },
+  });
+}
+
+// Delete a single saved rule. The backend also clears the discounts that rule
+// applied (products whose profit falls in its range).
+export function useDeleteDiscountRule() {
+  const queryClient = useQueryClient();
+  const { t } = useTranslation();
+
+  return useMutation({
+    mutationFn: (id: number) =>
+      api
+        .delete<ApiResponse<{ cleared: number }>>(`/discounts/rules/${id}`)
+        .then((res) => res.data.data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["products"] });
+      queryClient.invalidateQueries({ queryKey: ["discount-rules"] });
+      message.success(t("toast.ruleDeleted"));
+    },
+    onError: (err: any) => {
+      message.error(errMessage(err, t("toast.failedDeleteRule")));
+    },
+  });
+}
+
+// Delete every saved rule and zero out all discounts for the current source.
+export function useDeleteAllDiscountRules() {
+  const queryClient = useQueryClient();
+  const { t } = useTranslation();
+
+  return useMutation({
+    mutationFn: () =>
+      api
+        .delete<ApiResponse<{ updated: number }>>("/discounts/rules")
+        .then((res) => res.data.data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["products"] });
+      queryClient.invalidateQueries({ queryKey: ["discount-rules"] });
+      message.success(t("toast.allRulesDeleted"));
+    },
+    onError: (err: any) => {
+      message.error(errMessage(err, t("toast.failedDeleteRule")));
     },
   });
 }

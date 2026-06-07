@@ -14,9 +14,11 @@ import {
   DeleteOutlined,
   ThunderboltOutlined,
   ClearOutlined,
+  EyeOutlined,
 } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
 import { useBulkDiscount, useResetAllDiscounts } from "./mutations";
+import { DiscountRulesModal } from "./discountRulesModal";
 import type { IBulkDiscountRule, IDiscountRuleRow } from "./types";
 
 const { Text } = Typography;
@@ -36,6 +38,7 @@ export function BulkDiscountPanel() {
   const resetAll = useResetAllDiscounts();
 
   const [rows, setRows] = useState<IDiscountRuleRow[]>([newRow()]);
+  const [modalOpen, setModalOpen] = useState(false);
 
   const patchRow = (id: string, patch: Partial<IDiscountRuleRow>) =>
     setRows((prev) => prev.map((r) => (r.id === id ? { ...r, ...patch } : r)));
@@ -76,16 +79,21 @@ export function BulkDiscountPanel() {
         <Typography.Title level={5} style={{ margin: 0 }}>
           {t("discounts.bulkTitle")}
         </Typography.Title>
-        <Popconfirm
-          title={t("discounts.resetAllConfirm")}
-          okText={t("common.delete")}
-          okButtonProps={{ danger: true }}
-          onConfirm={() => resetAll.mutate()}
-        >
-          <Button danger icon={<ClearOutlined />} loading={resetAll.isPending}>
-            {t("discounts.resetAll")}
+        <Space>
+          <Button icon={<EyeOutlined />} onClick={() => setModalOpen(true)}>
+            {t("discounts.viewRules")}
           </Button>
-        </Popconfirm>
+          <Popconfirm
+            title={t("discounts.resetAllConfirm")}
+            okText={t("common.delete")}
+            okButtonProps={{ danger: true }}
+            onConfirm={() => resetAll.mutate()}
+          >
+            <Button danger icon={<ClearOutlined />} loading={resetAll.isPending}>
+              {t("discounts.resetAll")}
+            </Button>
+          </Popconfirm>
+        </Space>
       </Flex>
 
       <Text type="secondary" style={{ display: "block", marginBottom: 12 }}>
@@ -145,6 +153,11 @@ export function BulkDiscountPanel() {
           {t("discounts.apply")}
         </Button>
       </Space>
+
+      <DiscountRulesModal
+        open={modalOpen}
+        onClose={() => setModalOpen(false)}
+      />
     </Card>
   );
 }

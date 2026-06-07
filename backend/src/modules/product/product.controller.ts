@@ -120,6 +120,7 @@ class ProductController {
         name: req.validated?.query.name,
         oem: req.validated?.query.oem,
         WXQP: req.validated?.query.WXQP,
+        discounted: req.validated?.query.discounted,
       };
 
       const products = await service.getAllProducts(

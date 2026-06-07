@@ -27,3 +27,11 @@ export const bulkDiscountSchema = z.object({
   query: z.object({}).optional(),
   params: z.object({}).optional(),
 });
+
+export const deleteRuleSchema = z.object({
+  body: z.object({}).optional(),
+  query: z.object({}).optional(),
+  params: z.object({
+    id: z.preprocess((val) => Number(val), z.number().int().positive()),
+  }),
+});

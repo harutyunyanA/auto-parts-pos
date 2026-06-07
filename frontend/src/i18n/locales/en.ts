@@ -138,6 +138,9 @@ const en = {
       discountApplied: "Discounts applied to {{n}} products",
       failedApplyDiscount: "Failed to apply discounts",
       discountReset: "Discounts reset",
+      ruleDeleted: "Rule deleted",
+      allRulesDeleted: "All rules deleted",
+      failedDeleteRule: "Failed to delete rule",
     },
     cart: {
       closedTitle: "Cart is closed",
@@ -219,6 +222,19 @@ const en = {
       resetAllConfirm: "Reset discounts on all products of this cash desk?",
       noValidRules: "Add at least one rule with a profit and discount value",
       invalidRange: "Profit 'from' cannot be greater than 'to'",
+      viewRules: "Rules & discounts",
+      rulesModalTitle: "Discount rules & discounted products",
+      rulesListTitle: "Saved rules",
+      discountedProductsTitle: "Products with a discount",
+      deleteRuleConfirm:
+        "Delete this rule and clear discounts of products in its profit range?",
+      deleteAllRules: "Delete all rules",
+      deleteAllRulesConfirm:
+        "Delete all rules and reset every discount of this cash desk?",
+      noRules: "No saved rules yet",
+      ruleFrom: "Profit from",
+      ruleTo: "Profit to",
+      ruleDiscount: "Discount",
     },
     addProduct: {
       created: "Product created",

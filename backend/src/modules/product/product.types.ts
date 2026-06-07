@@ -34,6 +34,7 @@ export type searchParams = {
   name?: string;
   oem?: string;
   WXQP?: string;
+  discounted?: boolean;
 };
 
 export type paginationParams = {

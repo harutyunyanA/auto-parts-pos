@@ -82,7 +82,11 @@ function ResetDiscountButton({ product }: { product: IProduct }) {
   );
 }
 
-export function DiscountsTable() {
+export function DiscountsTable({
+  discountedOnly = false,
+}: {
+  discountedOnly?: boolean;
+}) {
   const { t } = useTranslation();
   const source = useSource();
 
@@ -96,12 +100,14 @@ export function DiscountsTable() {
 
   // Numeric search -> by code, otherwise by name.
   const trimmed = search.trim();
-  const filters: Record<string, unknown> =
-    trimmed === ""
+  const filters: Record<string, unknown> = {
+    ...(discountedOnly ? { discounted: true } : {}),
+    ...(trimmed === ""
       ? {}
       : /^\d+$/.test(trimmed)
         ? { code: Number(trimmed) }
-        : { name: trimmed };
+        : { name: trimmed }),
+  };
 
   const { data, isLoading } = useDiscountProducts(page, limit, filters, source);
 
@@ -196,7 +202,9 @@ export function DiscountsTable() {
     <Flex vertical gap="middle" style={{ height: "100%", minHeight: 0 }}>
       <Flex justify="space-between" align="center">
         <Typography.Title level={4} style={{ margin: 0 }}>
-          {t("discounts.productsTitle")}
+          {discountedOnly
+            ? t("discounts.discountedProductsTitle")
+            : t("discounts.productsTitle")}
         </Typography.Title>
         <Tooltip title={t("discounts.searchHint")}>
           <Input

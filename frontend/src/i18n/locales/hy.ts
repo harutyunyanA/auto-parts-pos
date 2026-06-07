@@ -139,6 +139,9 @@ const hy = {
       discountApplied: "Զեղչերը կիրառվեցին {{n}} ապրանքի վրա",
       failedApplyDiscount: "Չհաջողվեց կիրառել զեղչերը",
       discountReset: "Զեղչերը զրոյացվեցին",
+      ruleDeleted: "Կանոնը ջնջվեց",
+      allRulesDeleted: "Բոլոր կանոնները ջնջվեցին",
+      failedDeleteRule: "Չհաջողվեց ջնջել կանոնը",
     },
     cart: {
       closedTitle: "Զամբյուղը փակ է",
@@ -220,6 +223,19 @@ const hy = {
       resetAllConfirm: "Զրոյացնե՞լ զեղչերը այս դրամարկղի բոլոր ապրանքների վրա",
       noValidRules: "Ավելացրեք առնվազն մեկ կանոն՝ շահույթի և զեղչի արժեքով",
       invalidRange: "Շահույթի «սկսած»-ը չի կարող մեծ լինել «մինչև»-ից",
+      viewRules: "Կանոններ և զեղչեր",
+      rulesModalTitle: "Զեղչի կանոններ և զեղչով ապրանքներ",
+      rulesListTitle: "Պահված կանոններ",
+      discountedProductsTitle: "Զեղչով ապրանքներ",
+      deleteRuleConfirm:
+        "Ջնջե՞լ այս կանոնը և մաքրել նրա շահույթի միջակայքում գտնվող ապրանքների զեղչերը",
+      deleteAllRules: "Ջնջել բոլոր կանոնները",
+      deleteAllRulesConfirm:
+        "Ջնջե՞լ բոլոր կանոնները և զրոյացնել այս դրամարկղի բոլոր զեղչերը",
+      noRules: "Դեռ պահված կանոններ չկան",
+      ruleFrom: "Շահույթ՝",
+      ruleTo: "Մինչև",
+      ruleDiscount: "Զեղչ",
     },
     addProduct: {
       created: "Ապրանքն ստեղծվեց",

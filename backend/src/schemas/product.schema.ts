@@ -137,6 +137,12 @@ export const paginationQuerySchema = z.object({
       .optional(),
     type: z.string().optional(),
     name: z.string().optional(),
+    discounted: z
+      .preprocess(
+        (val) => val === true || val === "true" || val === "1",
+        z.boolean(),
+      )
+      .optional(),
     page: z
       .preprocess((val) => Number(val), z.number().int().positive())
       .optional()
