@@ -1,10 +1,8 @@
-import type { sourceType } from "../../types/source.types.ts";
-
 export type SupplyType = {
   id: number;
   supplierId: number | null;
   totalCost: string | null;
-  source: sourceType;
+  cashDeskId: number;
   status: "draft" | "completed";
   createdAt: Date;
   updatedAt: Date;

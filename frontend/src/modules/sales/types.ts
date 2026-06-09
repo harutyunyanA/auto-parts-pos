@@ -2,6 +2,8 @@ export interface ICart {
   id: number;
   clientId: number | null;
   client?: { id: number; name: string } | null;
+  cashDeskId: number;
+  cashDesk?: { id: number; name: string } | null;
   bonusPaid: boolean;
   totalAmount: number;
   status: "draft" | "completed";
@@ -21,7 +23,7 @@ export interface ICartItem {
   type: string;
   oem: string | null;
   WXQP: string;
-  code: number;
+  productId: number;
   purchase_price: number;
   sale_price: number;
 }

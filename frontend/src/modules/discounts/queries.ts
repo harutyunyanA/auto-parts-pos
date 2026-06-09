@@ -10,10 +10,9 @@ export function useDiscountProducts(
   page: number,
   limit: number,
   filters: Record<string, unknown>,
-  source: string | null,
 ) {
   return useQuery({
-    queryKey: ["products", page, limit, filters, source],
+    queryKey: ["products", page, limit, filters],
     queryFn: () =>
       api
         .get<ApiResponse<{ items: IProduct[]; total: number }>>("/product/all", {
@@ -25,10 +24,10 @@ export function useDiscountProducts(
   });
 }
 
-// Saved discount rules for the current source.
-export function useDiscountRules(source: string | null) {
+// Saved discount rules.
+export function useDiscountRules() {
   return useQuery({
-    queryKey: ["discount-rules", source],
+    queryKey: ["discount-rules"],
     queryFn: () =>
       api
         .get<ApiResponse<IDiscountRule[]>>("/discounts/rules")

@@ -3,7 +3,6 @@ import { message } from "antd";
 import { useTranslation } from "react-i18next";
 import api from "../../api/client";
 import type { ApiResponse } from "../../types/api.types";
-import { useSource } from "../../store/useAuthStore";
 import type { IProduct } from "../products/types";
 import type {
   IBulkDiscountResult,
@@ -24,15 +23,14 @@ function errMessage(err: any, fallback: string) {
 export function useSetProductDiscount() {
   const queryClient = useQueryClient();
   const { t } = useTranslation();
-  const source = useSource();
 
   return useMutation({
-    mutationFn: ({ code, discount }: ISetProductDiscountPayload) =>
+    mutationFn: ({ id, discount }: ISetProductDiscountPayload) =>
       api
         .patch<ApiResponse<IProduct>>(
           "/product",
           { discount },
-          { params: { code, source } },
+          { params: { id } },
         )
         .then((res) => res.data.data),
     onSuccess: () => {
@@ -45,7 +43,7 @@ export function useSetProductDiscount() {
   });
 }
 
-// Apply discount rules by profit range to every product of the current source.
+// Apply discount rules by profit range to every product in the catalogue.
 export function useBulkDiscount() {
   const queryClient = useQueryClient();
   const { t } = useTranslation();
@@ -88,7 +86,7 @@ export function useDeleteDiscountRule() {
   });
 }
 
-// Delete every saved rule and zero out all discounts for the current source.
+// Delete every saved rule and zero out all discounts in the catalogue.
 export function useDeleteAllDiscountRules() {
   const queryClient = useQueryClient();
   const { t } = useTranslation();
@@ -109,7 +107,7 @@ export function useDeleteAllDiscountRules() {
   });
 }
 
-// Zero out every discount for the current source.
+// Zero out every discount in the catalogue.
 export function useResetAllDiscounts() {
   const queryClient = useQueryClient();
   const { t } = useTranslation();

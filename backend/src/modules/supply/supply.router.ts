@@ -1,6 +1,6 @@
 import express from "express";
 import controller from "./supply.controller.ts";
-import checkSource from "../../middlewares/checkSource.middleware.ts";
+import setCashDesk from "../../middlewares/setCashDesk.middleware.ts";
 // import { checkSupply } from "../../middlewares/checkSupply.ts";
 import { validate } from "../../middlewares/validate.middleware.ts";
 import {
@@ -10,13 +10,11 @@ import {
 
 const router = express.Router();
 
-router.use(checkSource);
-
 router.get("/", controller.getAllSupplies);
 router.get("/:supplyId", controller.getSupplyInfo);
 router.post(
   "/",
-  checkSource,
+  setCashDesk,
   // validate(createSupplySchema),
   controller.newSupply,
 );

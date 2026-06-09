@@ -1,6 +1,5 @@
 import { DataTypes, Model } from "sequelize";
 import { sequelize } from "../../config/db.ts";
-import type { sourceType } from "../../types/source.types.ts";
 import type {
   DiscountRuleType,
   DiscountRuleCreationType,
@@ -14,7 +13,6 @@ export class DiscountRule
   declare minProfit: number;
   declare maxProfit: number | null;
   declare discount: number;
-  declare source: sourceType;
   declare createdAt: Date;
   declare updatedAt: Date;
 }
@@ -40,11 +38,6 @@ DiscountRule.init(
 
     discount: {
       type: DataTypes.DECIMAL(5, 2),
-      allowNull: false,
-    },
-
-    source: {
-      type: DataTypes.ENUM("soviet", "import"),
       allowNull: false,
     },
 

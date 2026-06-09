@@ -28,8 +28,8 @@ export function useSupplyMutations({
   const { t } = useTranslation();
 
   const mutationAdd = useMutation({
-    mutationFn: (code: string) =>
-      api.post(`/supplies/${supplyId}/item`, { code: Number(code) }),
+    mutationFn: (productId: string) =>
+      api.post(`/supplies/${supplyId}/item`, { productId: Number(productId) }),
     onSuccess: (res) => {
       queryClient.invalidateQueries({ queryKey: ["supplies"] });
       const newItem = res.data.data;

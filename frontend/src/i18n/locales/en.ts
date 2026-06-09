@@ -49,6 +49,7 @@ const en = {
     columns: {
       num: "№",
       code: "Code",
+      id: "ID",
       name: "Name",
       product: "Product",
       type: "Type",
@@ -101,7 +102,7 @@ const en = {
       addProduct: "Add Product",
     },
     toast: {
-      cannotChangeCodeQty: "Cannot change code if quantity > 0",
+      cannotChangeCodeQty: "Cannot change id if quantity > 0",
       failedReplaceItem: "Failed to replace item",
       cannotDeleteItemQty: "Cannot delete item with quantity > 0",
       settingsSaved: "Settings saved",
@@ -212,8 +213,8 @@ const en = {
     },
     discounts: {
       productsTitle: "Products",
-      searchPlaceholder: "Search by code or name...",
-      searchHint: "Type a number to search by code, text to search by name",
+      searchPlaceholder: "Search by id or name...",
+      searchHint: "Type a number to search by id, text to search by name",
       bulkTitle: "Bulk discount by profit range",
       bulkHint:
         "Rules apply top to bottom — the first matching range wins. Leave Max empty for no upper limit. Set discount to 0 to clear a range.",
@@ -244,6 +245,7 @@ const en = {
     addProduct: {
       created: "Product created",
       codeLabel: "Code",
+      idLabel: "ID",
       basics: "Basics",
       inventoryPricing: "Inventory & Pricing",
       productName: "Product Name",

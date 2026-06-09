@@ -1,6 +1,5 @@
 import express from "express";
 import controller from "./supplier.controller.ts";
-import checkSource from "../../middlewares/checkSource.middleware.ts";
 import { validate } from "../../middlewares/validate.middleware.ts";
 import {
   createSupplierSchema,
@@ -14,7 +13,6 @@ router.get("/", controller.getAll);
 router.get("/:id", validate(supplierIdParamSchema), controller.getById);
 router.get(
   "/:id/supplies",
-  checkSource,
   validate(supplierIdParamSchema),
   controller.getSupplierSupplies,
 );

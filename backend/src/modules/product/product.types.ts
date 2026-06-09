@@ -1,5 +1,4 @@
 import type { Optional } from "sequelize";
-import type { sourceType } from "../../types/source.types.ts";
 import type { CartItem } from "../sale/sale.model.ts";
 import type { CartItemType } from "../sale/sale.types.ts";
 import type { SupplyItem } from "../supply/supply.model.ts";
@@ -10,8 +9,6 @@ export type ProductType = {
   type: string;
   oem?: string | null;
   WXQP?: string | null;
-  code: number | null;
-  source: sourceType;
   quantity: number;
   minimum_quantity?: number | null;
   purchase_price: number;
@@ -25,11 +22,11 @@ export type ProductType = {
 
 export type ProductCreationType = Optional<
   ProductType,
-  "id" | "oem" | "WXQP" | "minimum_quantity" | "code" | "weight" | "discount"
+  "id" | "oem" | "WXQP" | "minimum_quantity" | "weight" | "discount"
 >;
 
 export type searchParams = {
-  code?: number;
+  id?: number;
   type?: string;
   name?: string;
   oem?: string;
@@ -53,7 +50,7 @@ export type paginationParams = {
 // };
 export type SoldProductsHistoryRow = CartItem & {
   product: {
-    code: number;
+    id: number;
     name: string;
     oem: string;
     type: string;
@@ -63,7 +60,7 @@ export type SoldProductsHistoryRow = CartItem & {
 
 export type SuppliedProductsHistoryRow = SupplyItem & {
   product: {
-    code: number;
+    id: number;
     name: string;
     oem: string;
     type: string;

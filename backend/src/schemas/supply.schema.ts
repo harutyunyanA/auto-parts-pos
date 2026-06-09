@@ -34,8 +34,7 @@ export const createSupplySchema = z.object({
 
 export const createSupplyItemSchema = z.object({
   body: z.object({
-    code: z.number().int().positive().optional(),
-    productId: z.number().int().positive().optional(),
+    productId: z.number().int().positive(),
     quantity: z.number().int().nonnegative().optional(),
     purchasePrice: z.number().nonnegative().optional(),
     salePrice: z.number().nonnegative().optional(),

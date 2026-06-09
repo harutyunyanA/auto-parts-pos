@@ -12,7 +12,7 @@ import type { ApiResponse } from "../../types/api.types";
 const { RangePicker } = DatePicker;
 
 type AppliedParams = {
-  code: string;
+  id: string;
   oem: string;
   from: string;
   to: string;
@@ -21,7 +21,7 @@ type AppliedParams = {
 export function ProductHistory() {
   const { t } = useTranslation();
   const [oem, setOEM] = useState<string>("");
-  const [code, setCode] = useState<string>("");
+  const [productId, setProductId] = useState<string>("");
   const [date, setDate] = useState<[Dayjs, Dayjs]>([dayjs(), dayjs()]);
   const [applied, setApplied] = useState<AppliedParams | null>(null);
 
@@ -30,7 +30,7 @@ export function ProductHistory() {
     queryFn: async () => {
       const res = await api.get<ApiResponse<IHistory[]>>("/product/history", {
         params: {
-          ...(applied!.code ? { code: applied!.code } : {}),
+          ...(applied!.id ? { id: applied!.id } : {}),
           ...(applied!.oem ? { oem: applied!.oem } : {}),
           from: applied!.from,
           to: applied!.to,
@@ -44,9 +44,9 @@ export function ProductHistory() {
   });
 
   const handleSearch = () => {
-    if (!code && !oem) return;
+    if (!productId && !oem) return;
     setApplied({
-      code,
+      id: productId,
       oem,
       from: date[0].format("YYYY-MM-DD"),
       to: date[1].format("YYYY-MM-DD"),
@@ -70,9 +70,9 @@ export function ProductHistory() {
       ),
     },
     {
-      title: t("columns.code"),
-      dataIndex: ["product", "code"],
-      key: "code",
+      title: t("columns.id"),
+      dataIndex: ["product", "id"],
+      key: "id",
       width: 90,
     },
     {
@@ -125,14 +125,14 @@ export function ProductHistory() {
     <div className="flex flex-col gap-4">
       <div className="flex gap-6">
         <Input
-          placeholder={t("columns.code")}
+          placeholder={t("columns.id")}
           size="large"
-          value={code}
+          value={productId}
           disabled={oem.length > 0}
           allowClear={{ clearIcon: <CloseOutlined /> }}
           onChange={(e) => {
             const value = e.target.value.replace(/\D/g, "");
-            if (value.length < 6) setCode(value);
+            if (value.length < 9) setProductId(value);
           }}
           onPressEnter={handleSearch}
           style={{ width: "20%" }}
@@ -143,7 +143,7 @@ export function ProductHistory() {
           size="large"
           value={oem}
           allowClear={{ clearIcon: <CloseOutlined /> }}
-          disabled={code.length > 0}
+          disabled={productId.length > 0}
           onChange={(e) => setOEM(e.target.value)}
           onPressEnter={handleSearch}
           style={{ width: "30%" }}

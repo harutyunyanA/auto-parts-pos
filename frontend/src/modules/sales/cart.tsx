@@ -67,7 +67,7 @@ export function Cart({ cart }: CartProps) {
     if (record.isNew) {
       mutationAdd.mutate(code);
     } else {
-      if (String(record.code) === String(code)) {
+      if (String(record.productId) === String(code)) {
         setFocusTarget({ id: record.id, field: "quantity" });
         return;
       }
@@ -102,7 +102,7 @@ export function Cart({ cart }: CartProps) {
       if (target) {
         const originalValue =
           field === "code"
-            ? record.code
+            ? record.productId
             : record[field === "price" ? "priceAtSale" : field];
         const val = String(originalValue ?? "");
 
@@ -179,9 +179,9 @@ export function Cart({ cart }: CartProps) {
 
   const columns: ColumnsType<any> = [
     {
-      title: t("columns.code"),
-      dataIndex: "code",
-      key: "code",
+      title: t("columns.id"),
+      dataIndex: "productId",
+      key: "productId",
       width: 70,
       align: "center",
       render: (text: any, record: any) => (
@@ -328,7 +328,7 @@ export function Cart({ cart }: CartProps) {
 
   const dataSource = [
     ...(cart.items || []).map((item) => ({ ...item, key: item.id })),
-    { key: "new", isNew: true, code: "" },
+    { key: "new", isNew: true, productId: "" },
   ];
 
   useEffect(() => {

@@ -19,7 +19,7 @@ import {
 import { useNavigate, useLocation, Outlet, Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useQueryClient } from "@tanstack/react-query";
-import { useSource, useClearSource } from "../store/useAuthStore";
+import { useCashDeskName, useClearCashDesk } from "../store/useAuthStore";
 import { useIsDarkMode } from "../store/useThemeStore";
 import { useCompact } from "../hooks/useCompact";
 import { useCurrentDate, useSetCurrentDate } from "../store/useDateStore";
@@ -34,8 +34,8 @@ export default function MainLayout() {
   const location = useLocation();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const source = useSource();
-  const clearSource = useClearSource();
+  const cashDeskName = useCashDeskName();
+  const clearCashDesk = useClearCashDesk();
   const isDarkMode = useIsDarkMode();
   const compact = useCompact();
   const headerHeight = compact ? 48 : 64;
@@ -98,7 +98,7 @@ export default function MainLayout() {
 
   const handleLogout = () => {
     queryClient.clear();
-    clearSource();
+    clearCashDesk();
     navigate("/selection");
   };
 
@@ -198,8 +198,8 @@ export default function MainLayout() {
               }}
             >
               <UserOutlined style={{ marginRight: 8 }} />
-              <Text strong style={{ textTransform: "uppercase" }}>
-                {source || t("layout.guest")}
+              <Text strong>
+                {cashDeskName || t("layout.guest")}
               </Text>
             </div>
           </div>

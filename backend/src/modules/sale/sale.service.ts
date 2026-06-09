@@ -1,11 +1,11 @@
 import { Op } from "sequelize";
 import { sequelize } from "../../config/db.ts";
-import type { sourceType } from "../../types/source.types.ts";
 import { Product } from "../product/product.model.ts";
 import productService from "../product/product.service.ts";
 import type { ProductType } from "../product/product.types.ts";
 import { Cart, CartItem } from "./sale.model.ts";
 import { Client } from "../clients/clients.model.ts";
+import { CashDesk } from "../cashdesk/cashdesk.model.ts";
 import dayjs from "dayjs";
 import { normalizeCart } from "../../utils/normalize-cart.ts";
 import {
@@ -17,22 +17,22 @@ import logger from "../../utils/logger.ts";
 import type { TransformedCartType } from "./sale.types.ts";
 
 class SaleService {
-  async createCart(source: sourceType, date: any) {
+  async createCart(cashDeskId: number, date: any) {
     if (dayjs(date).format("YYYY-MM-DD") !== dayjs().format("YYYY-MM-DD")) {
       const cart = await Cart.create(
-        { source, createdAt: date, updatedAt: date },
+        { cashDeskId, createdAt: date, updatedAt: date },
         { silent: true },
       );
       return cart.dataValues;
     } else {
-      const cart = await Cart.create({ source });
+      const cart = await Cart.create({ cashDeskId });
       return cart.dataValues;
     }
   }
 
-  async createCartItem(code: number, source: string, cartId: number) {
+  async createCartItem(productId: number, cartId: number) {
     const product: ProductType | undefined =
-      await productService.getProductByCode(code, source as sourceType);
+      await productService.getProductById(productId);
 
     if (!product) {
       throw new NotFoundError("Product not found");
@@ -192,13 +192,12 @@ class SaleService {
     return carts;
   }
 
-  async getCartOfDate(date: string, source: sourceType) {
+  async getCartOfDate(date: string) {
     const startOfDay = dayjs(date).startOf("day").toDate();
     const endOfDay = dayjs(date).add(1, "day").startOf("day").toDate();
 
     const records = await Cart.findAll({
       where: {
-        source: source,
         createdAt: {
           [Op.gte]: startOfDay,
           [Op.lt]: endOfDay,
@@ -208,7 +207,9 @@ class SaleService {
         {
           model: CartItem,
           as: "items",
-          attributes: { exclude: ["cartId", "productId"] },
+          // keep productId — the frontend uses it as the product identifier
+          // (replaces the old `code`).
+          attributes: { exclude: ["cartId"] },
           include: [
             {
               model: Product,
@@ -218,7 +219,6 @@ class SaleService {
                   "supplier_id",
                   "minimum_quantity",
                   "createdAt",
-                  "source",
                   "id",
                   "updatedAt",
                 ],
@@ -229,6 +229,11 @@ class SaleService {
         {
           model: Client,
           as: "client",
+          attributes: ["id", "name"],
+        },
+        {
+          model: CashDesk,
+          as: "cashDesk",
           attributes: ["id", "name"],
         },
       ],
@@ -287,10 +292,10 @@ class SaleService {
     return cart;
   }
 
-  async getProductHistory(source: sourceType, code?: number, oem?: string) {
-    const whereProduct: any = { source };
+  async getProductHistory(productId?: number, oem?: string) {
+    const whereProduct: any = {};
 
-    if (code) whereProduct.code = code;
+    if (productId) whereProduct.id = productId;
     if (oem) whereProduct.oem = oem;
 
     // const productId = (
@@ -335,7 +340,7 @@ class SaleService {
           model: Product,
           as: "product",
           where: whereProduct,
-          attributes: ["name", "code", "oem", "WXQP"],
+          attributes: ["name", "id", "oem", "WXQP"],
         },
       ],
       order: [["createdAt", "DESC"]],
@@ -343,13 +348,11 @@ class SaleService {
     return history;
   }
 
-  async getSummary(date: string, source: sourceType) {
+  async getSummary(date: string) {
     const startOfDay = dayjs(date, "YYYY-MM-DD").startOf("day").toDate();
     const endOfDay = dayjs(date, "YYYY-MM-DD").endOf("day").toDate();
-    console.log(startOfDay, endOfDay);
     const records = await Cart.findAll({
       where: {
-        source: source,
         createdAt: {
           [Op.gte]: startOfDay,
           [Op.lt]: endOfDay,
@@ -358,7 +361,6 @@ class SaleService {
       },
       attributes: ["totalAmount", "paymentMethod"],
     });
-    console.log(records);
 
     let total = 0;
     let cardPaid = 0;

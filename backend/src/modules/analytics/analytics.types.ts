@@ -11,7 +11,6 @@ export type SupplierStat = {
 
 export type DeadStockItem = {
   id: number;
-  code: number | null;
   name: string;
   type: string;
   oem: string | null;

@@ -75,7 +75,7 @@ export function useSupplyTable({ supply }: UseSupplyTableProps): {
       return;
     }
 
-    if (String(record.product?.code) === String(code)) {
+    if (String(record.product?.id) === String(code)) {
       setFocusTarget({ id: record.id, field: "quantity" });
       return;
     }
@@ -102,7 +102,7 @@ export function useSupplyTable({ supply }: UseSupplyTableProps): {
       const target = e.target as HTMLInputElement;
       if (target) {
         const originalValue =
-          field === "code" ? record.product?.code : record[field];
+          field === "code" ? record.product?.id : record[field];
         const val = String(originalValue ?? "");
 
         const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
@@ -188,9 +188,9 @@ export function useSupplyTable({ supply }: UseSupplyTableProps): {
 
   const columns: ColumnsType<SupplyTableRow> = [
     {
-      title: t("columns.code"),
-      dataIndex: "code",
-      key: "code",
+      title: t("columns.id"),
+      dataIndex: "productId",
+      key: "productId",
       width: 80,
       align: "center",
       render: (_text, record: any) => (
@@ -207,7 +207,7 @@ export function useSupplyTable({ supply }: UseSupplyTableProps): {
                 : `${record.id}-code`
             ] = el;
           }}
-          defaultValue={record.isNew ? "" : record.product?.code}
+          defaultValue={record.isNew ? "" : record.product?.id}
           variant="borderless"
           style={{ textAlign: "center", padding: 0 }}
           readOnly={isCompleted}

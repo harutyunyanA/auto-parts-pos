@@ -1,5 +1,4 @@
 import type { Optional } from "sequelize";
-import type { sourceType } from "../../types/source.types.ts";
 
 // In-memory rule shape used by the bulk-apply payload.
 export type DiscountRule = {
@@ -14,7 +13,6 @@ export type DiscountRuleType = {
   minProfit: number;
   maxProfit: number | null;
   discount: number;
-  source: sourceType;
   createdAt: Date;
   updatedAt: Date;
 };

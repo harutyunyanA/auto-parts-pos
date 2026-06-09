@@ -9,8 +9,7 @@ import { NotFoundError, BadRequestError } from "../../utils/errors.ts";
 import { Cart, CartItem } from "../sale/sale.model.ts";
 import { Product } from "../product/product.model.ts";
 import settingsService from "../settings/settings.service.ts";
-import { bonusPercentKey } from "../settings/settings.types.ts";
-import type { sourceType } from "../../types/source.types.ts";
+import { BONUS_PERCENT_KEY } from "../settings/settings.types.ts";
 
 class ClientsService {
   async getAll() {
@@ -52,20 +51,17 @@ class ClientsService {
     return { success: true };
   }
 
-  async getBonusPercent(source: sourceType): Promise<number> {
-    const pct = await settingsService.getNumber(bonusPercentKey(source));
+  async getBonusPercent(): Promise<number> {
+    const pct = await settingsService.getNumber(BONUS_PERCENT_KEY);
     return pct ?? 10;
   }
 
-  async getPurchases(
-    id: number,
-    source: sourceType,
-  ): Promise<ClientPurchasesResponse> {
+  async getPurchases(id: number): Promise<ClientPurchasesResponse> {
     const client = await this.getById(id);
-    const bonusPercent = await this.getBonusPercent(source);
+    const bonusPercent = await this.getBonusPercent();
 
     const carts = await Cart.findAll({
-      where: { clientId: id, source, status: "completed" },
+      where: { clientId: id, status: "completed" },
       include: [
         {
           model: CartItem,
@@ -74,7 +70,7 @@ class ClientsService {
             {
               model: Product,
               as: "product",
-              attributes: ["code", "name", "type", "oem"],
+              attributes: ["id", "name", "type", "oem"],
             },
           ],
         },
@@ -98,7 +94,7 @@ class ClientsService {
           quantity: item.quantity,
           priceAtSale: item.priceAtSale,
           totalPrice: item.totalPrice,
-          code: item.product?.code ?? null,
+          productId: item.product?.id ?? null,
           name: item.product?.name ?? "—",
           type: item.product?.type ?? "—",
           oem: item.product?.oem ?? null,
@@ -121,23 +117,22 @@ class ClientsService {
       ),
     };
 
-    return { client, purchases, stats, source };
+    return { client, purchases, stats };
   }
 
-  async payAllBonus(id: number, source: sourceType) {
+  async payAllBonus(id: number) {
     await this.getById(id);
     await Cart.update(
       { bonusPaid: true },
       {
         where: {
           clientId: id,
-          source,
           status: "completed",
           bonusPaid: false,
         },
       },
     );
-    return this.getPurchases(id, source);
+    return this.getPurchases(id);
   }
 
   async setCartBonusPaid(cartId: number, bonusPaid: boolean) {

@@ -16,7 +16,7 @@ export interface IClientPurchaseItem {
   quantity: number;
   priceAtSale: number;
   totalPrice: number;
-  code: number | null;
+  productId: number | null;
   name: string;
   type: string;
   oem: string | null;
@@ -44,5 +44,4 @@ export interface IClientPurchasesResponse {
   client: IClient;
   purchases: IClientPurchase[];
   stats: IClientStats;
-  source: "soviet" | "import";
 }

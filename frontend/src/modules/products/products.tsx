@@ -4,7 +4,6 @@ import { Flex, Pagination, Table, Input, Typography } from "antd";
 import { useQuery } from "@tanstack/react-query";
 import type { ApiResponse } from "../../types/api.types";
 import api from "../../api/client";
-import { useSource } from "../../store/useAuthStore";
 import { useContainerHeight } from "../../hooks/useContainerHeight";
 import { useTranslation } from "react-i18next";
 
@@ -19,7 +18,6 @@ export function Products({
   const [limit, setLimit] = useState(20);
   const containerHeight = useContainerHeight(containerRef);
   const tableScrollY = Math.max(containerHeight - 90, 200);
-  const source = useSource();
   const { t } = useTranslation();
 
   useEffect(() => {
@@ -27,7 +25,7 @@ export function Products({
   }, [filters]);
 
   const { data, isLoading } = useQuery({
-    queryKey: ["products", page, limit, filters, source],
+    queryKey: ["products", page, limit, filters],
     queryFn: () =>
       api
         .get<ApiResponse<{ items: IProduct[]; total: number }>>("/product/all", {
@@ -57,9 +55,9 @@ export function Products({
         pagination={false}
         columns={[
           {
-            title: t("columns.code"),
-            dataIndex: "code",
-            key: "code",
+            title: t("columns.id"),
+            dataIndex: "id",
+            key: "id",
             align: "center",
             width: 80,
           },

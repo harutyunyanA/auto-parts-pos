@@ -5,14 +5,12 @@ import { useQuery } from "@tanstack/react-query";
 import type { ApiResponse } from "../../types/api.types";
 import type { IProduct } from "../products/types";
 import api from "../../api/client";
-import { useSource } from "../../store/useAuthStore";
 import { useContainerHeight } from "../../hooks/useContainerHeight";
 import { useTranslation } from "react-i18next";
 import { printDeficit } from "./printDeficit";
 
 export function Deficit() {
   const { t } = useTranslation();
-  const source = useSource();
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(20);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -20,7 +18,7 @@ export function Deficit() {
   const tableScrollY = Math.max(containerHeight - 52, 160);
 
   const { data, isLoading } = useQuery({
-    queryKey: ["deficit", source],
+    queryKey: ["deficit"],
     queryFn: () =>
       api
         .get<ApiResponse<IProduct[]>>("/product/deficit")
@@ -58,9 +56,9 @@ export function Deficit() {
           render: (_text, _record, index) => (page - 1) * pageSize + index + 1,
         },
         {
-          title: t("columns.code"),
-          dataIndex: "code",
-          key: "code",
+          title: t("columns.id"),
+          dataIndex: "id",
+          key: "id",
           align: "center",
           width: 90,
         },

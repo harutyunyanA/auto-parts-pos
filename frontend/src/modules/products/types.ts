@@ -5,9 +5,7 @@ export interface IProduct {
   name: string;
   type: string;
   oem: string;
-  code: number;
   WXQP: string;
-  source: string;
   quantity: number;
   minimum_quantity: number;
   purchase_price: number;

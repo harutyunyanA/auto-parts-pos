@@ -23,7 +23,7 @@ export interface IDiscountRule {
 }
 
 export interface ISetProductDiscountPayload {
-  code: number;
+  id: number;
   discount: number;
 }
 

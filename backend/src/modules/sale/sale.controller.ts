@@ -3,8 +3,6 @@ import { errorResponse, successResponse } from "../../utils/response.ts";
 import { Cart } from "./sale.model.ts";
 import service from "./sale.service.ts";
 import logger from "../../utils/logger.ts";
-import type { sourceType } from "../../types/source.types.ts";
-import { number } from "zod";
 import { normalizeCart } from "../../utils/normalize-cart.ts";
 import dayjs from "dayjs";
 
@@ -19,7 +17,7 @@ class SaleController {
 
       const date = currentDate ? new Date(currentDate) : new Date();
 
-      const cart = await service.createCart(req.source as sourceType, date);
+      const cart = await service.createCart(req.cashDeskId as number, date);
       return successResponse(res, cart);
     } catch (err: any) {
       logger.error(err.message);
@@ -29,43 +27,17 @@ class SaleController {
 
   async addToCart(req: Request, res: Response, next: NextFunction) {
     try {
-      const { code, cartId } = req.validated?.params;
+      const { productId, cartId } = req.validated?.params;
 
-      if (!code) {
-        return errorResponse(res, "CODE_IS_REQIRED", 400);
-      }
-
-      const source: string = req.source;
-      if (!source) {
-        return errorResponse(res, "source is required", 400);
+      if (!productId) {
+        return errorResponse(res, "PRODUCT_ID_IS_REQUIRED", 400);
       }
       if (!cartId) {
         return errorResponse(res, "cart id is required", 400);
       }
 
-      const newCartItem = await service.createCartItem(code, source, cartId);
+      const newCartItem = await service.createCartItem(productId, cartId);
       return successResponse(res, { ...newCartItem });
-    } catch (err: any) {
-      logger.error(err.message);
-      next(err);
-    }
-  }
-
-  async updateCart(req: Request, res: Response, next: NextFunction) {
-    try {
-      const { code, cartId } = req.validated?.params;
-
-      if (!code) {
-        return errorResponse(res, "CODE_IS_REQIRED", 400);
-      }
-
-      const source: string = req.source;
-      if (!source) {
-        return errorResponse(res, "source is required", 400);
-      }
-      if (!cartId) {
-        return errorResponse(res, "cart id is required", 400);
-      }
     } catch (err: any) {
       logger.error(err.message);
       next(err);
@@ -177,7 +149,7 @@ class SaleController {
         return errorResponse(res, "date is required", 400);
       }
 
-      const carts = await service.getCartOfDate(date, req.source as sourceType);
+      const carts = await service.getCartOfDate(date);
 
       return successResponse(res, carts);
     } catch (err: any) {
@@ -230,14 +202,12 @@ class SaleController {
 
   async getProductHistory(req: Request, res: Response, next: NextFunction) {
     try {
-      const { code, oem } = req.validated?.body;
-      if (!code && !oem) {
-        return errorResponse(res, "Code or OEM is required", 400);
+      const { id, oem } = req.validated?.body;
+      if (!id && !oem) {
+        return errorResponse(res, "Product id or OEM is required", 400);
       }
 
-      const source = req.source as sourceType;
-
-      const history = await service.getProductHistory(source, code, oem);
+      const history = await service.getProductHistory(id, oem);
       return successResponse(res, history);
     } catch (err: any) {
       logger.error(err.message);
@@ -252,7 +222,7 @@ class SaleController {
         return errorResponse(res, "date is required", 400);
       }
 
-      const summary = await service.getSummary(date, req.source as sourceType);
+      const summary = await service.getSummary(date);
 
       return successResponse(res, summary);
     } catch (error) {

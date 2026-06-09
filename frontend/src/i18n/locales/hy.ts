@@ -50,6 +50,7 @@ const hy = {
     columns: {
       num: "№",
       code: "Կոդ",
+      id: "ID",
       name: "Անվանում",
       product: "Ապրանք",
       type: "Տեսակ",
@@ -102,7 +103,7 @@ const hy = {
       addProduct: "Ավելացնել ապրանք",
     },
     toast: {
-      cannotChangeCodeQty: "Հնարավոր չէ փոխել կոդը, եթե քանակը > 0",
+      cannotChangeCodeQty: "Հնարավոր չէ փոխել ID-ն, եթե քանակը > 0",
       failedReplaceItem: "Չհաջողվեց փոխարինել ապրանքը",
       cannotDeleteItemQty: "Հնարավոր չէ ջնջել ապրանքը, եթե քանակը > 0",
       settingsSaved: "Կարգավորումները պահպանվեցին",
@@ -213,8 +214,8 @@ const hy = {
     },
     discounts: {
       productsTitle: "Ապրանքներ",
-      searchPlaceholder: "Որոնել ըստ կոդի կամ անվանման...",
-      searchHint: "Մուտքագրեք թիվ՝ ըստ կոդի որոնելու, տեքստ՝ ըստ անվանման",
+      searchPlaceholder: "Որոնել ըստ ID-ի կամ անվանման...",
+      searchHint: "Մուտքագրեք թիվ՝ ըստ ID-ի որոնելու, տեքստ՝ ըստ անվանման",
       bulkTitle: "Զանգվածային զեղչ ըստ շահույթի միջակայքի",
       bulkHint:
         "Կանոնները կիրառվում են վերևից ներքև — առաջին համընկնող միջակայքը հաղթում է։ Թողեք Max-ը դատարկ՝ առանց վերին սահմանի։ Դրեք զեղչը 0՝ միջակայքը զրոյացնելու համար։",
@@ -245,6 +246,7 @@ const hy = {
     addProduct: {
       created: "Ապրանքն ստեղծվեց",
       codeLabel: "Կոդ",
+      idLabel: "ID",
       basics: "Հիմնական",
       inventoryPricing: "Պահեստ և գնագոյացում",
       productName: "Ապրանքի անվանում",

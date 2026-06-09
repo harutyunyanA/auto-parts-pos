@@ -11,7 +11,6 @@ import {
 } from "antd";
 import { SearchOutlined, CloseOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
-import { useSource } from "../../store/useAuthStore";
 import { useContainerHeight } from "../../hooks/useContainerHeight";
 import { useDiscountProducts } from "./queries";
 import { useSetProductDiscount } from "./mutations";
@@ -45,7 +44,7 @@ function DiscountCell({ product }: { product: IProduct }) {
 
   const commit = (next: number) => {
     if (next !== (Number(product.discount) || 0)) {
-      setDiscount.mutate({ code: product.code, discount: next });
+      setDiscount.mutate({ id: product.id, discount: next });
     }
   };
 
@@ -76,7 +75,7 @@ function ResetDiscountButton({ product }: { product: IProduct }) {
         size="small"
         icon={<CloseOutlined />}
         disabled={!hasDiscount}
-        onClick={() => setDiscount.mutate({ code: product.code, discount: 0 })}
+        onClick={() => setDiscount.mutate({ id: product.id, discount: 0 })}
       />
     </Tooltip>
   );
@@ -88,7 +87,6 @@ export function DiscountsTable({
   discountedOnly?: boolean;
 }) {
   const { t } = useTranslation();
-  const source = useSource();
 
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
@@ -98,18 +96,18 @@ export function DiscountsTable({
   const containerHeight = useContainerHeight(containerRef);
   const tableScrollY = Math.max(containerHeight - 52, 160);
 
-  // Numeric search -> by code, otherwise by name.
+  // Numeric search -> by id, otherwise by name.
   const trimmed = search.trim();
   const filters: Record<string, unknown> = {
     ...(discountedOnly ? { discounted: true } : {}),
     ...(trimmed === ""
       ? {}
       : /^\d+$/.test(trimmed)
-        ? { code: Number(trimmed) }
+        ? { id: Number(trimmed) }
         : { name: trimmed }),
   };
 
-  const { data, isLoading } = useDiscountProducts(page, limit, filters, source);
+  const { data, isLoading } = useDiscountProducts(page, limit, filters);
 
   useEffect(() => {
     setPage(1);
@@ -117,9 +115,9 @@ export function DiscountsTable({
 
   const columns = [
     {
-      title: t("columns.code"),
-      dataIndex: "code",
-      key: "code",
+      title: t("columns.id"),
+      dataIndex: "id",
+      key: "id",
       align: "center" as const,
       width: 80,
     },

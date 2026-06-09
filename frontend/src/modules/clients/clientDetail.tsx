@@ -18,7 +18,6 @@ import dayjs from "dayjs";
 import { useClientPurchases } from "./queries";
 import { usePayAllBonus, useToggleCartBonusPaid } from "./mutations";
 import { useContainerHeight } from "../../hooks/useContainerHeight";
-import { useSource } from "../../store/useAuthStore";
 import { useTranslation } from "react-i18next";
 import type { IClientPurchase, IClientPurchaseItem } from "./types";
 
@@ -29,8 +28,7 @@ interface ClientDetailProps {
 export function ClientDetail({ id }: ClientDetailProps) {
   const navigate = useNavigate();
   const { t } = useTranslation();
-  const source = useSource();
-  const { data, isLoading } = useClientPurchases(id, source);
+  const { data, isLoading } = useClientPurchases(id);
   const payAllBonus = usePayAllBonus(id);
   const toggleBonusPaid = useToggleCartBonusPaid(id);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -57,9 +55,9 @@ export function ClientDetail({ id }: ClientDetailProps) {
 
   const itemColumns = [
     {
-      title: t("columns.code"),
-      dataIndex: "code",
-      key: "code",
+      title: t("columns.id"),
+      dataIndex: "productId",
+      key: "productId",
       width: 80,
       render: (v: number | null) => v ?? "—",
     },

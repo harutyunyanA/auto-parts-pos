@@ -1,6 +1,5 @@
 import { Op, fn, col } from "sequelize";
 import dayjs from "dayjs";
-import type { sourceType } from "../../types/source.types.ts";
 import { Supply } from "../supply/supply.model.ts";
 import { Cart, CartItem } from "../sale/sale.model.ts";
 import { Product } from "../product/product.model.ts";
@@ -22,7 +21,6 @@ function buildDateRange(from?: string, to?: string) {
 class AnalyticsService {
   // Статистика по каждому поставщику: закуплено / продано / себестоимость / прибыль.
   async getSupplierStats(
-    source: sourceType,
     from?: string,
     to?: string,
   ): Promise<SupplierStat[]> {
@@ -36,7 +34,6 @@ class AnalyticsService {
         [fn("COUNT", col("id")), "supplyCount"],
       ],
       where: {
-        source,
         status: "completed",
         ...(range && { createdAt: range }),
       },
@@ -53,14 +50,12 @@ class AnalyticsService {
           model: Product,
           as: "product",
           attributes: ["supplier_id"],
-          where: { source },
           required: true,
         },
         {
           model: Cart,
           attributes: [],
           where: {
-            source,
             status: "completed",
             ...(range && { createdAt: range }),
           },
@@ -126,20 +121,17 @@ class AnalyticsService {
   }
 
   // Мёртвый сток: товары с остатком, не продававшиеся за последние N дней.
-  async getDeadStock(
-    source: sourceType,
-    days = 90,
-  ): Promise<DeadStockItem[]> {
+  async getDeadStock(days = 90): Promise<DeadStockItem[]> {
     const since = dayjs().subtract(days, "day").startOf("day").toDate();
 
-    // productId, у которых были продажи за период (в этой кассе).
+    // productId, у которых были продажи за период.
     const soldRows = (await CartItem.findAll({
       attributes: ["productId"],
       include: [
         {
           model: Cart,
           attributes: [],
-          where: { source, status: "completed", createdAt: { [Op.gte]: since } },
+          where: { status: "completed", createdAt: { [Op.gte]: since } },
           required: true,
         },
       ],
@@ -149,14 +141,13 @@ class AnalyticsService {
 
     const soldIds = soldRows.map((r) => Number(r.productId));
 
-    const where: any = { source, quantity: { [Op.gt]: 0 } };
+    const where: any = { quantity: { [Op.gt]: 0 } };
     if (soldIds.length) where.id = { [Op.notIn]: soldIds };
 
     const products = (await Product.findAll({
       where,
       attributes: [
         "id",
-        "code",
         "name",
         "type",
         "oem",
@@ -169,7 +160,6 @@ class AnalyticsService {
 
     const result: DeadStockItem[] = products.map((p) => ({
       id: Number(p.id),
-      code: p.code,
       name: p.name,
       type: p.type,
       oem: p.oem,

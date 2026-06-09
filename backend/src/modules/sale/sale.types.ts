@@ -1,11 +1,9 @@
-import type { sourceType } from "../../types/source.types.ts";
-
 export type CartType = {
   id: number;
   status: "draft" | "completed";
   totalAmount: number;
   paymentMethod: "cash" | "card";
-  source: sourceType;
+  cashDeskId: number;
   clientId: number | null;
   bonusPaid: boolean;
   createdAt: Date;
@@ -27,7 +25,7 @@ export type TransformedCartType = {
   status: "draft" | "completed";
   totalAmount: number;
   paymentMethod: "cash" | "card";
-  source: sourceType;
+  cashDeskId: number;
   createdAt: Date;
   updatedAt: Date;
   items: TransformedCartItemType[];

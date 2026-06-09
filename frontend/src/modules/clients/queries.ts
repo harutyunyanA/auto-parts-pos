@@ -15,9 +15,9 @@ export function useClients() {
   });
 }
 
-export function useClientPurchases(id: number, source: string | null) {
+export function useClientPurchases(id: number) {
   return useQuery({
-    queryKey: ["clients", id, "purchases", source],
+    queryKey: ["clients", id, "purchases"],
     queryFn: () =>
       api
         .get<ApiResponse<IClientPurchasesResponse>>(`/clients/${id}/purchases`)

@@ -1,5 +1,3 @@
-import type { sourceType } from "../../types/source.types.ts";
-
 export type ClientType = {
   id: number;
   name: string;
@@ -18,7 +16,7 @@ export type ClientPurchaseItem = {
   quantity: number;
   priceAtSale: number;
   totalPrice: number;
-  code: number | null;
+  productId: number | null;
   name: string;
   type: string;
   oem: string | null;
@@ -46,5 +44,4 @@ export type ClientPurchasesResponse = {
   client: ClientType;
   purchases: ClientPurchase[];
   stats: ClientStats;
-  source: sourceType;
 };

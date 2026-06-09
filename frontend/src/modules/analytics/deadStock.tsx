@@ -87,9 +87,9 @@ export function DeadStock() {
             render: (_t, _r, index) => (page - 1) * pageSize + index + 1,
           },
           {
-            title: t("columns.code"),
-            dataIndex: "code",
-            key: "code",
+            title: t("columns.id"),
+            dataIndex: "id",
+            key: "id",
             align: "center",
             width: 90,
           },

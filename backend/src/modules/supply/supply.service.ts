@@ -6,7 +6,6 @@ import { Supplier } from "../supplier/supplier.model.ts";
 import { Supply, SupplyItem } from "./supply.model.ts";
 import type { SupplyItemType, SupplyType } from "./supply.types.ts";
 import { NotFoundError, BadRequestError } from "../../utils/errors.ts";
-import type { sourceType } from "../../types/source.types.ts";
 import settingsService from "../settings/settings.service.ts";
 import {
   DEFAULT_USD_RATE_KEY,
@@ -14,10 +13,10 @@ import {
 } from "../settings/settings.types.ts";
 
 class SupplyService {
-  async createSupply(supplierId: number, source: string) {
+  async createSupply(supplierId: number, cashDeskId: number) {
     const newSupply = await Supply.create({
       supplierId,
-      source,
+      cashDeskId,
     });
 
     if (!newSupply) {
@@ -46,13 +45,13 @@ class SupplyService {
     return result.dataValues;
   }
 
-  async addSupplyItem(code: number, supplyId: number, source: sourceType) {
+  async addSupplyItem(productId: number, supplyId: number) {
     const transaction = await sequelize.transaction();
 
     try {
-      const product = await Product.findOne({
-        where: { code: code, source },
+      const product = await Product.findByPk(productId, {
         transaction,
+        lock: transaction.LOCK.UPDATE,
       });
 
       if (!product) {
@@ -123,7 +122,10 @@ class SupplyService {
 
       if (!supplyItem) throw new NotFoundError("Supply item not found");
       const supply = supplyItem.get("supply") as Supply;
-      const product = supplyItem.get("product") as Product;
+      const product = await Product.findByPk(supplyItem.productId, {
+        transaction,
+        lock: transaction.LOCK.UPDATE,
+      });
 
       if (!supply) throw new NotFoundError("Supply not found");
       if (!product) throw new NotFoundError("Product not found");
@@ -185,7 +187,11 @@ class SupplyService {
       if (!supplyItem) throw new NotFoundError("Supply item not found");
 
       const supply = supplyItem.get("supply") as Supply;
-      const product = supplyItem.get("product") as Product;
+      const product = await Product.findByPk(supplyItem.productId, {
+        transaction,
+        lock: transaction.LOCK.UPDATE,
+      });
+      if (!product) throw new NotFoundError("Product not found");
 
       if (supply.status === "completed") {
         throw new BadRequestError("Cannot update item in a completed supply");
@@ -291,7 +297,13 @@ class SupplyService {
       if (supply.status === "completed")
         throw new BadRequestError("Supply completed");
 
-      const product = item.get("product") as Product;
+      // Lock the product row before reading/writing quantity so a concurrent
+      // sale or supply edit can't clobber it (matches updateCartItemQuantity).
+      const product = await Product.findByPk(item.productId, {
+        transaction,
+        lock: transaction.LOCK.UPDATE,
+      });
+      if (!product) throw new NotFoundError("Product not found");
       product.quantity = product.quantity - item.quantity + quantity;
       item.quantity = quantity;
       item.totalCost = String(Number(item.purchasePrice) * quantity);
@@ -327,7 +339,13 @@ class SupplyService {
       if (supply.status === "completed")
         throw new BadRequestError("Supply completed");
 
-      const product = item.get("product") as Product;
+      // Lock the product row before reading/writing quantity so a concurrent
+      // sale or supply edit can't clobber it (matches updateCartItemQuantity).
+      const product = await Product.findByPk(item.productId, {
+        transaction,
+        lock: transaction.LOCK.UPDATE,
+      });
+      if (!product) throw new NotFoundError("Product not found");
       product.purchase_price = purchasePrice;
       item.purchasePrice = String(purchasePrice);
       item.totalCost = String(purchasePrice * item.quantity);
@@ -363,7 +381,13 @@ class SupplyService {
       if (supply.status === "completed")
         throw new BadRequestError("Supply completed");
 
-      const product = item.get("product") as Product;
+      // Lock the product row before reading/writing quantity so a concurrent
+      // sale or supply edit can't clobber it (matches updateCartItemQuantity).
+      const product = await Product.findByPk(item.productId, {
+        transaction,
+        lock: transaction.LOCK.UPDATE,
+      });
+      if (!product) throw new NotFoundError("Product not found");
       product.sale_price = salePrice;
       item.salePrice = String(salePrice);
 
@@ -398,7 +422,13 @@ class SupplyService {
       if (supply.status === "completed")
         throw new BadRequestError("Supply completed");
 
-      const product = item.get("product") as Product;
+      // Lock the product row before reading/writing quantity so a concurrent
+      // sale or supply edit can't clobber it (matches updateCartItemQuantity).
+      const product = await Product.findByPk(item.productId, {
+        transaction,
+        lock: transaction.LOCK.UPDATE,
+      });
+      if (!product) throw new NotFoundError("Product not found");
       product.minimum_quantity = minQuantity;
       item.minQuantity = minQuantity;
 
@@ -427,9 +457,8 @@ class SupplyService {
     return { success: true, data: supply };
   }
 
-  async getAllSupplies(source: sourceType) {
+  async getAllSupplies() {
     const supplies = await Supply.findAll({
-      where: { source },
       include: [
         {
           model: Supplier,
@@ -456,7 +485,7 @@ class SupplyService {
                 "name",
                 "quantity",
                 "type",
-                "code",
+                "id",
                 "minimum_quantity",
               ],
             },
@@ -472,10 +501,9 @@ class SupplyService {
     return { success: true, supplies };
   }
 
-  async getSupplyInfo(supplyId: number, source: sourceType) {
+  async getSupplyInfo(supplyId: number) {
     const supply = (
-      await Supply.findOne({
-        where: { id: supplyId, source },
+      await Supply.findByPk(supplyId, {
         include: [
           {
             model: SupplyItem,

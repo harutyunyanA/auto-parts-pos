@@ -10,7 +10,6 @@ import {
 } from "antd";
 import { DeleteOutlined, ClearOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
-import { useSource } from "../../store/useAuthStore";
 import { useDiscountRules } from "./queries";
 import {
   useDeleteAllDiscountRules,
@@ -27,8 +26,7 @@ export function DiscountRulesModal({
   onClose: () => void;
 }) {
   const { t } = useTranslation();
-  const source = useSource();
-  const { data: rules, isLoading } = useDiscountRules(source);
+  const { data: rules, isLoading } = useDiscountRules();
   const deleteRule = useDeleteDiscountRule();
   const deleteAll = useDeleteAllDiscountRules();
 

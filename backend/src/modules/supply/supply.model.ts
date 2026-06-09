@@ -1,9 +1,9 @@
 import { DataTypes, Model } from "sequelize";
 import { sequelize } from "../../config/db.ts";
 import type { SupplyType } from "./supply.types.ts";
-import type { sourceType } from "../../types/source.types.ts";
 import { Product } from "../product/product.model.ts";
 import { Supplier } from "../supplier/supplier.model.ts";
+import { CashDesk } from "../cashdesk/cashdesk.model.ts";
 import { recalcSupplyTotal } from "../../utils/recalcSupplyTotal.ts";
 
 // -------------------- Supply --------------------
@@ -11,7 +11,7 @@ export class Supply extends Model implements SupplyType {
   declare id: number;
   declare supplierId: number;
   declare totalCost: string | null;
-  declare source: sourceType;
+  declare cashDeskId: number;
   declare status: "draft" | "completed";
   declare createdAt: Date;
   declare updatedAt: Date;
@@ -33,8 +33,9 @@ Supply.init(
       allowNull: false,
       defaultValue: "draft",
     },
-    source: {
-      type: DataTypes.ENUM("soviet", "import"),
+    // Which cash desk recorded the supply — attribution only (see Cart).
+    cashDeskId: {
+      type: DataTypes.INTEGER,
       allowNull: false,
     },
     totalCost: {
@@ -156,6 +157,12 @@ SupplyItem.belongsTo(Product, { foreignKey: "productId", as: "product" });
 Supply.belongsTo(Supplier, {
   foreignKey: "supplierId",
   as: "supplier",
+  constraints: false,
+});
+
+Supply.belongsTo(CashDesk, {
+  foreignKey: "cashDeskId",
+  as: "cashDesk",
   constraints: false,
 });
 

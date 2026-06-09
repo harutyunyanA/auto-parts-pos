@@ -10,7 +10,6 @@ import {
 import { Button, Flex, Pagination, theme } from "antd";
 import { ClientsList } from "../components/ClientsList";
 import { useCurrentDate } from "../store/useDateStore";
-import { useSource } from "../store/useAuthStore";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import api from "../api/client";
 import { useEffect, useState, useRef } from "react";
@@ -36,13 +35,12 @@ export default function Sales() {
   const currentCartPage = useCurrentCartPage();
   const setCurrentCartPage = useSetCurrentCartPage();
   const activePrice = usePurchasePriceStore((state) => state.activePrice);
-  const source = useSource();
   const queryClient = useQueryClient();
   const { token } = theme.useToken();
   const { Text } = Typography;
 
   const { data: carts } = useQuery({
-    queryKey: ["carts", currentDate, source],
+    queryKey: ["carts", currentDate],
     queryFn: () =>
       api.get<ApiResponse<ICart[]>>(`/sale/${currentDate}`).then((res) => {
         return res.data.data;
@@ -75,7 +73,7 @@ export default function Sales() {
       prevCartsLength.current = carts.length;
       prevDate.current = currentDate;
     }
-  }, [carts, currentDate, setCurrentCartPage, source]);
+  }, [carts, currentDate, setCurrentCartPage]);
 
   async function createNewCart() {
     const currentCart = carts?.[currentCartPage - 1];
@@ -84,7 +82,7 @@ export default function Sales() {
     }
     await api.post("/sale", { currentDate });
     queryClient.invalidateQueries({
-      queryKey: ["carts", currentDate, source],
+      queryKey: ["carts", currentDate],
     });
   }
   return (
@@ -129,6 +127,9 @@ export default function Sales() {
             </Flex>
             <p>
               {t("sales.receipt")} {carts?.[currentCartPage - 1]?.id}
+              {carts?.[currentCartPage - 1]?.cashDesk?.name
+                ? ` · ${carts[currentCartPage - 1].cashDesk?.name}`
+                : ""}
             </p>
             <ClientsList cart={carts?.[currentCartPage - 1]} />
             <p id="purchasedPrice">11EAX{activePrice ?? ""}</p>

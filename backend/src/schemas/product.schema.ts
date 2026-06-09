@@ -3,11 +3,7 @@ import * as z from "zod";
 export const getProductQuerySchema = z.object({
   body: z.object({}).optional(),
   query: z.object({
-    code: z.preprocess((val) => Number(val), z.number().int().positive()),
-    source: z.preprocess(
-      (val) => (typeof val === "string" ? val.trim() : val),
-      z.enum(["soviet", "import"]),
-    ),
+    id: z.preprocess((val) => Number(val), z.number().int().positive()),
   }),
   params: z.object({}).optional(),
 });
@@ -23,12 +19,6 @@ export const addProductSchema = z.object({
       .union([z.string(), z.number()])
       .transform((val) => String(val).trim())
       .default("-"),
-
-    code: z
-      .number("code must be a number")
-      .int("Code must be an integer")
-      .nonnegative("code must be non-negative")
-      .optional(),
 
     oem: z
       .union([z.string(), z.number(), z.null()])
@@ -87,7 +77,6 @@ export const updateProductSchema = z.object({
       .union([z.string(), z.number()])
       .transform((val) => String(val).trim())
       .optional(),
-    code: z.number().int().nonnegative().optional(),
     oem: z
       .union([z.string(), z.number(), z.null()])
       .transform((val) =>
@@ -115,11 +104,7 @@ export const updateProductSchema = z.object({
     supplier_id: z.number().nullable().optional(),
   }),
   query: z.object({
-    code: z.preprocess((val) => Number(val), z.number().int().positive()),
-    source: z.preprocess(
-      (val) => (typeof val === "string" ? val.trim() : val),
-      z.enum(["soviet", "import"]),
-    ),
+    id: z.preprocess((val) => Number(val), z.number().int().positive()),
   }),
   params: z.object({}).optional(),
 });
@@ -129,7 +114,7 @@ export const paginationQuerySchema = z.object({
   query: z.object({
     oem: z.string().optional(),
     WXQP: z.string().optional(),
-    code: z
+    id: z
       .preprocess(
         (val) => (val === "" || val === undefined ? undefined : Number(val)),
         z.number().int().positive().optional(),
@@ -159,7 +144,7 @@ export const getProductHistorySchema = z.object({
   body: z.object({}).optional(),
   params: z.object({}).optional(),
   query: z.object({
-    code: z
+    id: z
       .preprocess((val) => Number(val), z.number().int().positive())
       .optional(),
     oem: z.string().optional(),

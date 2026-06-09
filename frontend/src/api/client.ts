@@ -10,9 +10,9 @@ const api = axios.create({
 });
 
 api.interceptors.request.use((config) => {
-  const { source } = useAuthStore.getState();
-  if (source) {
-    config.headers["X-Source-Type"] = source;
+  const { cashDeskId } = useAuthStore.getState();
+  if (cashDeskId != null) {
+    config.headers["X-Cash-Desk"] = String(cashDeskId);
   }
   return config;
 });

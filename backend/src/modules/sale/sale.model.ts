@@ -1,9 +1,9 @@
 import { DataTypes, Model } from "sequelize";
 import type { CartType, CartItemType } from "./sale.types.ts";
-import type { sourceType } from "../../types/source.types.ts";
 import { sequelize } from "../../config/db.ts";
 import { Product } from "../product/product.model.ts";
 import { Client } from "../clients/clients.model.ts";
+import { CashDesk } from "../cashdesk/cashdesk.model.ts";
 import { recalcCartTotal } from "../../utils/recalcCartTotal.ts";
 
 export class Cart extends Model implements CartType {
@@ -11,7 +11,7 @@ export class Cart extends Model implements CartType {
   declare status: "draft" | "completed";
   declare totalAmount: number;
   declare paymentMethod: "cash" | "card";
-  declare source: sourceType;
+  declare cashDeskId: number;
   declare clientId: number | null;
   declare bonusPaid: boolean;
   declare createdAt: Date;
@@ -40,8 +40,12 @@ Cart.init(
       allowNull: false,
       defaultValue: "cash",
     },
-    source: {
-      type: DataTypes.ENUM("soviet", "import"),
+    // Which cash desk rang up the sale. Attribution only — the catalogue and
+    // stock are shared across desks, so nothing is filtered by this. Plain
+    // column (no DB-level FK) to avoid sync({ alter: true }) duplicating the
+    // constraint on every boot; the association below uses constraints: false.
+    cashDeskId: {
+      type: DataTypes.INTEGER,
       allowNull: false,
     },
     clientId: {
@@ -139,6 +143,12 @@ Client.hasMany(Cart, {
 Cart.belongsTo(Client, {
   foreignKey: "clientId",
   as: "client",
+});
+
+Cart.belongsTo(CashDesk, {
+  foreignKey: "cashDeskId",
+  as: "cashDesk",
+  constraints: false,
 });
 
 CartItem.belongsTo(Cart, {

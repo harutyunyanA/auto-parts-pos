@@ -1,7 +1,7 @@
 import { createBrowserRouter, Navigate } from "react-router-dom";
 import UserSelection from "../pages/Auth/UserSelection";
 import MainLayout from "../layouts/MainLayout";
-import SourceGuard from "../components/SourceGuard";
+import DeskGuard from "../components/DeskGuard";
 import Dashboard from "../pages/Dashboard";
 import Analytics from "../pages/Analytics";
 import Products from "../pages/Products";
@@ -22,7 +22,7 @@ export const router = createBrowserRouter([
   },
   {
     path: "/",
-    element: <SourceGuard />,
+    element: <DeskGuard />,
     children: [
       {
         element: <MainLayout />,

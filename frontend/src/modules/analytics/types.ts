@@ -11,7 +11,6 @@ export interface ISupplierStat {
 
 export interface IDeadStockItem {
   id: number;
-  code: number | null;
   name: string;
   type: string;
   oem: string | null;

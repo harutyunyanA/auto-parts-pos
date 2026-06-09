@@ -11,7 +11,7 @@ export interface ISupplyItem {
   usdRate: string | null;
   weight: string | null;
   tax: string | null;
-  product: Pick<IProduct, "quantity" | "name" | "type" | "code" | "weight">;
+  product: Pick<IProduct, "quantity" | "name" | "type" | "id" | "weight">;
   createdAt: string;
   updatedAt: string;
 }
@@ -21,7 +21,7 @@ export interface ISupply {
   supplierId: number;
   supplier?: { id: number; name: string; phone: string | null } | null;
   status: string;
-  source: string;
+  cashDeskId: number;
   items: ISupplyItem[];
   totalCost: string;
   createdAt: string;

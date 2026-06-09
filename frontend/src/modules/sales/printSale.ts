@@ -24,7 +24,7 @@ export function printSale(cart: ICart, t: TFunction): void {
   // Each column: header label + cell class (controls alignment).
   const headers = [
     { label: t("columns.num"), cls: "num" },
-    { label: t("columns.code"), cls: "center" },
+    { label: t("columns.id"), cls: "center" },
     { label: t("columns.name"), cls: "" },
     { label: t("columns.type"), cls: "center" },
     { label: t("columns.oem"), cls: "" },
@@ -45,7 +45,7 @@ export function printSale(cart: ICart, t: TFunction): void {
       return (
         `<tr>` +
         `<td class="num">${i + 1}</td>` +
-        `<td class="center">${esc(it.code)}</td>` +
+        `<td class="center">${esc(it.productId)}</td>` +
         `<td>${esc(it.name)}</td>` +
         `<td class="center">${esc(it.type)}</td>` +
         `<td>${esc(it.oem ?? "")}</td>` +

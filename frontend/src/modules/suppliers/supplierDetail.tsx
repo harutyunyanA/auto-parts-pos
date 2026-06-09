@@ -52,9 +52,9 @@ export function SupplierDetail({ id }: SupplierDetailProps) {
 
   const itemColumns = [
     {
-      title: t("columns.code"),
-      dataIndex: ["product", "code"],
-      key: "code",
+      title: t("columns.id"),
+      dataIndex: ["product", "id"],
+      key: "id",
       width: 80,
     },
     {

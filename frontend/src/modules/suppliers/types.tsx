@@ -22,7 +22,7 @@ export interface ISupplierSupplyItem {
   tax: string | null;
   product: {
     name: string;
-    code: number;
+    id: number;
     type: string;
     oem: string | null;
     WXQP: string | null;

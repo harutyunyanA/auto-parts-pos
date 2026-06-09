@@ -6,13 +6,13 @@ export const cartItemSchema = z.object({
 
   params: z.object({
     cartId: z.preprocess((val) => Number(val), z.number().int().positive()),
-    code: z.preprocess((val) => Number(val), z.number().int().positive()),
+    productId: z.preprocess((val) => Number(val), z.number().int().positive()),
   }),
 });
 
 export const getProductHistorySchema = z.object({
   body: z.object({
-    code: z
+    id: z
       .preprocess((val) => Number(val), z.number().int().positive())
       .optional(),
     oem: z.string().optional(),

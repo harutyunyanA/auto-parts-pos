@@ -14,7 +14,7 @@ export function Base() {
     name: "",
     type: "",
     oem: "",
-    code: "",
+    id: "",
     WXQP: "",
   };
   const [searchParams, setSearchParams] = useState(searcParamsObj);
@@ -46,14 +46,14 @@ export function Base() {
           <Flex gap={"middle"} justify="start" wrap="wrap">
             <Search
               allowClear={{ clearIcon: <CloseOutlined /> }}
-              placeholder={t("columns.code")}
+              placeholder={t("columns.id")}
               style={{ minWidth: 150, flex: "1 1 150px" }}
-              value={searchParams.code}
+              value={searchParams.id}
               onChange={(e) => {
                 const value = e.target.value.replace(/\D/g, "");
-                setSearchParams((prev) => ({ ...prev, code: value }));
+                setSearchParams((prev) => ({ ...prev, id: value }));
               }}
-              onSearch={(value) => handleSearch("code", value)}
+              onSearch={(value) => handleSearch("id", value)}
             />
             <CarAutoComplete
               style={{ minWidth: 150, flex: "1 1 150px" }}

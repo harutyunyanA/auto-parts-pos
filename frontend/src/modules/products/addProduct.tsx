@@ -29,7 +29,7 @@ export function AddProduct({ onClose }: AddProductProps) {
   const [form] = Form.useForm<AddProductFormValues>();
   const enableMinQty = Form.useWatch("enable_minimum_quantity", form);
   const queryClient = useQueryClient();
-  const [createdCode, setCreatedCode] = useState<number | null>(null);
+  const [createdId, setCreatedId] = useState<number | null>(null);
 
   const { data: suppliers } = useQuery<ISupplier[]>({
     queryKey: ["suppliers"],
@@ -46,8 +46,8 @@ export function AddProduct({ onClose }: AddProductProps) {
     onSuccess: (res) => {
       const created = res.data.data;
       queryClient.invalidateQueries({ queryKey: ["products"] });
-      if (created?.code != null) {
-        setCreatedCode(created.code);
+      if (created?.id != null) {
+        setCreatedId(created.id);
       }
       form.resetFields();
     },
@@ -58,12 +58,12 @@ export function AddProduct({ onClose }: AddProductProps) {
     },
   });
 
-  if (createdCode != null) {
+  if (createdId != null) {
     return (
       <Result
         status="success"
         title={t("addProduct.created")}
-        subTitle={`${t("addProduct.codeLabel")}: ${createdCode}`}
+        subTitle={`${t("addProduct.idLabel")}: ${createdId}`}
         extra={
           <Button type="primary" onClick={onClose}>
             {t("common.close")}

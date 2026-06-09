@@ -19,7 +19,7 @@ export function printDeficit(products: IProduct[], t: TFunction): void {
 
   const headers = [
     { label: t("columns.num"), cls: "num" },
-    { label: t("columns.code"), cls: "center" },
+    { label: t("columns.id"), cls: "center" },
     { label: t("columns.name"), cls: "" },
     { label: t("columns.type"), cls: "center" },
     { label: t("columns.oem"), cls: "" },
@@ -37,7 +37,7 @@ export function printDeficit(products: IProduct[], t: TFunction): void {
       return (
         `<tr>` +
         `<td class="num">${i + 1}</td>` +
-        `<td class="center">${esc(p.code)}</td>` +
+        `<td class="center">${esc(p.id)}</td>` +
         `<td>${esc(p.name)}</td>` +
         `<td class="center">${esc(p.type)}</td>` +
         `<td>${esc(p.oem ?? "")}</td>` +

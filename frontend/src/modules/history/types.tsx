@@ -3,7 +3,7 @@ type HistoryBase = {
   quantity: number;
   createdAt: string;
   product: {
-    code: number;
+    id: number;
     name: string;
     type: string;
     oem: string;

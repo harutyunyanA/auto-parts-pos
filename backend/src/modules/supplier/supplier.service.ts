@@ -3,7 +3,6 @@ import type { SupplierCreationType } from "./supplier.types.ts";
 import { NotFoundError, BadRequestError } from "../../utils/errors.ts";
 import { Supply, SupplyItem } from "../supply/supply.model.ts";
 import { Product } from "../product/product.model.ts";
-import type { sourceType } from "../../types/source.types.ts";
 
 class SupplierService {
   async getAll() {
@@ -57,11 +56,11 @@ class SupplierService {
     return { success: true };
   }
 
-  async getSuppliesBySupplier(id: number, source: sourceType) {
+  async getSuppliesBySupplier(id: number) {
     const supplier = await this.getById(id);
 
     const supplies = await Supply.findAll({
-      where: { supplierId: id, source },
+      where: { supplierId: id },
       include: [
         {
           model: SupplyItem,
@@ -70,7 +69,7 @@ class SupplierService {
             {
               model: Product,
               as: "product",
-              attributes: ["name", "code", "type", "oem", "WXQP"],
+              attributes: ["name", "id", "type", "oem", "WXQP"],
             },
           ],
         },

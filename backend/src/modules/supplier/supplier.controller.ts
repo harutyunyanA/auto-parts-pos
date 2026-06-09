@@ -62,7 +62,7 @@ class SupplierController {
   async getSupplierSupplies(req: Request, res: Response, next: NextFunction) {
     try {
       const { id } = req.validated.params;
-      const result = await service.getSuppliesBySupplier(id, req.source);
+      const result = await service.getSuppliesBySupplier(id);
       return successResponse(res, result);
     } catch (err) {
       logger.error(err);

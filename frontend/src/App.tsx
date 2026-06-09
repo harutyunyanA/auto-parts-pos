@@ -3,14 +3,12 @@ import { ConfigProvider, theme } from 'antd';
 import { useTranslation } from 'react-i18next';
 import enUS from 'antd/locale/en_US';
 import hyAM from 'antd/locale/hy_AM';
-import { useSource } from './store/useAuthStore';
 import { useIsDarkMode } from './store/useThemeStore';
 import { useCompact } from './hooks/useCompact';
 import { router } from './router/router';
 import './App.css';
 
 export default function App() {
-  const source = useSource();
   const isDarkMode = useIsDarkMode();
   const compact = useCompact();
   const { i18n } = useTranslation();
@@ -24,7 +22,7 @@ export default function App() {
           ...(compact ? [theme.compactAlgorithm] : []),
         ],
         token: {
-          colorPrimary: source === 'import' ? '#1890ff' : '#52c41a',
+          colorPrimary: '#1890ff',
         },
       }}
     >

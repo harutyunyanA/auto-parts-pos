@@ -1,7 +1,6 @@
 import { DataTypes, Model } from "sequelize";
 import { sequelize } from "../../config/db.ts";
 import type { ProductType, ProductCreationType } from "./product.types.ts";
-import type { sourceType } from "../../types/source.types.ts";
 
 export class Product
   extends Model<ProductType, ProductCreationType>
@@ -12,8 +11,6 @@ export class Product
   declare type: string;
   declare oem: string | null;
   declare WXQP: string | null;
-  declare code: number | null;
-  declare source: sourceType;
   declare quantity: number;
   declare minimum_quantity: number | null;
   declare purchase_price: number;
@@ -31,7 +28,6 @@ Product.init(
       type: DataTypes.INTEGER,
       autoIncrement: true,
       primaryKey: true,
-      unique: true,
     },
 
     name: {
@@ -47,25 +43,14 @@ Product.init(
 
     oem: {
       type: DataTypes.STRING,
-      allowNull: false,
-      defaultValue: "-",
+      allowNull: true,
+      defaultValue: null,
     },
 
     WXQP: {
       type: DataTypes.STRING,
-      allowNull: false,
-      defaultValue: "-",
-    },
-
-    code: {
-      type: DataTypes.INTEGER,
       allowNull: true,
-    },
-
-    source: {
-      type: DataTypes.ENUM("soviet", "import"),
-      allowNull: false,
-      defaultValue: "soviet",
+      defaultValue: null,
     },
 
     quantity: {
@@ -100,7 +85,10 @@ Product.init(
     supplier_id: {
       type: DataTypes.INTEGER,
       allowNull: true,
-      defaultValue: 1,
+      // No default supplier: a fresh v2 DB has no suppliers yet, and the FK to
+      // `suppliers` would reject a hardcoded id. null = "no supplier" (analytics
+      // already renders these as "—").
+      defaultValue: null,
     },
 
     createdAt: {
@@ -119,10 +107,4 @@ Product.init(
     timestamps: true,
   },
 );
-
-Product.afterCreate(async (product) => {
-  if (!product.code) {
-    await product.update({ code: product.id });
-  }
-});
 

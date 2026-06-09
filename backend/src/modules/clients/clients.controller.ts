@@ -2,7 +2,6 @@ import type { Request, Response, NextFunction } from "express";
 import { successResponse } from "../../utils/response.ts";
 import service from "./clients.service.ts";
 import logger from "../../utils/logger.ts";
-import type { sourceType } from "../../types/source.types.ts";
 
 class ClientsController {
   async getAll(req: Request, res: Response, next: NextFunction) {
@@ -63,7 +62,7 @@ class ClientsController {
   async getPurchases(req: Request, res: Response, next: NextFunction) {
     try {
       const { id } = req.validated.params;
-      const result = await service.getPurchases(id, req.source as sourceType);
+      const result = await service.getPurchases(id);
       return successResponse(res, result);
     } catch (err) {
       logger.error(err);
@@ -74,7 +73,7 @@ class ClientsController {
   async payAllBonus(req: Request, res: Response, next: NextFunction) {
     try {
       const { id } = req.validated.params;
-      const result = await service.payAllBonus(id, req.source as sourceType);
+      const result = await service.payAllBonus(id);
       return successResponse(res, result);
     } catch (err) {
       logger.error(err);

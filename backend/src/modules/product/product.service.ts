@@ -1,4 +1,3 @@
-import type { sourceType } from "../../types/source.types.ts";
 import { Product } from "./product.model.ts";
 import { Supplier } from "../supplier/supplier.model.ts";
 import type {
@@ -15,11 +14,9 @@ import { SupplyItem } from "../supply/supply.model.ts";
 import dayjs from "dayjs";
 
 class ProductServices {
-  async getProductByCode(code: number, source: sourceType) {
+  async getProductById(id: number) {
     const res = (
-      await Product.findOne({
-        where: { code, source },
-      })
+      await Product.findByPk(id)
     )?.toJSON();
 
     if (!res) {
@@ -33,19 +30,18 @@ class ProductServices {
     return product.dataValues;
   }
 
-  async deleteProduct(code: number, source: sourceType) {
+  async deleteProduct(id: number) {
     const res = await Product.destroy({
-      where: { code: code, source: source },
+      where: { id },
     });
     return res;
   }
 
   async updateProduct(
-    code: number,
-    source: sourceType,
+    id: number,
     productData: Partial<ProductCreationType>,
   ) {
-    const product = await Product.findOne({ where: { code, source } });
+    const product = await Product.findByPk(id);
     if (!product) throw new NotFoundError("Product not found");
 
     await product.update(productData);
@@ -53,19 +49,16 @@ class ProductServices {
   }
 
   async getAllProducts(
-    source: sourceType,
     paginationParams: paginationParams,
     searchParams: searchParams,
   ) {
     const { page = 1, limit = 20 } = paginationParams;
     const offset = (page - 1) * limit;
 
-    const where: Record<string, any> = {
-      source: source,
-    };
+    const where: Record<string, any> = {};
 
-    if (searchParams.code) {
-      where.code = searchParams.code;
+    if (searchParams.id) {
+      where.id = searchParams.id;
     }
 
     if (searchParams.name) {
@@ -103,26 +96,24 @@ class ProductServices {
     return { items: result.rows, total: result.count };
   }
 
-  async getDeficitProducts(source: sourceType) {
+  async getDeficitProducts() {
     return await Product.findAll({
       where: {
-        source,
         minimum_quantity: { [Op.ne]: null },
         quantity: { [Op.lte]: { [Op.col]: "minimum_quantity" } },
       },
-      order: [["code", "ASC"]],
+      order: [["id", "ASC"]],
     });
   }
 
   async getProductHistory(
-    code: number | undefined,
+    id: number | undefined,
     oem: string | undefined,
-    source: sourceType,
     from: string | undefined,
     to: string | undefined,
   ) {
-    const productWhere: Record<string, any> = { source };
-    if (code) productWhere.code = code;
+    const productWhere: Record<string, any> = {};
+    if (id) productWhere.id = id;
     if (oem) productWhere.oem = oem;
 
     const dateRange: Record<symbol, Date> = {};
@@ -145,7 +136,7 @@ class ProductServices {
           model: Product,
           as: "product",
           where: productWhere,
-          attributes: ["code", "name", "oem", "type"],
+          attributes: ["id", "name", "oem", "type"],
           required: true,
         },
       ],
@@ -166,7 +157,7 @@ class ProductServices {
           model: Product,
           as: "product",
           where: productWhere,
-          attributes: ["code", "name", "oem", "type"],
+          attributes: ["id", "name", "oem", "type"],
           required: true,
         },
       ],
@@ -180,7 +171,7 @@ class ProductServices {
       totalPrice: i.totalPrice,
       operation: "OUT" as const,
       product: {
-        code: i.product?.code,
+        id: i.product?.id,
         name: i.product?.name,
         oem: i.product?.oem,
         type: i.product?.type,
@@ -196,7 +187,7 @@ class ProductServices {
       totalCost: i.totalCost,
       operation: "IN" as const,
       product: {
-        code: i.product?.code,
+        id: i.product?.id,
         name: i.product?.name,
         oem: i.product?.oem,
         type: i.product?.type,
